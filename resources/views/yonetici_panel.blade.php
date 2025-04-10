@@ -5,21 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topluluk Yönetimi</title>
-    <link rel="stylesheet" href="{{asset('css/style_panels.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/style_panels.css') }}">
+
 </head>
 
 <body>
     <div class="sidebar">
-        <img src="https://upload.wikimedia.org/wikipedia/tr/1/1a/Necmettin_Erbakan_%C3%9Cniversitesi_logo.png" alt="Logo">
-        <h2>BİLİŞİM TOPLULUĞU</h2>
+    <img src="{{ asset('images/neu_logo.png') }}" alt="Logo">
+    <h2>BİLİŞİM TOPLULUĞU</h2>
         <h3>REŞİDE ALTUN</h3>
         <p>BİLGİSAYAR MÜHENDİSLİĞİ</p>
 
         <div class="menu">
             <div class="menu-item" onclick="showContent('web')">Web Arayüz İşlemleri</div>
-            <div class="menu-item" onclick="showContent('etkinlik')">Etkinlik İşlemleri</div>
+            <a href="/etkinlik_islemleri" class="menu-item">Etkinlik İşlemleri</a>
             <div class="menu-item" onclick="showContent('uye')">Üye İşlemleri</div>
-            <a href="{{route('tpl_anasayfa')}}" style="color:white; text-decoration:none"><div class="menu-item">Çıkış</div></a>
+            <div class="menu-item" onclick="showContent('cikis')">Çıkış</div>
         </div>
     </div>
 
@@ -72,7 +73,7 @@
         </div>
     </div>
 
-    <script src="{{asset('js/js_panels.js')}}"></script>
+    <script src="{{ asset('js/js_panels.js') }}"></script>
     <script>
         // Logo önizleme
         document.getElementById('logo').addEventListener('change', function (event) {

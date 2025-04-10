@@ -1,3 +1,35 @@
+<?php
+	/* include("baglan.php");
+	if(isset($_POST['btn']))
+	{
+		$isim=$_POST["isim"];
+		$mail=$_POST["mail"];
+		$mesaj=$_POST["mesaj"];
+		if($isim <>'' and $mail<>'' and $mesaj<>'')
+		{
+			$sql="insert into mesaj(isim,mail,mesaj) values('$isim','$mail','$mesaj')";
+			$result=mysqli_query($baglanti,$sql);
+			if($result)
+			{
+				echo "<script  type='text/javascript'>
+				confirm('Mesajınız Başarıyla Gönderildi');
+					</script>";
+			}
+			else
+			{
+				echo "<script  type='text/javascript'>
+				confirm('Mesajınız Gönderilirken Bir Hata Oluştu');
+					</script>";
+			}
+		}
+		else
+		{
+			echo "<script  type='text/javascript'>
+				confirm('Lütfen Bilgileri Boş Bırakmayın');
+					</script>";
+		}
+	}*/
+?>
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
@@ -15,27 +47,31 @@
       type="image/x-icon"
       href="images/bilisimlogo.png"
     />
-	<link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}" />
-    <title>{{request('topluluk','Topluluk Seçilmedi')}}</title>
-   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+	<link rel="stylesheet" href="styles/bootstrap.min.css" />
+    <title>Bilişim Topluluğu</title>
+    <link rel="stylesheet" href="{{ asset('css/style_anasayfa.css') }}">
+
   </head>
 
   <body>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary header">
   <div class="container-fluid">
-    <a class="navbar-brand logo" href="{{route('tpl_anasayfa')}}">
+    <a class="navbar-brand logo" href="anasayfa">
       <img src="images/bilisimlogo.png" alt="logo" />
     </a>
     <div class="collapse navbar-collapse navbar" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="{{route('tpl_anasayfa')}}">Ana Sayfa</a>
+          <a class="nav-link active" aria-current="page" href="index">Ana Sayfa</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{route('tpl_etkinlik')}}">Etkinlikler</a>
+          <a class="nav-link" href="etkinlikler">Etkinlikler</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{route('tpl_uye')}}">Üye İşlemleri</a>
+          <a class="nav-link" href="sponsorlar">Sponsorlar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="uyeislemleri">Üye İşlemleri</a>
         </li>
       </ul>
       <div class="buttons">
@@ -149,9 +185,10 @@ style='text-decoration: none;'
 		href="https://www.linkedin.com/company/necmettin-erbakan-%C3%BCniversitesi-bili%C5%9Fim-toplulu%C4%9Fu/?viewAsMember=true" class="fab fa-linkedin"></a>
       </div>
       <div class="links nav justify-content-center border-bottom pb-3 mb-3 ">
-        <a href="{{route('tpl_anasayfa')}}" class="nav-link">Ana Sayfa</a>
-        <a href="{{route('tpl_etkinlik')}}" class="nav-link">Etkinlikler</a>
-        <a href="{{route('tpl_uye')}}" class="nav-link">Üye İşlemleri</a>
+        <a href="index" class="active nav-link">Ana Sayfa</a>
+        <a href="etkinlikler" class="nav-link">Etkinlikler</a>
+        <a href="sponsorlar" class="nav-link">Sponsorlar</a>
+        <a href="uyeislemleri" class="nav-link">Üye İşlemleri</a>
       </div>
       <div class="credit">
         <p class="text-center">© 2024 Bilişim Topluluğu, Tüm Hakları Saklıdır.</p>
