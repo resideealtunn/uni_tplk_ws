@@ -1,35 +1,3 @@
-<?php
-	/* include("baglan.php");
-	if(isset($_POST['btn']))
-	{
-		$isim=$_POST["isim"];
-		$mail=$_POST["mail"];
-		$mesaj=$_POST["mesaj"];
-		if($isim <>'' and $mail<>'' and $mesaj<>'')
-		{
-			$sql="insert into mesaj(isim,mail,mesaj) values('$isim','$mail','$mesaj')";
-			$result=mysqli_query($baglanti,$sql);
-			if($result)
-			{
-				echo "<script  type='text/javascript'>
-				confirm('Mesajınız Başarıyla Gönderildi');
-					</script>";
-			}
-			else
-			{
-				echo "<script  type='text/javascript'>
-				confirm('Mesajınız Gönderilirken Bir Hata Oluştu');
-					</script>";
-			}
-		}
-		else
-		{
-			echo "<script  type='text/javascript'>
-				confirm('Lütfen Bilgileri Boş Bırakmayın');
-					</script>";
-		}
-	}*/
-?>
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
@@ -45,7 +13,7 @@
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="images/bilisimlogo.png"
+      href="{{asset('image/pp.png')}}"
     />
 	<link rel="stylesheet" href="styles/bootstrap.min.css" />
     <title>Bilişim Topluluğu</title>
@@ -57,7 +25,7 @@
 	<nav class="navbar navbar-expand-lg bg-body-tertiary header">
   <div class="container-fluid">
     <a class="navbar-brand logo" href="anasayfa">
-      <img src="images/bilisimlogo.png" alt="logo" />
+      <img src="{{asset('images/pp.png')}}" alt="logo" />
     </a>
     <div class="collapse navbar-collapse navbar" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -65,8 +33,7 @@
           <a class="nav-link active" aria-current="page" href="index">Ana Sayfa</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="etkinlikler">Etkinlikler</a>
-        </li>
+          <a class="nav-link" href="etkinlikler">Etkinlikler</a>        </li>
         <li class="nav-item">
           <a class="nav-link" href="sponsorlar">Sponsorlar</a>
         </li>
@@ -181,7 +148,7 @@
           class="fab fa-instagram"
         ></a>
         <a
-style='text-decoration: none;'		
+style='text-decoration: none;'
 		href="https://www.linkedin.com/company/necmettin-erbakan-%C3%BCniversitesi-bili%C5%9Fim-toplulu%C4%9Fu/?viewAsMember=true" class="fab fa-linkedin"></a>
       </div>
       <div class="links nav justify-content-center border-bottom pb-3 mb-3 ">

@@ -40,12 +40,13 @@
             <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 40px;">
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     <span style="font-size: 16px; font-weight: bold; color: #003366;">TOPLULUK SAYISI</span>
-                    <span id="communityCount" style="font-size: 24px; font-weight: bold; margin-top: 5px;">253</span>
+                    <span id="communityCount" style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($topluluklar)}}</span>
                 </div>
 
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     <span style="font-size: 16px; font-weight: bold; color: #003366;">ÜYE SAYISI</span>
-                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">8574</span>
+                    <!--! Değiştirilecek !-->
+                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($topluluklar)}}</span>
                 </div>
             </div>
 
@@ -59,15 +60,15 @@
 
             <!-- Topluluk Listesi -->
             <div class="explore-grid" id="communityList">
-                @for ($i = 1; $i <= 12; $i++)
+                @foreach($topluluklar as $item)
                     <div class="event-card">
-                    <img src="/uni_ws/public/images/neu_logo.png" alt="Topluluk Logosu" class="community-logo">
+                    <img src="{{asset('image/logo/'.$item->gorsel)}}" alt="Topluluk Logosu" class="community-logo">
                     <div class="event-details">
-                        <h3>Topluluk {{ $i }}</h3>
-                        <p>Kısa açıklama</p>
+                        <h3>{{ $item->isim }}</h3>
+
                     </div>
-            </div>
-            @endfor
+                        @endforeach
+                    </div>
 
         </div>
         <!-- Sayfalama -->
@@ -108,7 +109,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
             const menuItems = document.querySelectorAll('.menu li a');
-            
+
             menuItems.forEach(item => {
                 if (item.getAttribute('href') === currentPath) {
                     item.classList.add('active');
