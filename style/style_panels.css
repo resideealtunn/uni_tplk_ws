@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700,800');
+@import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900');
+
+:root {
+    --main-color: #060133;
+    --black-color: #ffffff;
+    --border: 0.1rem solid rgba(255, 255, 255, 0.4);
+}
+
+/* Genel Stil Ayarları */
+* {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    /*text-transform: capitalize;*/
+    transition: 0.2s ease;
+}
+
+html {
+    font-size: 62.5%; /* 1rem = 10px */
+    overflow-x: hidden; /* x ekseninde scroll açılmasın */
+    scroll-padding-top: 9rem;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.6rem; /* Varsayılan font boyutu */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--main-color);
+}
+
+/* Hide input fields and buttons by default */
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+h1 {
+    cursor: pointer;
+}
+.form-section {
+    display: none; /* Başlangıçta gizli */
+    margin-top: 1em;
+}
+
+h1 {
+    cursor: pointer;
+    margin-bottom: 0.5em;
+}
+
+h1:hover {
+    text-decoration: underline;
+}
+
+input[type="submit"].btn {
+    margin-top: 1em;
+}
+/* Sponsor Logo Input */
+.inputBox input[type="file"] {
+    padding: 0.8rem;
+    font-size: 1.4rem;
+    background-color: #f9f9f9;
+    color: #060133;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd;
+}
+/* Header */
+.header {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    margin: 2rem 7%;
+    border-radius: 30rem;
+    box-shadow: 0px 0px 17px -2px rgba(0, 0, 0, 0.75);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .logo {
+    text-align: center;
+    flex: 1;
+}
+
+.header .logo img {
+    height: 10rem;
+}
+
+.header .navbar {
+    display: flex;
+    justify-content: center;
+    flex: 2;
+}
+
+.header .navbar a {
+    margin: 0 1rem;
+    font-size: 1.6rem;
+    color: var(--main-color);
+    border-bottom: 0.1rem solid transparent; /* Alt çizgi başlangıçta görünmeyecek */
+    text-decoration: none; /* Alt çizgiyi tamamen kaldırır */
+}
+
+.header .navbar .active {
+    border-color: var(--main-color); /* Sadece active olan elemanın altı çizili */
+    padding-bottom: 0.5rem;
+}
+
+.header .buttons button {
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin-left: 2rem;
+    background-color: transparent;
+}
+
+
+/* Form Sayfaları Genel Stil Ayarları */
+.member-registration, .management-application, .event-application, .additional-section , .sponsor-registration {
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 5rem;
+    background-color: #fff;
+    border-radius: 2rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.member-registration h1, .management-application h1, .event-application h1, .additional-section h1 , .sponsor-registration h1{
+    font-size: 2.4rem;
+    color: #060133;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.label-note {
+    display: block;
+    font-size: 1.2rem;
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+}
+/* Form Kutucukları */
+.inputBox {
+    margin-bottom: 1.5rem; /* Elemanlar arası boşluk */
+    
+}
+
+.inputBox label {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #060133;
+    margin-bottom: 0.5rem;
+}
+
+/* Aynı boyutta input ve select kutuları */
+.inputBox input,
+.inputBox select,
+.inputBox textarea {
+    width: 100%;
+    padding: 1rem; /* İç boşluk */
+    font-size: 1.4rem; /* Font boyutu */
+    color: #060133;
+    border: var(--border); /* Kenarlık */
+    border-radius: 0.5rem; /* Köşe yuvarlama */
+    background-color: #f9f9f9; /* Arka plan rengi */
+    box-sizing: border-box; /* Kenarlık ve padding boyuta dahil edilir */
+    display: block; /* Satır içi eleman olmalarını sağlar */
+}
+
+/* Select kutusu için */
+.inputBox select {
+    -webkit-appearance: none; /* Tarayıcı varsayılan stillerini kaldırır */
+    -moz-appearance: none; /* Tarayıcı varsayılan stillerini kaldırır */
+    appearance: none; /* Tarayıcı varsayılan stillerini kaldırır */
+    padding-right: 3rem; /* Sağ tarafta boşluk */
+}
+
+/* Focus durumunda kenarlık rengi */
+.inputBox input:focus,
+.inputBox select:focus,
+.inputBox textarea:focus {
+    border-color: #060133; /* Fokus durumunda kenarlık rengi */
+    outline: none; /* Varsayılan odak çerçevesini kaldırır */
+}
+#event-application-form{
+    display:block;
+}
+/* Buton */
+.btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    color: white;
+    background-color: #060133;
+    border-radius: 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #003366;
+    opacity: 1;
+}
+
+/* Footer */
+.footer {
+    background-color: #060133;
+    text-align: center;
+}
+
+.footer .search {
+    display: flex;
+    justify-content: center;
+}
+
+.footer .search .search-input {
+    width: 30rem;
+}
+
+.footer .search .btn-primary {
+    background-color: white;
+    padding: 1rem 2rem;
+    margin-left: 1rem;
+}
+
+.footer .search .btn-primary:hover {
+    transform: scale(1.2);
+    background-color: #060133;
+    color: white;
+}
+
+.footer .share {
+    padding: 2rem 0;
+}
+
+.footer .share a {
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
+    color: white;
+    font-size: 2rem;
+    border: var(--border);
+    margin: 0.3rem;
+}
+
+.footer .share a:hover {
+    background-color: white;
+    color: #060133;
+}
+
+.footer .search .btn {
+    color: #060133;
+}
+
+.footer .share a:hover {
+    background-color: #060133;
+}
+
+.footer .links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer .links a {
+    border-radius: 2rem;
+    background-color: white;
+    padding: 0.7rem 2rem;
+    color: #060133;
+    font-size: 2rem;
+}
+
+.footer .links a:hover {
+    background-color: transparent;
+    color: white;
+}
+
+.footer .credit {
+    font-size: 2rem;
+    color: white;
+    font-weight: 300;
+    padding-top: 1.5rem;
+}
+
+.footer .credit span {
+    color: red;
+}

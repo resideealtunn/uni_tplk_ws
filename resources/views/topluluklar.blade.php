@@ -62,7 +62,7 @@
             <div class="explore-grid" id="communityList">
                 @foreach($topluluklar as $item)
                     <div class="event-card">
-                    <img src="{{asset('image/logo/'.$item->gorsel)}}" alt="Topluluk Logosu" class="community-logo">
+                    <img src="{{asset('images/logo/'.$item->gorsel)}}" alt="Topluluk Logosu" class="community-logo">
                     <div class="event-details">
                         <h3>{{ $item->isim }}</h3>
 

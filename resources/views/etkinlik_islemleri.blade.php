@@ -9,13 +9,13 @@
 </head>
 <body>
     <div class="sidebar">
-        <img src="{{ asset('images/neu_logo.png') }}" alt="Logo">
-        <h2>BİLİŞİM TOPLULUĞU</h2>
-        <h3>REŞİDE ALTUN</h3>
-        <p>BİLGİSAYAR MÜHENDİSLİĞİ</p>
+        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+        <h2>{{ session('topluluk') }}</h2>
+        <h3>{{ session('isim') }}</h3>
+        <p>{{ session('rol') }}</p>
 
         <div class="menu">
-            <a href="/yonetici" class="menu-item">Web Arayüz İşlemleri</a>
+            <a href="/yonetici_panel" class="menu-item">Web Arayüz İşlemleri</a>
             <a href="/etkinlik_islemleri" class="menu-item active">Etkinlik İşlemleri</a>
             <div class="menu-item">Üye İşlemleri</div>
             <div class="menu-item">Çıkış</div>
@@ -25,7 +25,7 @@
     <div class="content active">
         <div class="action-container">
             <h1>Etkinlik İşlemleri</h1>
-            
+
             <div class="action-card" onclick="showEtkinlikEkleModal()">
                 <h2>Etkinlik Ekle</h2>
                 <p>Yeni bir etkinlik oluşturmak için tıklayın</p>
@@ -57,24 +57,29 @@
     <div id="etkinlikEkleModal" class="modal">
         <div class="modal-content">
             <h2>Etkinlik Ekle</h2>
-            <form id="etkinlikEkleForm">
+            <form id="etkinlikEkleForm" enctype="multipart/form-data" action="{{ route('etkinlik.ekle') }}" method="POST">
+                @csrf
                 <div class="form-group">
                     <label for="etkinlikBaslik">Etkinlik Başlığı:</label>
-                    <input type="text" id="etkinlikBaslik" required>
+                    <input type="text" id="etkinlikBaslik" name="baslik" required>
                 </div>
                 <div class="form-group">
                     <label for="etkinlikKisaBilgi">Kısa Bilgi:</label>
-                    <input type="text" id="etkinlikKisaBilgi" required>
+                    <input type="text" id="etkinlikKisaBilgi" name="kisa_bilgi" required>
                 </div>
                 <div class="form-group">
                     <label for="etkinlikAciklama">Açıklama:</label>
-                    <textarea id="etkinlikAciklama" rows="4" required></textarea>
+                    <textarea id="etkinlikAciklama" name="aciklama" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="etkinlikAfiş">Tanıtım Afişi:</label>
-                    <input type="file" id="etkinlikAfiş" accept="image/*" required>
+                    <input type="file" id="etkinlikAfiş" name="afis" required>
                 </div>
-                <button type="submit" class="btn">Etkinlik Ekle</button>
+                <div class="form-group">
+                    <label for="etkinliktarih">Etkinlik Tarihi:</label>
+                    <input type="datetime-local" id="etkinliktarih" name="tarih" required>
+                </div>
+                <button type="submit" class="btn" name="etkinlik_ekle">Etkinlik Ekle</button>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('etkinlikEkleModal')">İptal</button>
             </form>
         </div>
@@ -84,21 +89,24 @@
     <div id="basvuruModal" class="modal">
         <div class="modal-content">
             <h2>Başvuru Aç/Kapat</h2>
-            <form id="basvuruForm">
+            <form id="basvuruForm" method="POST" action="{{ route('basvuru.guncelle') }}">
+                @csrf
                 <div class="form-group">
                     <label for="etkinlikSec">Etkinlik Seçin:</label>
-                    <select id="etkinlikSec" class="form-control" required>
+                    <select id="etkinlikSec" name="etkinlik_id" class="form-control" onchange="guncelleDurum(this)" required>
                         <option value="">Etkinlik seçiniz</option>
-                        <option value="1">Etkinlik 1</option>
-                        <option value="2">Etkinlik 2</option>
-                        <option value="3">Etkinlik 3</option>
+                        @foreach($etkinlikler as $etkinlik)
+                            <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->b_durum }}">
+                                {{ $etkinlik->isim }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Mevcut Durum:</label>
-                    <p id="mevcutDurum" class="durum-text">Başvurular Kapalı</p>
+                    <p id="mevcutDurum" class="durum-text">Etkinlik seçiniz</p>
                 </div>
-                <button type="button" class="btn" onclick="toggleBasvuru()">Başvuru Aç/Kapat</button>
+                <button type="submit" class="btn">Başvuru Aç/Kapat</button>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('basvuruModal')">İptal</button>
             </form>
         </div>
@@ -108,21 +116,22 @@
     <div id="yoklamaModal" class="modal">
         <div class="modal-content">
             <h2>Yoklama Aç/Kapat</h2>
-            <form id="yoklamaForm">
+            <form id="yoklamaForm" method="POST" action="{{ route('yoklama.guncelle') }}">
+                @csrf
                 <div class="form-group">
-                    <label for="yoklamaEtkinlikSec">Etkinlik Seçin:</label>
-                    <select id="yoklamaEtkinlikSec" class="form-control" required>
-                        <option value="">Etkinlik seçiniz</option>
-                        <option value="1">Etkinlik 1</option>
-                        <option value="2">Etkinlik 2</option>
-                        <option value="3">Etkinlik 3</option>
+                    <label for="etkinlik_id">Etkinlik Seçin:</label>
+                    <select id="etkinlik_id" name="etkinlik_id" class="form-control" required>
+                        @foreach($yetkinlikler as $etkinlik)
+                            <option value="{{ $etkinlik->id }}" {{ $etkinlik->y_durum == 1 ? 'selected' : '' }}>
+                                {{ $etkinlik->isim }} ({{ $etkinlik->y_durum ? 'Açık' : 'Kapalı' }})
+                            </option>
+                        @endforeach
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Mevcut Durum:</label>
-                    <p id="yoklamaMevcutDurum" class="durum-text">Yoklama Kapalı</p>
-                </div>
-                <button type="button" class="btn" onclick="toggleYoklama()">Yoklama Aç/Kapat</button>
+
+                <input type="hidden" name="durum" value="toggle"> {{-- Sadece toggle işlemi yapılır --}}
+
+                <button type="submit" class="btn">Yoklamayı Aç / Kapat</button>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('yoklamaModal')">İptal</button>
             </form>
         </div>
@@ -132,27 +141,28 @@
     <div id="paylasModal" class="modal">
         <div class="modal-content">
             <h2>Etkinlik Paylaş</h2>
-            <form id="paylasForm">
+            <form id="paylasForm" enctype="multipart/form-data" action="{{ route('etkinlik.paylas') }}" method="POST">
+                @csrf
                 <div class="form-group">
                     <label for="paylasEtkinlikSec">Etkinlik Seçin:</label>
-                    <select id="paylasEtkinlikSec" class="form-control" required>
+                    <select id="paylasEtkinlikSec" class="form-control" name="paylasEtkinlikSec" required>
                         <option value="">Etkinlik seçiniz</option>
-                        <option value="1">Etkinlik 1</option>
-                        <option value="2">Etkinlik 2</option>
-                        <option value="3">Etkinlik 3</option>
+                        @foreach($petkinlikler as $etkinlik)
+                            <option value="{{ $etkinlik->id }}">{{ $etkinlik->isim }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="paylasKisaBilgi">Kısa Bilgi:</label>
-                    <input type="text" id="paylasKisaBilgi" class="form-control" required>
+                    <input type="text" id="paylasKisaBilgi" class="form-control" name="paylasKisaBilgi" required>
                 </div>
                 <div class="form-group">
                     <label for="paylasAciklama">Açıklama:</label>
-                    <textarea id="paylasAciklama" rows="4" class="form-control" required></textarea>
+                    <textarea id="paylasAciklama" rows="4" class="form-control" name="paylasAciklama" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="paylasResim">Etkinlik Resmi:</label>
-                    <input type="file" id="paylasResim" accept="image/*" class="form-control" required>
+                    <input type="file" id="paylasResim" name="paylasResim" class="form-control" required>
                     <div id="resimOnizleme" class="resim-onizleme"></div>
                 </div>
                 <button type="submit" class="btn">Paylaş</button>
@@ -165,36 +175,67 @@
     <div id="basvuruListeModal" class="modal">
         <div class="modal-content">
             <h2>Etkinlik Başvurularını Listele</h2>
-            <form id="basvuruListeForm">
+            <form id="basvuruListeForm" method="POST" action="{{ route('basvuru.göster') }}">
+                @csrf
                 <div class="form-group">
                     <label for="basvuruListeEtkinlikSec">Etkinlik Seçin:</label>
                     <select id="basvuruListeEtkinlikSec" class="form-control" required>
-                        <option value="">Etkinlik seçiniz</option>
-                        <option value="1">Etkinlik 1</option>
-                        <option value="2">Etkinlik 2</option>
-                        <option value="3">Etkinlik 3</option>
+                        @foreach($etkinlikler as $etkinlik)
+                            <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->b_durum }}">
+                                {{ $etkinlik->isim }}
+                            </option>
+                        @endforeach
                     </select>
-                </div>
+                    <button type="submit" class="btn">Göster</button>
+            </form>
                 <div class="basvuru-listesi">
                     <table>
                         <thead>
                             <tr>
                                 <th>Ad Soyad</th>
+                                <th>Ögr. No</th>
                                 <th>Bölüm</th>
-                                <th>Cep No</th>
-                                <th>Durum</th>
+                                <th>Telefon</th>
+                                <th>Toplam Katılım</th>
                             </tr>
                         </thead>
                         <tbody id="basvuruListesi">
-                            <!-- Başvurular JavaScript ile doldurulacak -->
+
                         </tbody>
                     </table>
                 </div>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('basvuruListeModal')">Kapat</button>
-            </form>
         </div>
     </div>
 
     <script src="{{ asset('js/js_etkinlik_islemleri.js') }}"></script>
+    <script>
+        function guncelleDurum(selectElement) {
+            const secilen = selectElement.options[selectElement.selectedIndex];
+            const durum = secilen.getAttribute("data-durum");
+
+            const durumYazi = document.getElementById("mevcutDurum");
+            if (durum === "1") {
+                durumYazi.textContent = "Başvurular Açık";
+            } else if (durum === "0") {
+                durumYazi.textContent = "Başvurular Kapalı";
+            } else {
+                durumYazi.textContent = "Durum bilinmiyor";
+            }
+        }
+        function guncelleYoklamaDurum(selectElement) {
+            const secilen = selectElement.options[selectElement.selectedIndex];
+            const durum = secilen.getAttribute("data-durum");
+
+            const durumYazi = document.getElementById("yoklamaMevcutDurum");
+            if (durum === "1") {
+                durumYazi.textContent = "Yoklama Açık";
+            } else if (durum === "0") {
+                durumYazi.textContent = "Yoklama Kapalı";
+            } else {
+                durumYazi.textContent = "Durum bilinmiyor";
+            }
+        }
+    </script>
 </body>
 </html>

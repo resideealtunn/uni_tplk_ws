@@ -1,0 +1,493 @@
+@import url('https://fonts.googleapis.com/css2?family=Kalnia+Glaze:wght@100..700&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700,800');
+
+@import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900');
+:root{
+    --main-color: #060133;
+    --black-color: #ffffff;
+    --border: 0.1rem solid rgba(255,255,255,0.4);
+}
+*{              /*genel sayfanın formatıyla ilgili*/
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: 0.2s ease;
+}
+
+/*! base html codes*/
+html{
+    font-size: 62.5%;           /*normalde 1rem=16px iken 1rem=10px yaptık*/
+    overflow-x: hidden;         /*x ekseninde scroll açılmasın*/
+    scroll-padding-top: 9rem;
+    scroll-behavior: smooth;
+}
+/*html::-webkit-scrollbar{
+    width: 0.8rem;
+    background-color: white;
+}
+html::-webkit-scrollbar-track{
+    background-color:#060133;
+}*/
+/* Genel Stil Ayarları */
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--main-color);
+}
+
+/* Header */
+.header {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    margin: 2rem 7%;
+    border-radius: 30rem;
+    box-shadow: 0px 0px 17px -2px rgba(0, 0, 0, 0.75);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Ana Başlık ve Paragraf */
+.header .logo {
+    text-align: center;
+    flex: 1;
+}
+
+.header .logo img {
+    height: 10rem;
+}
+
+.header .navbar {
+    display: flex;
+    justify-content: center;
+    flex: 2;
+}
+
+.header .navbar a {
+    margin: 0 1rem;
+    font-size: 1.6rem;
+    color: var(--main-color);
+    border-bottom: 0.1rem solid transparent;
+}
+
+.header .navbar .active,
+.header .navbar a:hover {
+    border-color: var(--main-color);
+    padding-bottom: 0.5rem;
+}
+
+.header .buttons button {
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin-left: 2rem;
+    background-color: transparent;
+}
+
+/* Home */
+.home {
+    min-height: 100vh;
+    background: url(../images/deneme2.jpg) no-repeat;
+    background-size: cover;
+    background-position: center;
+    margin-top: -14.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Orta hizalama */
+    text-align: center; /* Ortada hizalama */
+    color: white;
+}
+
+.home .content {
+    max-width: 60rem;
+}
+.home .content h6 {
+    margin-top: 10rem;
+    font-size: 3rem;
+    padding: rem;
+}
+.home .content h3 {
+    font-size: 8rem;
+    padding: 4rem;
+}
+
+@media only screen and (max-width: 600px) {
+    .home .content h3 {
+        font-size: 4rem;
+    }
+}
+
+.home .content h4 {
+    font-size: 2rem;
+    padding: 2rem;
+}
+.home .content p {
+    background-color: #f0f0f0; /* Açık gri arka plan */
+    opacity: 0.6; /* Şeffaflık efekti */
+    border-radius: 2rem;
+    font-size: 1.75rem;
+    font-weight: 300;
+    line-height: 1.2;
+    padding: 1.2rem 1rem;
+    color: #060133;
+}
+
+.home .content .btn {
+    background-color: white;
+    color: #060133;
+}
+
+/* Diğer stiller buraya devam eder... */
+
+
+/*! Menu start */
+
+
+.menu .box-container {
+    display: flex; /* Ya da grid: grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr)); */
+    gap: 1.5rem;
+    flex-wrap: wrap; /* Kutuların sarmalamasını sağlar */
+}
+
+.menu .box-container .box {
+    padding: 2rem; /* Paddingi güncelledik */
+    background-color: white;
+    border-radius: 1.5rem; /* Kenarları yuvarlatılmış */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* İçerikleri ortalar */
+    justify-content: space-between;
+    width: 100%; /* Genişlik %100 */
+    max-width: 30rem; /* Maksimum genişlik */
+    height: auto; /* Yüksekliği otomatik */
+}
+
+.menu .box-container .box img {
+    border-radius: 1rem;
+    width: 100%; /* Resim kutu genişliğiyle uyumlu */
+    height: 15rem; /* Yükseklik */
+    object-fit: cover; /* Resmin kutuya sığdırılması */
+}
+
+.menu .box-container .box:hover img {
+    transform: scale(1.1); /* Hover etkisi */
+}
+
+.menu .box-container .box .menu-category{
+    font-size: 1.2rem;
+    text-transform: lowercase;
+}
+.menu .box-container .box h3{
+    font-size: 3rem;
+    padding: 1rem 0;
+}
+
+.menu .box-container .box .price{
+    font-size: 2.5rem;
+    padding: 0.5rem 0;
+}
+.menu .box-container .box .price span{
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    font-weight: 300;
+}
+
+/* Genel Stil */
+/*! About Us*/
+.about {
+    padding: 2rem 0; /* Üst ve alt padding ekleyerek boşluk yarat */
+}
+
+.about .row {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+    align-items: center; /* Merkezi hizalama */
+    justify-content: center; /* Merkezi hizalama */
+    text-align: center; /* Metni ortalar */
+}
+
+.about .row .image {
+    flex: 1 1 45rem;
+    display: flex;
+    justify-content: center; /* Resmi ortalar */
+    border-radius: 1rem; /* Kenarları yuvarlat */
+}
+
+.about .row img {
+    max-width: 100%;
+    border-radius: 1rem; /* Kenarları yuvarlat */
+}
+
+.about .row .content {
+    flex: 1 1 45rem;
+    display: flex;
+    flex-direction: column; /* İçerikleri dikey hizalama */
+    align-items: center; /* İçerikleri ortalar */
+    justify-content: center; /* İçerikleri ortalar */
+    border-radius: 1rem; /* Kenarları yuvarlat */
+}
+
+.about .row .content h3 {
+    color: #ffffff;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.about .row .content p {
+    font-size: 1.5rem;
+    color: #ccc;
+    padding: 0.8rem 1rem;
+    line-height: 1.8;
+    text-transform: none; /* Büyük harfleri engellemek için */
+}
+
+.about .row .content a {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #ffffff; /* Dark background color for contrast */
+    color:#060133; /* White text color for readability */
+    font-size: 1.6rem; /* Slightly larger font for emphasis */
+    font-weight: 600; /* Bold font for prominence */
+    border-radius: 2rem; /* Rounded corners for a softer look */
+    text-align: center;
+    text-decoration: none; /* No underline */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition effects */
+}
+
+.about .row .content a:hover {
+    background-color: #003366; /* Slightly darker on hover */
+    transform: scale(1.05); /* Subtle scaling effect on hover */
+}
+
+/*! Customers Review*/
+.review .box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(30rem,1fr));
+    gap:1.5rem;
+}
+.review .box-container .box{
+    border: var(--border);
+    border-radius: 10rem;
+    text-align:center ;
+    padding: 3rem 2rem;
+    background-color: white;
+}
+.review .box-container .box p{
+    font-size: 1.5rem;
+    line-height: 1.8;
+    padding: 2rem 0;
+}
+.review .box-container .box .user{
+    height: 7rem;
+    width: 7rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.review .box-container .box:hover .user{
+transform: scale(1.2);
+}
+
+.review .box-container .box h3{
+    padding: 1rem 0;
+    font-size: 2rem;
+    color: #ffffff;
+}
+.review .box-container .box .stars i{
+    font-size: 1.5rem;
+    color: gold;
+}
+
+
+/*! Content*/
+.contact-info {
+    font-size: 1.4rem;
+    color: #ffffff; /* Etiket rengi */
+    text-align: center; /* Metni ortalar */
+    margin-bottom: 1rem; /* Başlık ile etiket arasında boşluk bırakır */
+}
+
+.contact .row {
+    border-radius: 5rem;
+    display: flex;
+    background-color: #ffffff;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center; /* Dikey hizalamayı ortalar */
+    flex-direction: row-reverse; /* Formun solda, görselin sağda olmasını sağlar */
+}
+
+.contact .row .map {
+    border-radius: 5rem;
+    flex: 1 1 45rem;
+    width: 100%;
+}
+
+.contact .row form {
+    flex: 1 1 75rem;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.contact .row .map img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.3rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Opsiyonel: resme gölge eklemek için */
+}
+
+.contact .row form h1 {
+    text-transform: uppercase;
+    font-size: 3.5rem;
+    color: #060133; /* Form başlığı rengi */
+}
+
+.contact .row form .inputBox {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    border: var(--border);
+}
+
+.contact .row form .inputBox i {
+    border-radius: 2rem;
+    background-color: #060133;
+    color: white;
+    font-size: 1.9rem;
+    padding: 1.5rem; /* İcon boyutları input kutusuna göre ayarlandı */
+    width: 4rem; /* İcon genişliği, input ile uyumlu */
+    height: 4rem; /* İcon yüksekliği, input ile uyumlu */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact .row form .inputBox input,
+.contact .row form .inputBox textarea {
+    border-radius: 2rem;
+    width: calc(100% - 6rem); /* İcon genişliği kadar yer bırak */
+    padding: 2rem;
+    font-size: 1.7rem;
+    color: #ffffff;
+    background: #060133;
+    border: none; /* Border kaldırıldı */
+}
+
+.contact .row form .inputBox textarea {
+    resize: vertical; /* Yalnızca dikey olarak yeniden boyutlandırma */
+    height: 15rem; /* Mesaj kutusunun yüksekliği */
+}
+
+.contact .row form .inputBox input::placeholder,
+.contact .row form .inputBox textarea::placeholder {
+    color: #ffffff; /* Placeholder rengi */
+}
+
+.contact h1 {
+    font-size: 3rem;
+}
+
+.contact .row .btn {
+    font-size: 2rem;
+    padding: 1rem 2rem; /* Butonun iç boşluğunu ayarlar */
+    background-color: #060133; /* Lacivert arka plan rengi */
+    color: white; /* Buton üzerindeki metin rengi */
+    border: none; /* Butonun kenarlıklarını kaldırır */
+    border-radius: 2rem; /* Butonun köşelerini yuvarlatır */
+    cursor: pointer; /* Buton üzerine gelindiğinde fare işaretçisini değiştirir */
+    text-transform: uppercase; /* Metni büyük harf yapar */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Geçiş efektleri */
+}
+
+.contact .row .btn:hover {
+    background-color: #002244; /* Hover durumunda butonun arka plan rengini değiştirir */
+    transform: scale(1.05); /* Butonu biraz büyütür */
+}
+
+.contact .row .btn:active {
+    background-color: #001a33; /* Tıklama durumunda butonun arka plan rengini değiştirir */
+    transform: scale(0.95); /* Butonu tıklanmış gibi küçültür */
+}
+
+
+/*! Footer */
+
+.footer{
+    background-color: #060133;
+    text-align: center;
+}
+.footer .search {
+    display: flex;
+    justify-content: center;
+}
+.footer .search .search-input{
+    width: 30rem;
+}
+.footer .search .btn-primary{
+    background-color:white;
+    padding: 1rem 2rem;
+    margin-left: 1rem;
+}
+.footer .search .btn-primary:hover{
+    transform: scale(1.2);
+    background-color: #060133;
+    color: white;
+}
+.footer .share{
+    padding: 2rem 0;
+}
+.footer .share a{
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
+    color: white;
+    font-size: 2rem;
+    border: var(--border);
+    margin: 0.3rem;
+}
+.footer .share a:hover{
+    background-color: white;
+    color: #060133;
+}
+.footer .search .btn{
+    color: #060133;
+}
+.footer .share a:hover{
+    background-color:#060133;
+}
+.footer .links{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap:1rem;
+}
+.footer .links a{
+    border-radius: 2rem;
+background-color: white;
+padding: 0.7rem 2rem;
+color: #060133;
+font-size: 2rem;
+}
+
+.footer .links a:hover{
+    background-color: transparent ;
+    color: white;
+    }
+.footer .credit{
+    font-size: 2rem;
+    color:white;
+    font-weight: 300;
+    padding-top: 1.5rem;
+}
+.footer .credit span{
+    color: red;
+}
