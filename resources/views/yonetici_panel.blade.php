@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topluluk Yönetimi</title>
+    <title>Etkinlik İşlemleri</title>
     <link rel="stylesheet" href="{{ asset('css/style_panels.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/etkinlik_islemleri.css') }}">
 </head>
-
 <body>
 <div class="sidebar">
     <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
@@ -16,11 +16,20 @@
     <p>{{ session('rol') }}</p>
 
     <div class="menu">
-        <div class="menu-item" onclick="showContent('web')">Web Arayüz İşlemleri</div>
+        <a href="/yonetici_panel" class="menu-item active">Web Arayüz İşlemleri</a>
         <a href="/etkinlik_islemleri" class="menu-item">Etkinlik İşlemleri</a>
-        <div class="menu-item" onclick="showContent('uye')">Üye İşlemleri</div>
-        <div class="menu-item" onclick="showContent('cikis')">Çıkış</div>
+        <a href="/uye_islemleri" class="menu-item ">Üye İşlemleri</a>
+
+        <!-- Çıkış Butonu Formu -->
+        <form action="{{ route('cikis') }}" method="POST" id="cikisForm" style="display: none;">
+            @csrf
+        </form>
+        <!-- Çıkış Div'i -->
+        <div class="menu-item" onclick="document.getElementById('cikisForm').submit();">
+            Çıkış
+        </div>
     </div>
+
 </div>
 
 <div class="content" id="web">

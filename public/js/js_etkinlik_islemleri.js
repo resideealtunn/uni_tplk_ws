@@ -29,13 +29,6 @@ function showPaylasModal() {
 function showBasvuruListeModal() {
     showModal('basvuruListeModal');
 
-    // Etkinlik seçildiğinde başvuruları getir
-    document.getElementById('basvuruListeEtkinlikSec').addEventListener('change', function() {
-        const etkinlikId = this.value;
-        if (etkinlikId) {
-            getBasvurular(etkinlikId);
-        } else {
-            document.getElementById('basvuruListesi').innerHTML = '';
-        }
-    });
 }
+
+

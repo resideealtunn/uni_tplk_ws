@@ -62,16 +62,19 @@
             <div class="explore-grid" id="communityList">
                 @foreach($topluluklar as $item)
                     <div class="event-card">
-                    <img src="{{asset('images/logo/'.$item->gorsel)}}" alt="Topluluk Logosu" class="community-logo">
-                    <div class="event-details">
-                        <h3>{{ $item->isim }}</h3>
-
+                        <!-- Topluluğa tıklandığında topluluk adıyla yönlendir -->
+                        <a href="{{ route('tplk_anasayfa', ['isim' => $item->isim, 'id' => $item->id]) }}">
+                            <img src="{{ asset('images/logo/'.$item->gorsel) }}" alt="Topluluk Logosu" class="community-logo">
+                            <div class="event-details">
+                                <h3>{{ $item->isim }}</h3>
+                            </div>
+                        </a>
                     </div>
-                        @endforeach
-                    </div>
+                @endforeach
+            </div>
 
-        </div>
-        <!-- Sayfalama -->
+
+            <!-- Sayfalama -->
         <div class="pagination" id="paginationContainer"></div>
     </div>
     </div>

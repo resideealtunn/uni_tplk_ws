@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\YoneticiController;
-
+use App\Http\Controllers\ToplulukController;
+use App\Http\Controllers\EtkinlikController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,14 +18,6 @@ Route::get('/kesfet', [App\Http\Controllers\Controller::class, 'kesfetIndex'])->
 
 
 Route::get('/topluluklar', [App\Http\Controllers\Controller::class, 'topluluklarIndex']);
-
-Route::get('/', function () {
-    return view('tpl_anasayfa');
-});
-
-Route::get('tpl_anasayfa', function () {
-    return view('tpl_anasayfa');
-})->name('tpl_anasayfa');
 
 Route::get('yonetici_panel', function () {
     return view('yonetici_panel');
@@ -50,4 +43,17 @@ Route::post('/yoklama-guncelle', [YoneticiController::class, 'yoklamaGuncelle'])
 Route::get('etkinlik_islemleri', [YoneticiController::class, 'paylasilabilirEtkinlikler'])->name('etkinlik_islemleri');
 Route::post('/etkinlik-paylas', [YoneticiController::class, 'etkinlikPaylas'])->name('etkinlik.paylas');
 
-Route::post('/basvuru/goster', [YoneticiController::class, 'basvurular'])->name('basvuru.göster');
+Route::post('/basvuru-goster', [YoneticiController::class, 'getir'])->name('basvuru.göster');
+
+Route::get('uye_islemleri', function () {
+    return view('panel_uye_islemleri');
+})->name('uye_islemleri');
+
+Route::post('/cikis', [App\Http\Controllers\YoneticiController::class, 'cikis'])->name('cikis');
+
+Route::get('etkinlikler', function () {
+    return view('tplk_etkinlikler');
+})->name('etkinlikler');
+
+Route::get('/topluluklar/{isim}/{id}', [ToplulukController::class, 'show'])->name('topluluk_anasayfa');
+Route::get('/etkinlikler/{topluluk_isim}/{topluluk_id}', [EtkinlikController::class, 'show'])->name('etkinlikler');

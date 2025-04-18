@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Etkinlik_bilgi;
+use Illuminate\Support\Facades\Auth;
 
 class YoneticiController extends Controller
 {
@@ -34,11 +35,10 @@ class YoneticiController extends Controller
         $rol = DB::table('rol')
             ->where('id', $uye->rol)
             ->first();
-        @dd($topluluk);
         session([
             'ogrenci_id' => $ogrenci->id,
             'isim'=>$ogrenci->isim,
-            't_id'=>$uye->t_id,
+            't_id'=>$uye->top_id,
             'topluluk'=>$topluluk->isim,
             'rol' => $rol->rol
         ]);
@@ -182,9 +182,8 @@ class YoneticiController extends Controller
 
         $petkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
             ->where('p_durum', 0)
-            ->get(); // Bu satırda .first() değil ->get() olmalı!
+            ->get();
 
-        //$etkinlik_id=$request->etkinlik->id;
         $basvurular = DB::table('etkinlik_basvuru')
             ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id') // Assuming 'id' is the primary key in 'uyeler'
             ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id') // Assuming 'id' is the primary key in 'ogrencii_bilgi'
@@ -194,6 +193,24 @@ class YoneticiController extends Controller
 
         return view('etkinlik_islemleri', compact('etkinlikler', 'yetkinlikler', 'petkinlikler', 'basvurular'));
     }
+    public function getir(Request $request)
+    {
+        $basvurular = DB::table('etkinlik_basvuru')
+            ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id') // Assuming 'id' is the primary key in 'uyeler'
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id') // Assuming 'id' is the primary key in 'ogrencii_bilgi'
+            ->select('ogrenci_bilgi.isim', 'ogrenci_bilgi.numara', 'ogrenci_bilgi.bolum', 'ogrenci_bilgi.tel', 'etkinlik_basvuru.u_id')
+            ->where('etkinlik_basvuru.e_id',1 ) // Ensure to replace 'event_id' with the actual event column
+            ->get();
 
+        return response()->json($basvurular);
+    }
+    public function cikis(Request $request)
+    {
+        // Oturumu sonlandır
+        Auth::logout();
+
+        // Kullanıcıyı giriş sayfasına yönlendir
+        return redirect()->route('yonetici.giris')->with('success', 'Başarıyla çıkış yapıldı.');
+    }
 }
 

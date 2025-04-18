@@ -8,19 +8,28 @@
     <link rel="stylesheet" href="{{ asset('css/etkinlik_islemleri.css') }}">
 </head>
 <body>
-    <div class="sidebar">
-        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
-        <h2>{{ session('topluluk') }}</h2>
-        <h3>{{ session('isim') }}</h3>
-        <p>{{ session('rol') }}</p>
+<div class="sidebar">
+    <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+    <h2>{{ session('topluluk') }}</h2>
+    <h3>{{ session('isim') }}</h3>
+    <p>{{ session('rol') }}</p>
 
-        <div class="menu">
-            <a href="/yonetici_panel" class="menu-item">Web Arayüz İşlemleri</a>
-            <a href="/etkinlik_islemleri" class="menu-item active">Etkinlik İşlemleri</a>
-            <div class="menu-item">Üye İşlemleri</div>
-            <div class="menu-item">Çıkış</div>
+    <div class="menu">
+        <a href="/yonetici_panel" class="menu-item">Web Arayüz İşlemleri</a>
+        <a href="/etkinlik_islemleri" class="menu-item active">Etkinlik İşlemleri</a>
+        <a href="/uye_islemleri" class="menu-item ">Üye İşlemleri</a>
+
+        <!-- Çıkış Butonu Formu -->
+        <form action="{{ route('cikis') }}" method="POST" id="cikisForm" style="display: none;">
+            @csrf
+        </form>
+        <!-- Çıkış Div'i -->
+        <div class="menu-item" onclick="document.getElementById('cikisForm').submit();">
+            Çıkış
         </div>
     </div>
+
+</div>
 
     <div class="content active">
         <div class="action-container">
@@ -179,7 +188,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="basvuruListeEtkinlikSec">Etkinlik Seçin:</label>
-                    <select id="basvuruListeEtkinlikSec" class="form-control" required>
+                    <select id="basvuruListeEtkinlikSec" class="form-control"  name="etkinlik_id" required>
                         @foreach($etkinlikler as $etkinlik)
                             <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->b_durum }}">
                                 {{ $etkinlik->isim }}
@@ -236,6 +245,38 @@
                 durumYazi.textContent = "Durum bilinmiyor";
             }
         }
+        document.getElementById('basvuruListeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const etkinlikId = document.getElementById('basvuruListeEtkinlikSec').value;
+
+            fetch('/basvuru-goster', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ etkinlik_id: etkinlikId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const basvuruListesi = document.getElementById('basvuruListesi');
+                    basvuruListesi.innerHTML = ''; // Listeyi sıfırla
+
+                    data.forEach(basvuru => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                <td>${basvuru.isim}</td>
+                <td>${basvuru.numara}</td>
+                <td>${basvuru.bolum}</td>
+                <td>${basvuru.tel}</td>
+            `;
+                        basvuruListesi.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Başvuru verisi alınamadı:', error));
+        });
+
     </script>
 </body>
 </html>
