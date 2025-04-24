@@ -122,7 +122,7 @@
                     <li><a href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
                     <li><a href="{{ route('etkinlikler', ['topluluk_isim' => $topluluk->isim, 'topluluk_id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Etkinlikler</a></li>
                     <li><a href="#"><i class="fas fa-chevron-right"></i> Üye İşlemleri</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> Yönetici İşlemleri</a></li>
+                    <li><a href="{{route('yonetici.giris')}}"><i class="fas fa-chevron-right"></i> Yönetici İşlemleri</a></li>
                 </ul>
             </div>
             <div class="col-md-4 mb-4">

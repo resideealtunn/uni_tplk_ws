@@ -58,3 +58,6 @@ Route::get('etkinlikler', function () {
 
 Route::get('/topluluklar/{isim}/{id}', [ToplulukController::class, 'show'])->name('topluluk_anasayfa');
 Route::get('/etkinlikler/{topluluk_isim}/{topluluk_id}', [EtkinlikController::class, 'show'])->name('etkinlikler');
+
+
+Route::get('/yonetici.giris', [YoneticiController::class, 'giris']);

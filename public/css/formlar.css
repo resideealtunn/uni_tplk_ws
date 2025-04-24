@@ -1,0 +1,51 @@
+.menu li a.active {
+    color: #FFA500;
+}
+
+.menu li a {
+    padding-left: 10px;
+}
+
+.title-section {
+    background-color:rgb(163, 219, 252);
+    padding: 30px 0;
+    margin-bottom: 30px;
+}
+
+#contentTitle {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    margin-top: 20px;
+}
+
+.form-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-item {
+    background-color: #fff;
+    border: 2px solid #003366;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.form-item:hover {
+    transform: translateY(-2px);
+}
+
+.form-item a {
+    color: #003366;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-item i {
+    color: #003366;
+}

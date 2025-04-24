@@ -4,45 +4,114 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Etkinlik_bilgi;
 use Illuminate\Support\Facades\Auth;
-
 class YoneticiController extends Controller
 {
     public function giris(Request $request)
     {
+        $curl = curl_init();
         $tc = $request->input('tc');
         $sifre = $request->input('sifre');
 
-        $ogrenci = DB::table('ogrenci_bilgi')
-            ->where('tc', $tc)
-            ->where('sifre', $sifre)
-            ->first();
+// JSON oluşturma
+        $jsonVerisi = [
+            "Tip" => "ogrenci",
+            "TcKn" => $tc,
+            "Sifre" => $sifre,
+        ];
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://api.erbakan.edu.tr/LDap/getGirisDogrula',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_POSTFIELDS => json_encode($jsonVerisi),
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+            ),
+        ));
 
-        if (!$ogrenci) {
-            return back()->with('error', 'TC veya Şifre yanlış');
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $response = curl_exec($curl);
+
+        $data = json_decode($response, true);
+        if (isset($data['Durum'])) {
+            $ogrenci = DB::table('ogrenci_bilgi')
+                ->where('tc', $tc)
+                ->first();
+            if ($ogrenci) {
+                $uye = DB::table('uyeler')
+                    ->where('ogr_id', $ogrenci->id)
+                    ->whereIn('rol', [2, 3])
+                    ->first();
+
+                if (!$uye) {
+                    return back()->with('error', 'Bu kullanıcıya yönetici yetkisi tanımlanmamış');
+                }
+                $topluluk = DB::table('topluluklar')
+                    ->where('id', $uye->top_id)
+                    ->first();
+                $rol = DB::table('rol')
+                    ->where('id', $uye->rol)
+                    ->first();
+                session([
+                    'ogrenci_id' => $ogrenci->id,
+                    'isim' => $ogrenci->isim,
+                    't_id' => $uye->top_id,
+                    'topluluk' => $topluluk->isim,
+                    'rol' => $rol->rol
+                ]);
+                return redirect()->route('yonetici.panel');
+            }
+            else
+                $jsonVerisi = [
+                    "Tip" => "personel",
+                    "TcKn" => $tc,
+                    "Sifre" => $sifre,
+                ];
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://api.erbakan.edu.tr/LDap/getGirisDogrula',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_POSTFIELDS => json_encode($jsonVerisi),
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+                 ),
+               ));
+                curl_close($curl);
+                $response = curl_exec($curl);
+                $data = json_decode($response, true);
+                if (isset($data['Durum'])) {
+                    $personel = DB::table('personel')
+                        ->where('tc', $tc)
+                        ->first();
+                    if($personel){
+                        return redirect()->route('kesfet');
+                    }
+                    else
+                    {
+                        return redirect()->route('anasayfa');
+                    }
+                }
+                else{
+                    return redirect()->route('anasayfa');
+                }
+        }
+        else {
+            return redirect()->route('anasayfa');
         }
 
-        $uye = DB::table('uyeler')
-            ->where('ogr_id', $ogrenci->id)
-            ->whereIn('rol', [2, 3])
-            ->first();
-
-        if (!$uye) {
-            return back()->with('error', 'Bu kullanıcıya yönetici yetkisi tanımlanmamış');
-        }
-        $topluluk = DB::table('topluluklar')
-            ->where('id', $uye->top_id)
-            ->first();
-        $rol = DB::table('rol')
-            ->where('id', $uye->rol)
-            ->first();
-        session([
-            'ogrenci_id' => $ogrenci->id,
-            'isim'=>$ogrenci->isim,
-            't_id'=>$uye->top_id,
-            'topluluk'=>$topluluk->isim,
-            'rol' => $rol->rol
-        ]);
-        return redirect()->route('yonetici.panel');
     }
     public function yoneticiPanel()
     {
@@ -209,8 +278,11 @@ class YoneticiController extends Controller
         // Oturumu sonlandır
         Auth::logout();
 
-        // Kullanıcıyı giriş sayfasına yönlendir
-        return redirect()->route('yonetici.giris')->with('success', 'Başarıyla çıkış yapıldı.');
+        // Tüm session verilerini temizle
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Anasayfaya yönlendir
+        return redirect('/')->with('success', 'Başarıyla çıkış yapıldı.');
     }
 }
-

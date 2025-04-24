@@ -39,10 +39,9 @@ class Controller extends BaseController
     public function kesfetIndex()
     {
         $kesfet = DB::table('topluluklar')
-            ->join('etkinlikler', 'etkinlikler.top_id', '=', 'topluluklar.id')
-            ->join('etkinlik_bilgi', 'etkinlik_bilgi.id', '=', 'etkinlikler.e_id')
+            ->join('etkinlik_bilgi', 'etkinlik_bilgi.t_id', '=', 'topluluklar.id')
             ->where('etkinlik_bilgi.b_durum', '=', '1')
-            ->orderBy('etkinlikler.b_tarih', 'desc')
+            ->orderBy('etkinlik_bilgi.tarih', 'desc')
             ->select(
                 'etkinlik_bilgi.id as eb_id',
                 'etkinlik_bilgi.isim as eb_isim',

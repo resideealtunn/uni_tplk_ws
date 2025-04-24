@@ -34,7 +34,7 @@
                     <a class="nav-link" href="#">Üye İşlemleri</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Yönetici İşlemleri</a>
+                    <a class="nav-link" href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a>
                 </li>
             </ul>
 

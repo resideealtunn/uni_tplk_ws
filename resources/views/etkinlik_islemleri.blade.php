@@ -19,12 +19,8 @@
         <a href="/etkinlik_islemleri" class="menu-item active">Etkinlik İşlemleri</a>
         <a href="/uye_islemleri" class="menu-item ">Üye İşlemleri</a>
 
-        <!-- Çıkış Butonu Formu -->
-        <form action="{{ route('cikis') }}" method="POST" id="cikisForm" style="display: none;">
-            @csrf
-        </form>
         <!-- Çıkış Div'i -->
-        <div class="menu-item" onclick="document.getElementById('cikisForm').submit();">
+        <div class="menu-item" ">
             Çıkış
         </div>
     </div>

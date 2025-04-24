@@ -309,3 +309,61 @@ body.modal-open {
 .pagination button:hover:not(.active) {
     background-color: #f0f0f0;
 }
+.menu li a.active {
+    color: #FFA500;
+}
+.menu li a {
+    padding-left: 10px;
+}
+.community-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+.community-card {
+    text-decoration: none;
+    color: inherit;
+}
+.card-content {
+    background-color: white;
+    border: 2px solid #003366;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.card-content:hover {
+    transform: translateY(-5px);
+}
+.card-content img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+.card-content h3 {
+    color: #003366;
+    margin: 0;
+    font-size: 18px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 20px;
+}
+.pagination a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: bold;
+}
+.pagination a:hover {
+    text-decoration: underline;
+}
+.current-page {
+    color: #003366;
+    font-weight: bold;
+}
