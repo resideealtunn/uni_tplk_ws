@@ -28,7 +28,7 @@
                 <li><a href="/kesfet">Ana Sayfa</a></li>
                 <li><a href="/topluluklar" class="active">Topluluklar</a></li>
                 <li><a href="#">Formlar</a></li>
-                <li><a href="/yonetici">Yönetici İşlemleri</a></li>
+                <li><a href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a></li>
             </ul>
         </div>
 
@@ -63,7 +63,7 @@
                 @foreach($topluluklar as $item)
                     <div class="event-card">
                         <!-- Topluluğa tıklandığında topluluk adıyla yönlendir -->
-                        <a href="{{ route('tplk_anasayfa', ['isim' => $item->isim, 'id' => $item->id]) }}">
+                        <a href="{{ route('topluluk_anasayfa', ['isim' => $item->isim, 'id' => $item->id]) }}">
                             <img src="{{ asset('images/logo/'.$item->gorsel) }}" alt="Topluluk Logosu" class="community-logo">
                             <div class="event-details">
                                 <h3>{{ $item->isim }}</h3>

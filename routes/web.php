@@ -14,6 +14,7 @@ use App\Http\Controllers\EtkinlikController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', [App\Http\Controllers\Controller::class, 'kesfetIndex'])->name('anasayfa');
 Route::get('/kesfet', [App\Http\Controllers\Controller::class, 'kesfetIndex'])->name('kesfet');
 
 

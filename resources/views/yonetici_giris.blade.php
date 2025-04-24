@@ -10,7 +10,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="logo-container">
-                <img src="{{ asset('images/neu_logo.png') }}" alt="NEU Logo" class="neu-logo">
+                <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo" class="neu-logo">
             </div>
             <form id="loginForm" class="login-form" method="POST" action="{{ route('yonetici.giris.post') }}">
                 @csrf
