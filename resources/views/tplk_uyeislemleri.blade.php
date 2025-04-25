@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/tplk_anasayfa.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tplk_uyeislemleri.css') }}">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg">
@@ -45,50 +46,48 @@
         </div>
     </div>
 </nav>
-    <section class="events-section">
-        <div class="container">
-            <!-- Aktif Etkinlikler -->
-            <div class="section-header">
-                <h2>Aktif Etkinlikler</h2>
-                <p>Yaklaşan ve devam eden etkinliklerimizi keşfedin</p>
-            </div>
-            <div class="row">
-                @foreach($activeEvents as $event)
-                    <div class="col-md-3">
-                        <div class="event-card">
-                            <img src="{{ asset('images/etkinlik/'.$event->gorsel) }}"  class="event-image">
-                            <div class="event-content">
-                                <h3 class="event-title">{{ $event->isim }}</h3>
-                                <p class="event-short-desc">{{ $event->bilgi }}</p>
-                            </div>
-                            <div class="event-long-desc">
-                                <p>{{ $event->metin }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
 
-            <!-- Geçmiş Etkinlikler -->
-            <div class="section-header mt-5">
-                <h2>Geçmiş Etkinlikler</h2>
-                <p>Tamamlanmış etkinliklerimizi inceleyin</p>
-            </div>
-            <div class="row">
-                @foreach($pastEvents as $event)
-                    <div class="col-md-3">
-                        <div class="event-card">
-                            <img src="{{ asset('images/etkinlik/'.$event->gorsel) }}" class="event-image">
-                            <div class="event-content">
-                                <h3 class="event-title">{{ $event->isim }}</h3>
-                                <p class="event-short-desc">{{ $event->bilgi }}</p>
-                            </div>
-                            <div class="event-long-desc">
-                                <p>{{ $event->metin }}</p>
-                            </div>
-                        </div>
+    <section class="membership-section">
+        <div class="container">
+            <h1 class="text-center mb-4">Üye İşlemleri</h1>
+            <h2 class="text-center mb-5">{{ $topluluk->isim }}</h2>
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('danger'))
+                <div class="alert alert-danger">
+                    {{ session('danger') }}
+                </div>
+            @endif
+            <div class="membership-form">
+                <form method="POST" enctype="multipart/form-data" action="{{route('kayitol')}}">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="student_number" class="form-label">TC. No</label>
+                        <input type="text" class="form-control" id="student_number" name="tc" required>
                     </div>
-                @endforeach
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Tek Şifre</label>
+                        <input type="password" class="form-control" id="password" name="sifre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="membership_form" class="form-label">Topluluk Üyelik Formu</label>
+                        <input type="file" class="form-control" id="membership_form" name="membership_form" required>
+                    </div>
+
+                    <a href="{{ asset('docs/kayit_belge/uyelik.docx') }}" class="download-link" target="_blank">
+                        <i class="fas fa-download"></i> Topluluk Üyelik Formunu İndir
+                    </a>
+
+                    <div class="text-center">,
+                        <input type="hidden" value="{{ $topluluk->id }}" name="topluluk">
+                        <button type="submit" class="btn btn-primary">Topluluğa Üye Ol</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
@@ -103,8 +102,8 @@
                 <div class="col-md-4 mb-4">
                     <h3 class="footer-title">Hızlı Bağlantılar</h3>
                     <ul class="footer-links">
-                        <li><a href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
-                        <li><a href="{{ route('etkinlikler', ['topluluk_isim' => $topluluk->isim, 'topluluk_id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Etkinlikler</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Etkinlikler</a></li>
                         <li><a href="#"><i class="fas fa-chevron-right"></i> Üye İşlemleri</a></li>
                         <li><a href="#"><i class="fas fa-chevron-right"></i> Yönetici İşlemleri</a></li>
                     </ul>
@@ -131,6 +130,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/tplk_anasayfa.js') }}"></script>
+    <script src="{{ asset('js/tplk_uyeislemleri.js') }}"></script>
 </body>
 </html>

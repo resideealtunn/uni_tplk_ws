@@ -24,6 +24,7 @@ Route::get('yonetici_panel', function () {
     return view('yonetici_panel');
 })->name('yonetici_panel');
 
+
 Route::get('etkinlik_islemleri', function () {
     return view('etkinlik_islemleri');
 })->name('etkinlik_islemleri');
@@ -59,5 +60,8 @@ Route::get('etkinlikler', function () {
 Route::get('/topluluklar/{isim}/{id}', [ToplulukController::class, 'show'])->name('topluluk_anasayfa');
 Route::get('/etkinlikler/{topluluk_isim}/{topluluk_id}', [EtkinlikController::class, 'show'])->name('etkinlikler');
 
+Route::get('/uyeislemleri/{isim}/{id}', [ToplulukController::class, 'uyeIslemleri'])->name('uyeislemleri');
 
 Route::get('/yonetici.giris', [YoneticiController::class, 'giris']);
+
+Route::post('/kayitol', [ToplulukController::class, 'kayitOl'])->name('kayitol');

@@ -12,7 +12,6 @@ class YoneticiController extends Controller
         $tc = $request->input('tc');
         $sifre = $request->input('sifre');
 
-// JSON oluşturma
         $jsonVerisi = [
             "Tip" => "ogrenci",
             "TcKn" => $tc,

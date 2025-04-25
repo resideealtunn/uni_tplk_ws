@@ -31,10 +31,10 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Üye İşlemleri</a>
+                    <a class="nav-link" href="{{ route('uyeislemleri', ['isim' => Str::slug($topluluk->isim), 'id' => $topluluk->id]) }}">Üye İşlemleri</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Yönetici İşlemleri</a>
+                    <a class="nav-link" href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a>
                 </li>
             </ul>
 
