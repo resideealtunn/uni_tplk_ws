@@ -70,13 +70,13 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <img src="{{ asset('images/neu_logo.png') }}">
+                <img src="{{ asset('images/logo/neu_logo.png') }}">
             </div>
             <ul class="menu">
                 <li><a href="/kesfet">Ana Sayfa</a></li>
-                <li><a href="/topluluklar">Topluluklar</a></li>
+                <li><a href="/topluluklar" >Topluluklar</a></li>
                 <li><a href="/formlar" class="active">Formlar</a></li>
-                <li><a href="/yonetici/giris?panel=yonetici">Yönetim Paneli</a></li>
+                <li><a href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a></li>
             </ul>
         </div>
 

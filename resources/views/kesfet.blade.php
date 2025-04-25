@@ -36,7 +36,7 @@
         <ul class="menu">
             <li><a href="/kesfet" id="homeBtn">Ana Sayfa</a></li>
             <li><a href="/topluluklar" id="communitiesBtn">Topluluklar</a></li>
-            <li><a href="#" id="formsBtn">Formlar</a></li>
+            <li><a href="/formlar" >Formlar</a></li>
             <li><a href={{route('yonetici.giris')}} id="adminBtn">Yönetici İşlemleri</a></li>
         </ul>
     </div>
@@ -52,7 +52,7 @@
                     <div class="event-details">
                         <h3>{{ $item->eb_isim }}</h3>
                         <p>{{ $item->t_isim }}</p>
-                        <p>{{ $item->eb_metin }}</p>
+                        <p>{{ $item->eb_bilgi }}</p>
                     </div>
                 </div>
             @endforeach

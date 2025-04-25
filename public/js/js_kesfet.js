@@ -10,7 +10,6 @@ document.querySelectorAll('.event-card').forEach(card => {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalCommunity').innerText = community;
         document.getElementById('modalShortDesc').innerText = shortDesc;
-        document.getElementById('modalLongDesc').innerText = "Bu etkinlik hakkında daha detaylı bilgi burada yer alacak. (Buraya uzun açıklama yazılabilir.)";
 
         // Modal aç
         document.getElementById('eventModal').style.display = 'block';

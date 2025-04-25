@@ -62,7 +62,6 @@
             <div class="explore-grid" id="communityList">
                 @foreach($topluluklar as $item)
                     <div class="event-card">
-                        <!-- Topluluğa tıklandığında topluluk adıyla yönlendir -->
                         <a href="{{ route('topluluk_anasayfa', ['isim' => $item->isim, 'id' => $item->id]) }}">
                             <img src="{{ asset('images/logo/'.$item->gorsel) }}" alt="Topluluk Logosu" class="community-logo">
                             <div class="event-details">

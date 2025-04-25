@@ -48,6 +48,7 @@ class Controller extends BaseController
                 'topluluklar.id as t_id',
                 'topluluklar.isim as t_isim',
                 'etkinlik_bilgi.gorsel as eb_gorsel',
+                'etkinlik_bilgi.bilgi as eb_bilgi',
                 'etkinlik_bilgi.metin as eb_metin'
             )
             ->get();
