@@ -77,7 +77,6 @@
                 <li><a href="/topluluklar">Topluluklar</a></li>
                 <li><a href="/formlar" class="active">Formlar</a></li>
                 <li><a href="/yonetici/giris?panel=yonetici">Yönetim Paneli</a></li>
-                <li><a href="/yonetici/giris?panel=denetim">Denetim Paneli</a></li>
             </ul>
         </div>
 
@@ -112,9 +111,9 @@
                 @if ($currentPage > 1)
                     <a href="{{ route('formlar', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
                 @endif
-                
+
                 <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
-                
+
                 @if ($currentPage < $lastPage)
                     <a href="{{ route('formlar', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
                 @endif
