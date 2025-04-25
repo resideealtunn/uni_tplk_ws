@@ -22,12 +22,12 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <img src="{{ asset('images/neu_logo.png') }}">
+                <img src="{{ asset('images/logo/neu_logo.png') }}">
             </div>
             <ul class="menu">
                 <li><a href="/kesfet">Ana Sayfa</a></li>
                 <li><a href="/topluluklar" class="active">Topluluklar</a></li>
-                <li><a href="#">Formlar</a></li>
+                <li><a href="/formlar">Formlar</a></li>
                 <li><a href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a></li>
             </ul>
         </div>

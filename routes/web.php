@@ -65,3 +65,7 @@ Route::get('/uyeislemleri/{isim}/{id}', [ToplulukController::class, 'uyeIslemler
 Route::get('/yonetici.giris', [YoneticiController::class, 'giris']);
 
 Route::post('/kayitol', [ToplulukController::class, 'kayitOl'])->name('kayitol');
+
+Route::get('formlar', function () {
+    return view('formlar');
+})->name('formlar');
