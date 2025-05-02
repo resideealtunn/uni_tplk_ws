@@ -124,35 +124,38 @@ class YoneticiController extends Controller
     }
     public function etkinlikEkle(Request $request)
     {
-
-
         if ($request->hasFile('afis')) {
             $afis = $request->file('afis');
-            $afisAdi = time() . '_' . $afis->getClientOriginalName();
-            $afis->move(public_path('images/etkinlik'), $afisAdi);
+            $tarih = date('Y-m-d', strtotime($request->input('tarih')));
+            $afisAdi = $tarih . '_' . $request->input('baslik').'png';
+            $afis->move(public_path('images\etkinlik'), $afisAdi);
             $afisYolu = 'images/etkinlik/' . $afisAdi;
-        } else {
-            $afisYolu = null;
+            DB::table('etkinlik_bilgi')->insert([
+                'isim' => $request->input('baslik'),
+                'bilgi' => $request->input('kisa_bilgi'),
+                'metin' => $request->input('aciklama'),
+                't_id' => session('t_id'),
+                'gorsel' => $afisAdi,
+                'tarih' => $tarih,
+
+            ]);
         }
-
-        // Veritabanına kaydet
-        DB::table('etkinlik_bilgi')->insert([
-            'isim' => $request->input('baslik'),
-            'bilgi' => $request->input('kisa_bilgi'),
-            'metin' => $request->input('aciklama'),
-            'gorsel' => $afisAdi,
-            'tarih' => $request->input('tarih'),
-
-        ]);
 
         return back()->with('success', 'Etkinlik başarıyla eklendi!');
     }
     public function etkinlikIslemleri()
     {
         $toplulukId = session('t_id');
-        $etkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)->get();
+        
+        // Onaylanmış etkinlikleri getir
+        $onaylanmisEtkinlikler = DB::table('etkinlik_onay')
+            ->join('etkinlik_bilgi', 'etkinlik_onay.e_id', '=', 'etkinlik_bilgi.id')
+            ->where('etkinlik_onay.onay', 1)
+            ->where('etkinlik_bilgi.t_id', $toplulukId)
+            ->select('etkinlik_bilgi.*')
+            ->get();
 
-        return view('etkinlik_islemleri', compact('etkinlikler'));
+        return view('etkinlik_islemleri', compact('onaylanmisEtkinlikler'));
     }
     public function basvuruGuncelle(Request $request)
     {
@@ -169,14 +172,15 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Etkinlikler ve yetkinlikler verilerini al
-        $etkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)->get();
-        $yetkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
-            ->where('b_durum', 0)
+        // Onaylanmış etkinlikleri getir
+        $onaylanmisEtkinlikler = DB::table('etkinlik_onay')
+            ->join('etkinlik_bilgi', 'etkinlik_onay.e_id', '=', 'etkinlik_bilgi.id')
+            ->where('etkinlik_onay.onay', 1)
+            ->where('etkinlik_bilgi.t_id', $toplulukId)
+            ->select('etkinlik_bilgi.*')
             ->get();
 
-        // Her iki veri kümesini view'e gönder
-        return view('etkinlik_islemleri', compact('etkinlikler', 'yetkinlikler'));
+        return view('etkinlik_islemleri', compact('onaylanmisEtkinlikler'));
     }
 
     public function yoklamaGuncelle(Request $request)
@@ -203,74 +207,109 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Gerekli tüm veri setlerini çek
-        $etkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)->get();
-
-        $yetkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
-            ->where('b_durum', 0)
+        // Onaylanmış etkinlikleri getir
+        $onaylanmisEtkinlikler = DB::table('etkinlik_onay')
+            ->join('etkinlik_bilgi', 'etkinlik_onay.e_id', '=', 'etkinlik_bilgi.id')
+            ->where('etkinlik_onay.onay', 1)
+            ->where('etkinlik_bilgi.t_id', $toplulukId)
+            ->select('etkinlik_bilgi.*')
             ->get();
 
-        $petkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
-            ->where('p_durum', 0)
-            ->get(); // Bu satırda .first() değil ->get() olmalı!
-
-        return view('etkinlik_islemleri', compact('etkinlikler', 'yetkinlikler', 'petkinlikler'));
+        return view('etkinlik_islemleri', compact('onaylanmisEtkinlikler'));
     }
 
     public function etkinlikPaylas(Request $request)
     {
+        // Debug için gelen verileri kontrol edelim
+        \Log::info('Paylaşım isteği:', $request->all());
+        
         $etkinlik = Etkinlik_bilgi::find($request->paylasEtkinlikSec);
-
-        // Yeni görsel yükleme
-        if ($request->hasFile('paylasResim')) {
-            $afis = $request->file('paylasResim');
-            $afisAdi = time() . '_' . $afis->getClientOriginalName();
-            $afis->move(public_path('images/etkinlik'), $afisAdi);
-            $etkinlik->gorsel = 'images/etkinlik/' . $afisAdi;
+        
+        if (!$etkinlik) {
+            \Log::error('Etkinlik bulunamadı. ID:', ['id' => $request->paylasEtkinlikSec]);
+            return back()->with('danger', 'Etkinlik bulunamadı.');
         }
-        // Güncellemeler
-        $etkinlik->bilgi = $request->paylasKisaBilgi;
-        $etkinlik->metin = $request->paylasAciklama;
-        $etkinlik->gorsel=$afisAdi;
-        $etkinlik->p_durum = 1;
-        $etkinlik->save();
 
-        return back()->with('success', 'Etkinlik başarıyla paylaşıldı.');
+        \Log::info('Bulunan etkinlik:', ['etkinlik' => $etkinlik->toArray()]);
+
+        try {
+            // Yeni görsel yükleme
+            if ($request->hasFile('paylasResim')) {
+                $afis = $request->file('paylasResim');
+                $afisAdi = time() . '_' . $afis->getClientOriginalName();
+                $afis->move(public_path('images/etkinlik'), $afisAdi);
+                $etkinlik->gorsel = $afisAdi;
+            }
+
+            // Güncellemeler
+            $etkinlik->bilgi = $request->paylasKisaBilgi;
+            $etkinlik->metin = $request->paylasAciklama;
+            $etkinlik->p_durum = 1;
+
+            // Değişiklikleri kaydet
+            $saved = $etkinlik->save();
+
+            \Log::info('Kaydetme sonucu:', ['saved' => $saved, 'etkinlik' => $etkinlik->toArray()]);
+
+            if ($saved) {
+                return back()->with('success', 'Etkinlik başarıyla paylaşıldı.');
+            } else {
+                \Log::error('Kaydetme başarısız oldu');
+                return back()->with('danger', 'Etkinlik paylaşılırken bir hata oluştu.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Paylaşım hatası:', ['error' => $e->getMessage()]);
+            return back()->with('danger', 'Bir hata oluştu: ' . $e->getMessage());
+        }
     }
     public function basvurular(Request $request)
     {
         $toplulukId = session('t_id');
 
-        // Gerekli tüm veri setlerini çek
-        $etkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)->get();
-
-        $yetkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
-            ->where('b_durum', 0)
-            ->get();
-
-        $petkinlikler = etkinlik_bilgi::where('t_id', $toplulukId)
-            ->where('p_durum', 0)
+        // Onaylanmış etkinlikleri getir
+        $onaylanmisEtkinlikler = DB::table('etkinlik_onay')
+            ->join('etkinlik_bilgi', 'etkinlik_onay.e_id', '=', 'etkinlik_bilgi.id')
+            ->where('etkinlik_onay.onay', 1)
+            ->where('etkinlik_bilgi.t_id', $toplulukId)
+            ->select('etkinlik_bilgi.*')
             ->get();
 
         $basvurular = DB::table('etkinlik_basvuru')
-            ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id') // Assuming 'id' is the primary key in 'uyeler'
-            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id') // Assuming 'id' is the primary key in 'ogrencii_bilgi'
+            ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id')
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
             ->select('ogrenci_bilgi.isim', 'ogrenci_bilgi.numara', 'ogrenci_bilgi.bolum', 'ogrenci_bilgi.tel', 'etkinlik_basvuru.u_id')
-            ->where('etkinlik_basvuru.e_id',1 ) // Ensure to replace 'event_id' with the actual event column
+            ->where('etkinlik_basvuru.e_id', $request->etkinlik_id)
             ->get();
 
-        return view('etkinlik_islemleri', compact('etkinlikler', 'yetkinlikler', 'petkinlikler', 'basvurular'));
+        return view('etkinlik_islemleri', compact('onaylanmisEtkinlikler', 'basvurular'));
     }
     public function getir(Request $request)
     {
-        $basvurular = DB::table('etkinlik_basvuru')
-            ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id') // Assuming 'id' is the primary key in 'uyeler'
-            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id') // Assuming 'id' is the primary key in 'ogrencii_bilgi'
-            ->select('ogrenci_bilgi.isim', 'ogrenci_bilgi.numara', 'ogrenci_bilgi.bolum', 'ogrenci_bilgi.tel', 'etkinlik_basvuru.u_id')
-            ->where('etkinlik_basvuru.e_id',1 ) // Ensure to replace 'event_id' with the actual event column
-            ->get();
+        \Log::info('Başvuru listeleme isteği:', $request->all());
+        
+        $etkinlikId = $request->etkinlik_id;
+        
+        try {
+            $basvurular = DB::table('etkinlik_basvuru')
+                ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id')
+                ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+                ->select(
+                    'ogrenci_bilgi.isim',
+                    'ogrenci_bilgi.numara',
+                    'ogrenci_bilgi.bolum',
+                    'ogrenci_bilgi.tel',
+                    DB::raw('(SELECT COUNT(*) FROM etkinlik_basvuru WHERE u_id = uyeler.id) as toplam_katilim')
+                )
+                ->where('etkinlik_basvuru.e_id', $etkinlikId)
+                ->get();
 
-        return response()->json($basvurular);
+            \Log::info('Bulunan başvurular:', ['basvurular' => $basvurular]);
+
+            return response()->json($basvurular);
+        } catch (\Exception $e) {
+            \Log::error('Başvuru listeleme hatası:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Başvurular alınırken bir hata oluştu'], 500);
+        }
     }
     public function cikis(Request $request)
     {

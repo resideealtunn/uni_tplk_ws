@@ -34,7 +34,7 @@
             <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
         </div>
         <ul class="menu">
-            <li><a href="/kesfet" id="homeBtn">Ana Sayfa</a></li>
+            <li><a href="/" id="homeBtn">Ana Sayfa</a></li>
             <li><a href="/topluluklar" id="communitiesBtn">Topluluklar</a></li>
             <li><a href="/formlar" >Formlar</a></li>
             <li><a href={{route('yonetici.giris')}} id="adminBtn">Yönetici İşlemleri</a></li>

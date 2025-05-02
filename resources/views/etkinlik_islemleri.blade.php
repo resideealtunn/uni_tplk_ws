@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etkinlik İşlemleri</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style_panels.css') }}">
     <link rel="stylesheet" href="{{ asset('css/etkinlik_islemleri.css') }}">
 </head>
@@ -29,6 +30,16 @@
 
     <div class="content active">
         <div class="action-container">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('danger'))
+                <div class="alert alert-danger">
+                    {{ session('danger') }}
+                </div>
+            @endif
             <h1>Etkinlik İşlemleri</h1>
 
             <div class="action-card" onclick="showEtkinlikEkleModal()">
@@ -57,7 +68,6 @@
             </div>
         </div>
     </div>
-
     <!-- Etkinlik Ekle Modal -->
     <div id="etkinlikEkleModal" class="modal">
         <div class="modal-content">
@@ -84,7 +94,7 @@
                     <label for="etkinliktarih">Etkinlik Tarihi:</label>
                     <input type="datetime-local" id="etkinliktarih" name="tarih" required>
                 </div>
-                <button type="submit" class="btn" name="etkinlik_ekle">Etkinlik Ekle</button>
+                <input type="submit" class="btn" name="etkinlik_ekle" value="Etkinlik Ekle">
                 <button type="button" class="btn btn-cancel" onclick="closeModal('etkinlikEkleModal')">İptal</button>
             </form>
         </div>
@@ -100,7 +110,7 @@
                     <label for="etkinlikSec">Etkinlik Seçin:</label>
                     <select id="etkinlikSec" name="etkinlik_id" class="form-control" onchange="guncelleDurum(this)" required>
                         <option value="">Etkinlik seçiniz</option>
-                        @foreach($etkinlikler as $etkinlik)
+                        @foreach($onaylanmisEtkinlikler as $etkinlik)
                             <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->b_durum }}">
                                 {{ $etkinlik->isim }}
                             </option>
@@ -126,7 +136,7 @@
                 <div class="form-group">
                     <label for="etkinlik_id">Etkinlik Seçin:</label>
                     <select id="etkinlik_id" name="etkinlik_id" class="form-control" required>
-                        @foreach($yetkinlikler as $etkinlik)
+                        @foreach($onaylanmisEtkinlikler as $etkinlik)
                             <option value="{{ $etkinlik->id }}" {{ $etkinlik->y_durum == 1 ? 'selected' : '' }}>
                                 {{ $etkinlik->isim }} ({{ $etkinlik->y_durum ? 'Açık' : 'Kapalı' }})
                             </option>
@@ -152,7 +162,7 @@
                     <label for="paylasEtkinlikSec">Etkinlik Seçin:</label>
                     <select id="paylasEtkinlikSec" class="form-control" name="paylasEtkinlikSec" required>
                         <option value="">Etkinlik seçiniz</option>
-                        @foreach($petkinlikler as $etkinlik)
+                        @foreach($onaylanmisEtkinlikler as $etkinlik)
                             <option value="{{ $etkinlik->id }}">{{ $etkinlik->isim }}</option>
                         @endforeach
                     </select>
@@ -180,18 +190,19 @@
     <div id="basvuruListeModal" class="modal">
         <div class="modal-content">
             <h2>Etkinlik Başvurularını Listele</h2>
-            <form id="basvuruListeForm" method="POST" action="{{ route('basvuru.göster') }}">
+            <form id="basvuruListeForm" method="POST" action="{{ route('basvuru.goster') }}">
                 @csrf
                 <div class="form-group">
                     <label for="basvuruListeEtkinlikSec">Etkinlik Seçin:</label>
                     <select id="basvuruListeEtkinlikSec" class="form-control"  name="etkinlik_id" required>
-                        @foreach($etkinlikler as $etkinlik)
+                        @foreach($onaylanmisEtkinlikler as $etkinlik)
                             <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->b_durum }}">
                                 {{ $etkinlik->isim }}
                             </option>
                         @endforeach
                     </select>
                     <button type="submit" class="btn">Göster</button>
+                </div>
             </form>
                 <div class="basvuru-listesi">
                     <table>
@@ -228,25 +239,13 @@
                 durumYazi.textContent = "Durum bilinmiyor";
             }
         }
-        function guncelleYoklamaDurum(selectElement) {
-            const secilen = selectElement.options[selectElement.selectedIndex];
-            const durum = secilen.getAttribute("data-durum");
 
-            const durumYazi = document.getElementById("yoklamaMevcutDurum");
-            if (durum === "1") {
-                durumYazi.textContent = "Yoklama Açık";
-            } else if (durum === "0") {
-                durumYazi.textContent = "Yoklama Kapalı";
-            } else {
-                durumYazi.textContent = "Durum bilinmiyor";
-            }
-        }
         document.getElementById('basvuruListeForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
             const etkinlikId = document.getElementById('basvuruListeEtkinlikSec').value;
 
-            fetch('/basvuru-goster', {
+            fetch('{{ route("basvuru.goster") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -254,25 +253,42 @@
                 },
                 body: JSON.stringify({ etkinlik_id: etkinlikId })
             })
-                .then(response => response.json())
-                .then(data => {
-                    const basvuruListesi = document.getElementById('basvuruListesi');
-                    basvuruListesi.innerHTML = ''; // Listeyi sıfırla
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Gelen veri:', data); // Debug için
+                const basvuruListesi = document.getElementById('basvuruListesi');
+                basvuruListesi.innerHTML = ''; // Listeyi temizle
 
-                    data.forEach(basvuru => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                <td>${basvuru.isim}</td>
-                <td>${basvuru.numara}</td>
-                <td>${basvuru.bolum}</td>
-                <td>${basvuru.tel}</td>
-            `;
-                        basvuruListesi.appendChild(tr);
-                    });
-                })
-                .catch(error => console.error('Başvuru verisi alınamadı:', error));
+                if (data.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="5" class="text-center">Bu etkinliğe henüz başvuru yapılmamış.</td>';
+                    basvuruListesi.appendChild(tr);
+                    return;
+                }
+
+                data.forEach(basvuru => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${basvuru.isim}</td>
+                        <td>${basvuru.numara}</td>
+                        <td>${basvuru.bolum}</td>
+                        <td>${basvuru.tel}</td>
+                        <td>${basvuru.toplam_katilim}</td>
+                    `;
+                    basvuruListesi.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Başvuru verisi alınamadı:', error);
+                const basvuruListesi = document.getElementById('basvuruListesi');
+                basvuruListesi.innerHTML = '<tr><td colspan="5" class="text-center">Başvurular yüklenirken bir hata oluştu.</td></tr>';
+            });
         });
-
     </script>
 </body>
 </html>

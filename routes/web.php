@@ -45,7 +45,7 @@ Route::post('/yoklama-guncelle', [YoneticiController::class, 'yoklamaGuncelle'])
 Route::get('etkinlik_islemleri', [YoneticiController::class, 'paylasilabilirEtkinlikler'])->name('etkinlik_islemleri');
 Route::post('/etkinlik-paylas', [YoneticiController::class, 'etkinlikPaylas'])->name('etkinlik.paylas');
 
-Route::post('/basvuru-goster', [YoneticiController::class, 'getir'])->name('basvuru.göster');
+Route::post('/basvuru-goster', [YoneticiController::class, 'getir'])->name('basvuru.goster');
 
 Route::get('uye_islemleri', function () {
     return view('panel_uye_islemleri');
