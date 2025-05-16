@@ -34,14 +34,12 @@ class YoneticiController extends Controller
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
-        $response = curl_exec($curl);
 
         $data = json_decode($response, true);
-        if (isset($data['Durum'])) {
+        if (isset($data['Durum']) and $data['Durum'] == true) {
             $ogrenci = DB::table('ogrenci_bilgi')
-                ->where('tc', $tc)
+                ->where('tc', $tc,)
                 ->first();
             if ($ogrenci) {
                 $uye = DB::table('uyeler')
@@ -67,13 +65,17 @@ class YoneticiController extends Controller
                 ]);
                 return redirect()->route('yonetici.panel');
             }
-            else
-                $jsonVerisi = [
-                    "Tip" => "personel",
-                    "TcKn" => $tc,
-                    "Sifre" => $sifre,
-                ];
-                curl_setopt_array($curl, array(
+            else{
+                return redirect()->route('kesfet');
+            }
+        }
+        else {
+            $jsonVerisi = [
+                "Tip" => "personel",
+                "TcKn" => $tc,
+                "Sifre" => $sifre,
+            ];
+            curl_setopt_array($curl, array(
                 CURLOPT_URL => 'http://api.erbakan.edu.tr/LDap/getGirisDogrula',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
@@ -86,29 +88,68 @@ class YoneticiController extends Controller
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
                     'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
-                 ),
-               ));
-                curl_close($curl);
-                $response = curl_exec($curl);
-                $data = json_decode($response, true);
-                if (isset($data['Durum'])) {
-                    $personel = DB::table('personel')
-                        ->where('tc', $tc)
-                        ->first();
-                    if($personel){
-                        return redirect()->route('kesfet');
-                    }
-                    else
-                    {
-                        return redirect()->route('anasayfa');
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $data = json_decode($response, true);
+            if (isset($data['Durum']) and $data['Durum'] == true) {
+                $personel = DB::table('personel')
+                    ->where('tc', $tc)
+                    ->first();
+                if ($personel) {
+                    session([
+                        'personel_id' => $personel->id,
+                        'isim' => $personel->isim,
+                        'unvan' => $personel->unvan,
+                        'birim' => $personel->birim
+                    ]);
+                    return redirect()->route('denetim.panel');
+                }
+                else
+                {
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getPersonelBilgi?tc='.$request->tc,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => array(
+                            'Content-Type: application/json',
+                            'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+                        ),
+                    ));
+                    $response = curl_exec($curl);
+                    curl_close($curl);
+                    $data = json_decode($response, true);
+                    if($data){
+                        DB::table('personel')->insert([
+                            'isim' => $data['personelAd'].' '.$data['personelSoyad'],
+                            'tc' => $request->tc,
+                            'unvan' => $data['personelUnvan'],
+                            'birim' => $data['personelBirim']
+                        ]);
+                        $personel = DB::table('personel')
+                            ->where('tc', $tc)
+                            ->first();
+                        session([
+                            'personel_id' => $personel->id,
+                            'isim' => $personel->isim,
+                            'unvan' => $personel->unvan,
+                            'birim' => $personel->birim
+                        ]);
+                        return redirect()->route('denetim.panel');
                     }
                 }
-                else{
-                    return redirect()->route('anasayfa');
-                }
-        }
-        else {
-            return redirect()->route('anasayfa');
+            }
+            else{
+                return redirect()->route('kesfet');
+            }
         }
 
     }
@@ -146,7 +187,7 @@ class YoneticiController extends Controller
     public function etkinlikIslemleri()
     {
         $toplulukId = session('t_id');
-        
+
         // Onaylanmış etkinlikleri getir
         $onaylanmisEtkinlikler = DB::table('etkinlik_onay')
             ->join('etkinlik_bilgi', 'etkinlik_onay.e_id', '=', 'etkinlik_bilgi.id')
@@ -222,9 +263,9 @@ class YoneticiController extends Controller
     {
         // Debug için gelen verileri kontrol edelim
         \Log::info('Paylaşım isteği:', $request->all());
-        
+
         $etkinlik = Etkinlik_bilgi::find($request->paylasEtkinlikSec);
-        
+
         if (!$etkinlik) {
             \Log::error('Etkinlik bulunamadı. ID:', ['id' => $request->paylasEtkinlikSec]);
             return back()->with('danger', 'Etkinlik bulunamadı.');
@@ -285,31 +326,77 @@ class YoneticiController extends Controller
     }
     public function getir(Request $request)
     {
-        \Log::info('Başvuru listeleme isteği:', $request->all());
-        
-        $etkinlikId = $request->etkinlik_id;
-        
-        try {
-            $basvurular = DB::table('etkinlik_basvuru')
-                ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id')
-                ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
-                ->select(
-                    'ogrenci_bilgi.isim',
-                    'ogrenci_bilgi.numara',
-                    'ogrenci_bilgi.bolum',
-                    'ogrenci_bilgi.tel',
-                    DB::raw('(SELECT COUNT(*) FROM etkinlik_basvuru WHERE u_id = uyeler.id) as toplam_katilim')
-                )
-                ->where('etkinlik_basvuru.e_id', $etkinlikId)
-                ->get();
+        $basvurular = DB::table('etkinlik_basvuru')
+            ->join('uyeler', 'etkinlik_basvuru.u_id', '=', 'uyeler.id') // Assuming 'id' is the primary key in 'uyeler'
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id') // Assuming 'id' is the primary key in 'ogrencii_bilgi'
+            ->select('ogrenci_bilgi.isim', 'ogrenci_bilgi.numara', 'ogrenci_bilgi.bolum', 'ogrenci_bilgi.tel', 'etkinlik_basvuru.u_id')
+            ->where('etkinlik_basvuru.e_id',1 ) // Ensure to replace 'event_id' with the actual event column
+            ->get();
 
-            \Log::info('Bulunan başvurular:', ['basvurular' => $basvurular]);
+        return response()->json($basvurular);
+    }
 
-            return response()->json($basvurular);
-        } catch (\Exception $e) {
-            \Log::error('Başvuru listeleme hatası:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Başvurular alınırken bir hata oluştu'], 500);
+    public function guncelle(Request $request)
+    {
+        $topluluk_id = session('topluluk_id');
+
+        // Topluluk bilgilerini al
+        $topluluk = DB::table('topluluklar')->where('id', $topluluk_id)->first();
+
+        // === LOGO GÜNCELLEME ===
+        if ($request->hasFile('logo') && $request->file('logo')->isValid()) {
+            $logo_file = $request->file('logo');
+            $logo_name = session('$topluluk');
+            $logo_path = 'images/logo/' . $logo_name;
+
+            $logo_file->move(public_path('images/logo'), $logo_name);
+
+            // Eğer logo değiştiyse, güncelle
+            if ($topluluk->logo !== $logo_name) {
+                DB::table('topluluklar')->where('id', $topluluk_id)->update(['logo' => $logo_name]);
+
+                // logo_onay tablosuna kaydet
+                DB::table('logo_onay')->insert([
+                    't_id' => $topluluk_id,
+                    'logo' => $logo_name,
+                    'onay' => 0
+                ]);
+            }
         }
+        // === ARKA PLAN GÜNCELLEME ===
+        if ($request->hasFile('bg') && $request->file('bg')->isValid()) {
+            $bg_file = $request->file('bg');
+            $bg_name = session('topluluk');
+            $bg_path = 'images/bg/' . $bg_name;
+
+            $bg_file->move(public_path('images/background'), $bg_name);
+            DB::table('topluluklar')->where('id', $topluluk_id)->update(['background' => $bg_name]);
+        }
+
+        // === SLOGAN GÜNCELLEME ===
+        if ($request->filled('slogan')) {
+            DB::table('topluluklar')->where('id', $topluluk_id)->update(['slogan' => $request->input('slogan')]);
+        }
+
+        // === VİZYON ===
+        if ($request->filled('vizyon')) {
+            DB::table('topluluklar')->where('id', $topluluk_id)->update(['vizyon' => $request->input('vizyon')]);
+        }
+
+        // === MİSYON ===
+        if ($request->filled('misyon')) {
+            DB::table('topluluklar')->where('id', $topluluk_id)->update(['misyon' => $request->input('misyon')]);
+        }
+
+        // === TÜZÜK ===
+        if ($request->hasFile('tuzuk') && $request->file('tuzuk')->isValid()) {
+            $tuzuk_file = $request->file('tuzuk');
+            $tuzuk_name = time() . '_tuzuk_' . Str::random(5) . '.' . $tuzuk_file->getClientOriginalExtension();
+            $tuzuk_file->move(public_path('files/tuzuk'), $tuzuk_name);
+            DB::table('topluluklar')->where('id', $topluluk_id)->update(['tuzuk' => $tuzuk_name]);
+        }
+
+        return redirect()->back()->with('success', 'Bilgiler güncellendi.');
     }
     public function cikis(Request $request)
     {

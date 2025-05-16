@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etkinlik İşlemleri</title>
+    <title>Topluluk Yönetimi</title>
     <link rel="stylesheet" href="{{ asset('css/style_panels.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/etkinlik_islemleri.css') }}">
 </head>
 <body>
 <div class="sidebar">
@@ -33,35 +32,50 @@
 <div class="content" id="web">
     <div class="form-container">
         <h2>Web Arayüz Bilgileri</h2>
-        <form method="POST" enctype="multipart/form-data">
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('danger'))
+            <div class="alert alert-danger">
+                {{ session('danger') }}
+            </div>
+        @endif
+        <form method="POST" enctype="multipart/form-data" action="{{ route('yonetici.guncelle') }}">
             @csrf
             <div class="form-group">
                 <label for="logo">Topluluk Logosu</label>
-                <input type="file" id="logo" name="logo" value="{{ asset('images/logo'.$veri->gorsel ?? '') }}">
+                <input type="file" id="logo" name="logo">
                 <div id="logo-preview"></div>
+                <input type="submit" name="logok" value="Kaydet">
             </div>
             <div class="form-group">
                 <label for="background">Sayfa Arka Plan Resmi</label>
                 <input type="file" id="background" name="bg">
                 <div id="background-preview"></div>
+                <input type="submit" name="bgk" value="Kaydet">
             </div>
             <div class="form-group">
                 <label for="slogan">Slogan</label>
-                <input type="text" id="slogan" name="slogan" value="{{ $veri->slogan ?? '' }}">
+                <input type="text" id="slogan" name='slogan' placeholder="Slogan giriniz">
+                <input type="submit" name="slogank" value="Kaydet">
             </div>
             <div class="form-group">
                 <label for="vizyon">Vizyon</label>
-                <textarea id="vizyon" rows="2" placeholder="Vizyon giriniz" name="vizyon">{{ $veri->vizyon ?? '' }}</textarea>
+                <textarea id="vizyon" rows="2" placeholder="Vizyon giriniz" name="vizyon"></textarea>
+                <input type="submit" name="vizyonk" value="Kaydet">
             </div>
             <div class="form-group">
                 <label for="misyon">Misyon</label>
-                <textarea id="misyon" rows="2" placeholder="Misyon giriniz" name="misyon">{{ $veri->misyon ?? '' }}</textarea>
+                <textarea id="misyon" rows="2" placeholder="Misyon giriniz" name="misyon"></textarea>
+                <input type="submit" name="misyonk" value="Kaydet">
             </div>
             <div class="form-group">
                 <label for="tuzuk">Tüzük</label>
-                <input type="file" id="tuzul" name="tuzuk">
+                <input type="file" id="tuzuk" name="tuzuk">
+                <input type="submit" name="tuzukk" value="Kaydet">
             </div>
-            <button type="submit" name="Guncelle">Güncelle</button>
         </form>
     </div>
 </div>

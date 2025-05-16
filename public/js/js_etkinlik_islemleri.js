@@ -110,6 +110,6 @@ function showPaylasModal() {
 function showBasvuruListeModal() {
     showModal('basvuruListeModal');
 
-    
+
 }
 

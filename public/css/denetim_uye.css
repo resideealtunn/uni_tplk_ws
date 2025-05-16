@@ -1,0 +1,1298 @@
+/* Genel ayarlar */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    height: 100vh;
+}
+.menu-item.active {
+    background-color: #3498db !important;
+    color: #fff !important;
+}
+
+
+/* Aktif olan içerik kısmı görünsün */
+.content.active {
+    display: block;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar img {
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.sidebar h3 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #34495e;
+}
+
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.info-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.update-section {
+    margin-top: 30px;
+}
+
+.update-item {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.preview-container {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 5px;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+.preview-text {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    margin: 15px 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.red-sebep {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.red-sebep textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    resize: vertical;
+}
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+    max-width: 100%;
+}
+
+.form-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.vision-text {
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    max-height: 100px; /* Set the initial height limit for collapsed state */
+}
+
+.mission-text {
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    max-height: 100px; /* Set the initial height limit for collapsed state */
+}
+
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+.red-reason {
+    display: none;
+    margin-top: 5px;
+  }
+
+  .btn {
+    padding: 5px 10px;
+    margin: 2px;
+    cursor: pointer;
+  }
+
+  .btn-approve {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .btn-reject {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .btn-send {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-top: 5px;
+    padding: 5px 8px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+
+
+/* Menü */
+.menu {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.menu-item {
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu {
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: block;
+    padding: 12px 15px;
+    color: #ecf0f1;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Ensure the table takes full width and has nice spacing */
+.table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd; /* Light border for a clean look */
+}
+
+/* Table headers with darker background and white text */
+.table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Table cells with equal height */
+.table th, .table td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Equal column width distribution */
+.table th, .table td {
+    width: 12.5%; /* For 8 columns, this will evenly distribute the width */
+}
+
+/* Styling buttons to make them more uniform and modern */
+.table button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Button colors */
+.table .btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+.table .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.table .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+.table .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.table .btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+.table .btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.table .btn-success {
+    background-color: #28a745;
+    border: none;
+}
+.table .btn-success:hover {
+    background-color: #218838;
+}
+
+.table .btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+.table .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Optional: Add responsive behavior */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    .table button {
+        font-size: 12px;
+    }
+}
+.img-logo {
+    width: 50px;  /* Genişlik değerini isteğinize göre ayarlayın */
+    height: auto; /* Yüksekliği orantılı olarak ayarlar */
+}
+/* Modal arka planı */
+.modal {
+    display: none; /* Başlangıçta gizli */
+    position: fixed;
+    z-index: 1; /* Üstte görünmesi için */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Arka planın kararması */
+    padding-top: 60px;
+}
+
+/* Modal içeriği */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Ekranın %80'inde görünsün */
+    max-width: 900px;
+}
+
+/* Kapatma butonu */
+.btn-cancel {
+    background-color: #f44336; /* Kırmızı */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-cancel:hover {
+    background-color: #d32f2f;
+}
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* Increase modal width */
+    max-width: 1200px; /* Ensure the modal doesn't get too wide */
+    border-radius: 8px;
+}
+
+/* Table Styling */
+.uye-listesi table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.uye-listesi th, .uye-listesi td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd; /* Light border for cleaner look */
+}
+
+.uye-listesi th {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Make the columns wider */
+.uye-listesi th:nth-child(1),
+.uye-listesi td:nth-child(1) {
+    width: 15%; /* Wider for Kayıt Şekli */
+}
+
+.uye-listesi th:nth-child(2),
+.uye-listesi td:nth-child(2) {
+    width: 18%; /* Wider for Başvuru Tarihi */
+}
+
+.uye-listesi th:nth-child(3),
+.uye-listesi td:nth-child(3) {
+    width: 10%; /* Wider for Öğrenci No */
+}
+
+.uye-listesi th:nth-child(4),
+.uye-listesi td:nth-child(4) {
+    width: 20%; /* Wider for Ad Soyad */
+}
+
+.uye-listesi th:nth-child(5),
+.uye-listesi td:nth-child(5) {
+    width: 12%; /* Wider for Cep Tel */
+}
+
+.uye-listesi th:nth-child(6),
+.uye-listesi td:nth-child(6) {
+    width: 12%; /* Wider for Fakülte */
+}
+
+.uye-listesi th:nth-child(7),
+.uye-listesi td:nth-child(7) {
+    width: 15%; /* Wider for Bölüm */
+}
+
+.uye-listesi th:nth-child(8),
+.uye-listesi td:nth-child(8) {
+    width: 15%; /* Wider for Üyelik Formu */
+}
+
+.uye-listesi th:nth-child(9),
+.uye-listesi td:nth-child(9) {
+    width: 12%; /* Wider for Onay Durumu */
+}
+
+.uye-listesi th:nth-child(10),
+.uye-listesi td:nth-child(10) {
+    width: 20%; /* Wider for Ayrılış Tarihi/Sebebi */
+}
+
+/* Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
+
+/* Close Button */
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-cancel:hover {
+    background-color: #d32f2f;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    padding-top: 50px;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    border-radius: 8px;
+}
+
+.uye-listesi table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.uye-listesi th, .uye-listesi td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+.uye-listesi th {
+    background-color: #343a40;
+    color: #fff;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+}
+
+form input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background-color: #d32f2f;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-success:hover {
+    background-color: #45a049;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px; /* veya istediğin gibi */
+    border-radius: 8px;
+
+    /* EKLENENLER: */
+    max-height: 80vh; /* Ekranın %80 yüksekliği kadar olsun */
+    overflow-y: auto; /* İçerik fazla olursa modal içinde kaydırılsın */
+}
+/* Search Input Styling */
+.search-container {
+    margin: 15px 0;
+    padding: 0 15px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    color: #333;
+    background-color: #f8f8f8;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.search-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Table Row Height */
+#basvuruListesi tr {
+    height: 40px; /* Reduces the row height */
+}
+
+/* Buttons Styling */
+.btn {
+    padding: 6px 12px; /* Ensures the buttons are the same size */
+    font-size: 14px; /* Adjusts the font size for a consistent look */
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Success Button (Onayla) */
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+/* Danger Button (Reddet) */
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+/* Button Hover Effect */
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Button Focus Effect */
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+/* Ensure buttons have the same size */
+.btn-equal-size {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+.button-group .btn {
+    width: 48%;  /* This makes the buttons take up nearly half of the container */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* Increase modal width */
+    max-width: 1200px; /* Ensure the modal doesn't get too wide */
+    border-radius: 8px;
+}
+
+/* Table Styling */
+.uye-listesi table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.uye-listesi th, .uye-listesi td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd; /* Light border for cleaner look */
+}
+
+.uye-listesi th {
+    background-color: #343a40;
+    color: white;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Make the columns wider */
+.uye-listesi th:nth-child(1),
+.uye-listesi td:nth-child(1) {
+    width: 15%; /* Wider for Kayıt Şekli */
+}
+
+.uye-listesi th:nth-child(2),
+.uye-listesi td:nth-child(2) {
+    width: 18%; /* Wider for Başvuru Tarihi */
+}
+
+.uye-listesi th:nth-child(3),
+.uye-listesi td:nth-child(3) {
+    width: 10%; /* Wider for Öğrenci No */
+}
+
+.uye-listesi th:nth-child(4),
+.uye-listesi td:nth-child(4) {
+    width: 20%; /* Wider for Ad Soyad */
+}
+
+.uye-listesi th:nth-child(5),
+.uye-listesi td:nth-child(5) {
+    width: 12%; /* Wider for Cep Tel */
+}
+
+.uye-listesi th:nth-child(6),
+.uye-listesi td:nth-child(6) {
+    width: 12%; /* Wider for Fakülte */
+}
+
+.uye-listesi th:nth-child(7),
+.uye-listesi td:nth-child(7) {
+    width: 15%; /* Wider for Bölüm */
+}
+
+.uye-listesi th:nth-child(8),
+.uye-listesi td:nth-child(8) {
+    width: 15%; /* Wider for Üyelik Formu */
+}
+
+.uye-listesi th:nth-child(9),
+.uye-listesi td:nth-child(9) {
+    width: 12%; /* Wider for Onay Durumu */
+}
+
+.uye-listesi th:nth-child(10),
+.uye-listesi td:nth-child(10) {
+    width: 20%; /* Wider for Ayrılış Tarihi/Sebebi */
+}
+
+/* Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Close Button */
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.btn-cancel:hover {
+    background-color: #d32f2f;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar img {
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.sidebar h3 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #34495e;
+}
+
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+/* Menü */
+.menu {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.menu-item {
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+
+
+
+.menu {
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: block;
+    padding: 12px 15px;
+    color: #ecf0f1;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+.menu-item.active {
+    background-color: #3498db;
+    color: #fff;
+}
+
+
+
+/* Footer sadece content kadar geniş olsun ve sidebar'a dokunmasın */
+.footer {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    background-color: #ffffff;
+    color: #003366;
+    padding: 40px 20px 20px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    border-top: 2px solid #dce3ea;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: auto;
+    gap: 20px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-section h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #003366;
+    border-bottom: 1px solid #dce3ea;
+    padding-bottom: 5px;
+}
+
+.footer-section p {
+    margin: 5px 0;
+    color: #4a4a4a;
+    font-size: 15px;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: #7a8a99;
+    border-top: 1px solid #dce3ea;
+    padding-top: 10px;
+}
+
+.social-icons i {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #003366;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.social-icons i:hover {
+    color: #f39c12;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    border: 1px solid #dce3ea;
+    background-color: white;
+    color: #003366;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.pagination button.active {
+    background-color: #003366;
+    color: white;
+}
+
+.pagination button:hover:not(.active) {
+    background-color: #f0f0f0;
+}
+.menu li a.active {
+    color: #FFA500;
+}
+.menu li a {
+    padding-left: 10px;
+}
+.community-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+.community-card {
+    text-decoration: none;
+    color: inherit;
+}
+.card-content {
+    background-color: white;
+    border: 2px solid #003366;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.card-content:hover {
+    transform: translateY(-5px);
+}
+.card-content img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+.card-content h3 {
+    color: #003366;
+    margin: 0;
+    font-size: 18px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 20px;
+}
+.pagination a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: bold;
+}
+.pagination a:hover {
+    text-decoration: underline;
+}
+.current-page {
+    color: #003366;
+    font-weight: bold;
+}
+/* Sayfa düzeni */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Sayfa yüksekliğini en az ekran boyutunda tut */
+}
+
+.content {
+    flex: 1; /* İçeriğin geri kalan alanı kaplamasını sağlar */
+    padding-bottom: 50px; /* Footer ile çakışmaması için içerik altına boşluk ekleyin */
+}
+
+/* Footer'ı en alta sabitlemek için */
+.footer {
+    background-color: #ffffff;
+    color: #003366;
+    padding: 20px 0;
+    position:fixed;
+    width: 100%-250px;
+    bottom: 0;
+    text-align: center;
+    /* Footer'ı en alta sabitlemek için */
+    margin:0px ; /* Sayfanın alt kısmına itmek için */
+}
+
+/* Arama kutusu stilleri */
+.search-container {
+    margin: 15px 0;
+    padding: 0 15px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+/* Red Sebebi Modal Stilleri */
+#redSebebiModal .modal-content {
+    width: 40%; /* Daha küçük genişlik */
+    max-width: 500px; /* Maksimum genişlik */
+    margin: 10% auto; /* Üstten boşluk azaltıldı */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px; /* Textarea yüksekliği azaltıldı */
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* PDF Yükleme Alanı Stilleri */
+.file-upload-container {
+    margin-top: 5px;
+}
+
+.file-upload-container input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+}
+
+.file-upload-container input[type="file"]:hover {
+    background-color: #f0f0f0;
+}
+
+.current-pdf {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.current-pdf a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.current-pdf a:hover {
+    text-decoration: underline;
+}
+
+/* Dosya seçildiğinde gösterilecek stil */
+.file-selected {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Ayrılış Sebebi Input ve Button Stilleri */
+.ayrilis-sebebi-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    height: 50px;
+}
+
+.ayrilis-sebebi-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-radius: 4px;
+    width: 100%;
+}
+
+/* Ayrılış Sebebi Container Stilleri */
+.ayrilis-sebebi-container {
+    position: relative;
+    width: 100%;
+}
+
+.ayrilis-sebebi-input-group {
+    margin-top: 10px;
+}
+
+.ayrilis-sebebi-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.ayrilis-sebebi-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.button-group .btn {
+    flex: 1;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+/* Small Modal Styles */
+.small-modal {
+    width: 400px !important;
+    max-width: 90% !important;
+    margin: 15% auto !important;
+    padding: 20px !important;
+}
+
+.small-modal h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 18px;
+}
+
+.small-modal .ayrilis-sebebi-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    height: 100px;
+    min-height: 100px;
+    resize: vertical;
+    margin-bottom: 15px;
+    white-space: pre-wrap; /* Enable text wrapping */
+    word-wrap: break-word; /* Break long words if necessary */
+    overflow-wrap: break-word; /* Modern browsers support */
+}
+
+.small-modal .button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.small-modal .button-group .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+}
+
+

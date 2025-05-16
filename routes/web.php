@@ -98,3 +98,16 @@ Route::get('/formlar', function () {
         'lastPage' => 2
     ]);
 })->name('formlar');
+Route::post('/yonetici_panel', [YoneticiController::class, 'guncelle'])->name('yonetici.guncelle');
+Route::get('/denetim/panel', function () {
+    return view('denetim_panel');
+})->name('denetim.panel');
+Route::get('denetim/etkinlik', function () {
+    return view('denetim_etkinlik');
+})->name('denetim.etkinlik');
+Route::get('denetim/etkinlik', [EtkinlikController::class, 'onayBekleyenEtkinlikler'])->name('denetim.etkinlik');
+
+Route::post('/onay', [EtkinlikController::class, 'onayIslemi'])->name('onay.islemi');
+Route::get('/denetim/uye', [ToplulukController::class, 'toplulukListesi'])->name('denetim.uye');
+
+

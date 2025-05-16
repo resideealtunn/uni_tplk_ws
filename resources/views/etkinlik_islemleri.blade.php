@@ -260,7 +260,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Gelen veri:', data); // Debug için
                 const basvuruListesi = document.getElementById('basvuruListesi');
                 basvuruListesi.innerHTML = ''; // Listeyi temizle
 
