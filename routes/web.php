@@ -108,6 +108,5 @@ Route::get('denetim/etkinlik', function () {
 Route::get('denetim/etkinlik', [EtkinlikController::class, 'onayBekleyenEtkinlikler'])->name('denetim.etkinlik');
 
 Route::post('/onay', [EtkinlikController::class, 'onayIslemi'])->name('onay.islemi');
-Route::get('/denetim/uye', [ToplulukController::class, 'toplulukListesi'])->name('denetim.uye');
-
-
+Route::get('/denetim/uye', [ToplulukController::class, 'index'])->name('denetim.uye');
+Route::get('/denetim/uye/{id}', [ToplulukController::class, 'uyeListesi'])->name('topluluk.uyeler');

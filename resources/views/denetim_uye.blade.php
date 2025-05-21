@@ -14,9 +14,9 @@
 <body>
 <div class="sidebar">
     <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
-    <h2>Rektörlük</h2>
-    <h3>Ali Ataseven</h3>
-    <p>Sağlık, Kültür, Sanat</p>
+    <h2>{{session('isim')}}</h2>
+    <h3>{{session('unvan')}}</h3>
+    <p>{{session('birim')}}</p>
 
     <div class="menu">
         <a href="{{ route('denetim.panel') }}" class="menu-item">Topluluk & Web Arayüz İşlemleri</a>
@@ -38,7 +38,6 @@
                 <table class="table table-bordered table-striped align-middle text-center w-100">
                     <thead class="table-dark">
                     <tr>
-                        <th>Topluluk ID</th>
                         <th>Topluluk Adı</th>
                         <th>Logo</th>
                         <th>Üye Listesi</th>
@@ -49,70 +48,52 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Bilişim Topluluğu</td>
-                        <td><img src="{{ asset('images/logo/bilisimlogo.png') }}" alt="Logo" class="img-logo"></td> <!-- Logo burada yer alacak -->
-                        <td><button class="btn btn-primary" onclick="openUyeListesiModal()">Üye Listesi</button></td>
-                        <td><button class="btn btn-secondary" onclick="openBasvuruListeModal()">Başvurular</button></td>
-                        <td><button class="btn btn-warning" onclick="openGuncelleModal()">Güncelle</button></td>
-                        <td><button class="btn btn-success" onclick="openYeniUyeModal()">Yeni Üye</button></td>
-                        <td><button class="btn btn-danger" onclick="openSilModal()">Sil</button></td> <!-- Pass the member ID here -->
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Sağlık Topluluğu</td>
-                        <td><img src="{{ asset('images/logo/bilisimlogo.png') }}" alt="Logo" class="img-logo"></td> <!-- Logo burada yer alacak -->
-                        <td><button class="btn btn-primary" onclick="openUyeListesiModal()">Üye Listesi</button></td>
-                        <td><button class="btn btn-secondary" onclick="openBasvuruListeModal()">Başvurular</button></td>
-                        <td><button class="btn btn-warning" onclick="openGuncelleModal()">Güncelle</button></td>
-                        <td><button class="btn btn-success" onclick="openYeniUyeModal()">Yeni Üye</button></td>
-                        <td><button class="btn btn-danger" onclick="openSilModal()">Sil</button></td> <!-- Pass the member ID here -->
-                    </tr>
-
+                    @foreach ($topluluklar as $index => $topluluk)
+                        <tr>
+                            <td>{{ $topluluk->isim }}</td>
+                            <td><img src="{{ asset('images/logo/' . $topluluk->gorsel) }}" alt="Logo" class="img-logo" style="width: 50px;"></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="openUyeListesiModal({{ $topluluk->id }})">
+                                    Üye Listesi
+                                </button>
+                            </td>
+                            <td><button class="btn btn-secondary" onclick="openBasvuruListeModal({{ $topluluk->id }})">Başvurular</button></td>
+                            <td><button class="btn btn-warning" onclick="openGuncelleModal({{ $topluluk->id }})">Güncelle</button></td>
+                            <td><button class="btn btn-success" onclick="openYeniUyeModal({{ $topluluk->id }})">Yeni Üye</button></td>
+                            <td><button class="btn btn-danger" onclick="openSilModal({{ $topluluk->id }})">Sil</button></td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
-
             </div>
         </div>
-        <!-- Üyeleri Listele Modal -->
-        <div id="uyeListeModal" class="modal">
+        <div id="uyeListeModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2>Üye Listesi</h2>
-                <!-- Search Input for Öğrenci No -->
-                <div class="search-container">
-                    <input type="text" id="searchUyeNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterList('uyeListesi', 'searchUyeNo')">
-                </div>
                 <div class="uye-listesi">
                     <table>
                         <thead>
                         <tr>
-                            <th>Kayıt Şekli</th>
-                            <th>Başvuru Tarihi</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
                             <th>Cep Tel</th>
                             <th>Fakülte</th>
                             <th>Bölüm</th>
                             <th>Üyelik Formu</th>
-                            <th>Onay Durumu</th>
-                            <th>Ayrılış Tarihi/Sebebi</th>
                         </tr>
                         </thead>
                         <tbody id="uyeListesi">
-                        <!-- Üyeler JavaScript ile doldurulacak -->
+
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('uyeListeModal')">Kapat</button>
+                <button type="button" class="btn btn-cancel" onclick="document.getElementById('uyeListeModal').style.display='none'">Kapat</button>
             </div>
         </div>
 
-        <!-- Üyelik Başvuruları Modal -->
         <div id="basvuruListeModal" class="modal">
             <div class="modal-content">
                 <h2>Üyelik Başvuruları</h2>
-                <!-- Search Input for Öğrenci No -->
                 <div class="search-container">
                     <input type="text" id="searchBasvuruNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListBasvuru('basvuruListesi', 'searchBasvuruNo')">
                 </div>
@@ -132,7 +113,6 @@
                         </tr>
                         </thead>
                         <tbody id="basvuruListesi">
-                        <!-- JavaScript ile doldurulacak -->
                         </tbody>
                     </table>
                 </div>
@@ -140,7 +120,6 @@
             </div>
         </div>
 
-        <!-- Red Sebebi Modalı -->
         <div id="redSebebiModal" class="modal">
             <div class="modal-content">
                 <h2>Red Sebebi</h2>
@@ -149,17 +128,15 @@
                     <textarea id="redSebebi" class="form-control" rows="4" placeholder="Red sebebini buraya yazınız..."></textarea>
                 </div>
                 <div class="button-group">
-                    <button type="button" class="btn btn-success" onclick="redSebebiGonder()">Gönder</button>
+                    <button type="button" class="btn btn-success" >Gönder</button>
                     <button type="button" class="btn btn-cancel" onclick="closeModal('redSebebiModal')">İptal</button>
                 </div>
             </div>
         </div>
 
-        <!-- Güncelle Modalı -->
         <div id="guncelleModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Güncelleme Listesi</h2>
-                <!-- Search Input for Öğrenci No -->
                 <div class="search-container">
                     <input type="text" id="searchGuncelleNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListUpdate('guncelleUyeListesi', 'searchGuncelleNo')">
                 </div>
@@ -180,14 +157,12 @@
                         </tr>
                         </thead>
                         <tbody id="guncelleUyeListesi">
-                        <!-- JavaScript ile doldurulacak -->
                         </tbody>
                     </table>
                 </div>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('guncelleModal')">Kapat</button>
             </div>
         </div>
-        <!-- Üye Düzenleme Modalı -->
         <div id="duzenleModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Bilgilerini Düzenle</h2>
@@ -221,61 +196,29 @@
                     </div>
                     <br>
                     <div class="button-group">
-                        <button type="button" class="btn btn-success btn-equal-size" onclick="saveChanges()">Kaydet</button>
+                        <button type="button" class="btn btn-success btn-equal-size" >Kaydet</button>
                         <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('duzenleModal')">İptal</button>
                     </div>
                 </form>
             </div>
         </div>
-
-
-        <!-- Yeni Üye Ekle Modalı -->
         <div id="yeniUyeModal" class="modal">
             <div class="modal-content">
                 <h2>Yeni Üye Ekle</h2>
                 <form id="yeniUyeForm">
                     <div>
-                        <label>Kayıt Şekli:</label>
-                        <input type="text" id="yeniKayitSekli" value="denetim" readonly>
-                    </div>
-                    <div>
-                        <label>Başvuru Tarihi:</label>
-                        <input type="date" id="yeniBasvuruTarihi" readonly>
-                    </div>
-                    <div>
                         <label>Öğrenci No:</label>
                         <input type="text" id="yeniOgrNo" required>
                     </div>
-                    <div>
-                        <label>Tek Şifre:</label>
-                        <input type="text" id="yeniteksifre" required>
-                    </div>
-                    <div>
-                        <label>Ad Soyad:</label>
-                        <input type="text" id="yeniAdSoyad" required>
-                    </div>
-                    <div>
-                        <label>Cep Tel:</label>
-                        <input type="text" id="yeniCepTel" required>
-                    </div>
-                    <div>
-                        <label>Fakülte:</label>
-                        <input type="text" id="yeniFakulte" required>
-                    </div>
-                    <div>
-                        <label>Bölüm:</label>
-                        <input type="text" id="yeniBolum" required>
-                    </div>
                     <br>
                     <div class="button-group">
-                        <button type="button" class="btn btn-success btn-equal-size" onclick="saveNewUye()">Kaydet</button>
+                        <button type="button" class="btn btn-success btn-equal-size"">Kaydet</button>
                         <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('yeniUyeModal')">İptal</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Silme Modalı -->
         <div id="silModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Silme Listesi</h2>

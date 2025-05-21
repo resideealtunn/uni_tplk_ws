@@ -133,91 +133,31 @@ class ToplulukController extends Controller
             return redirect()->back()->with('danger', 'Üniversiteye Kaydınız Bulunamadı!');
         }
     }
-    public function toplulukListesi()
+    public function index()
     {
-        $topluluklar = DB::table('uyeler')
+        $topluluklar = Topluluk::all();
+        return view('denetim_uye', compact('topluluklar'));
+    }
+    public function uyeListesi($id)
+    {
+        $topluluklar = Topluluk::all();
+        $uyeler = DB::table('uyeler')
             ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
-            ->join('topluluklar', 'uyeler.top_id', '=', 'topluluklar.id')
+            ->where('uyeler.top_id', $id)
             ->select(
-                'uyeler.id as uye_id',
-                'topluluklar.id as id',
-                'ogrenci_bilgi.isim as ogrenci_isim',
-                'ogrenci_bilgi.soyisim as ogrenci_soyisim',
-                'ogrenci_bilgi.numara as ogrenci_numara',
-                'ogrenci_bilgi.tel as ogrenci_telefon',
-                'ogrenci_bilgi.bol_ad as ogrenci_bolum',
-                'ogrenci_bilgi.fak_ad as ogrenci_fak',
-                'topluluklar.isim as isim',
-                'topluluklar.gorsel as gorsel',
-                'uyeler.tarih as tarih',
+                'ogrenci_bilgi.numara as numara',
+                'ogrenci_bilgi.isim as isim',
+                'ogrenci_bilgi.soyisim as soyisim',
+                'ogrenci_bilgi.fak_ad as fak_ad',
+                'ogrenci_bilgi.bol_ad as bol_ad',
+                'ogrenci_bilgi.tel as tel',
                 'uyeler.belge as belge'
             )
             ->get();
-
-        return view('denetim_uye', compact('topluluklar'));
-    }
-    public function uyeBasvuruIslem(Request $request)
-    {
-        $uyeId = $request->input('uye_id');
-        $islem = $request->input('islem');
-
-        if ($islem == 'kabul') {
-            DB::table('uyeler')
-                ->where('id', $uyeId)
-                ->update(['durum' => '4']);
-
-            return redirect()->back()->with('success', 'Başvuru kabul edildi.');
-        }
-
-        if ($islem == 'red') {
-            DB::table('uyeler')
-                ->where('id', $uyeId)
-                ->update(['durum' => '0']);
-
-            return redirect()->back()->with('success', 'Başvuru reddedildi.');
-        }
-
-        return redirect()->back()->with('error', 'İşlem başarısız.');
-    }
-    public function getUyeler($toplulukId)
-    {
-        $uyeler = DB::table('uyeler')
-            ->where('top_id', $toplulukId)
-            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
-            ->select(
-                'uyeler.tarih',
-                'ogrenci_bilgi.numara as ogrenci_numara',
-                'ogrenci_bilgi.isim as ogrenci_isim',
-                'ogrenci_bilgi.soyisim as ogrenci_soyisim',
-                'ogrenci_bilgi.tel as ogrenci_telefon',
-                'ogrenci_bilgi.fak_ad as ogrenci_fak',
-                'ogrenci_bilgi.bol_ad as ogrenci_bolum'
-            )
-            ->get();
-
         return response()->json($uyeler);
     }
-    public function getBasvurular($toplulukId)
-    {
-        $basvurular = DB::table('uyeler')
-            ->where('top_id', $toplulukId)
-            ->where('durum', 1)
-            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
-            ->select(
-                'uyeler.id as uye_id',
-                'uyeler.tarih',
-                'ogrenci_bilgi.numara as ogrenci_numara',
-                'ogrenci_bilgi.isim as ogrenci_isim',
-                'ogrenci_bilgi.soyisim as ogrenci_soyisim',
-                'ogrenci_bilgi.tel as ogrenci_telefon',
-                'ogrenci_bilgi.fak_ad as ogrenci_fak',
-                'ogrenci_bilgi.bol_ad as ogrenci_bolum',
-                'uyeler.belge'
-            )
-            ->get();
 
-        return response()->json($basvurular);
-    }
+
 }
 
 
