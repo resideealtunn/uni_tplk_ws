@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Topluluk Denetimi</title>
     <link rel="stylesheet" href="{{ asset('css/denetim_etkinlik.css') }}">
 
@@ -74,6 +75,7 @@
                     <table>
                         <thead>
                         <tr>
+                            <th>Tarih</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
                             <th>Cep Tel</th>
@@ -101,7 +103,6 @@
                     <table>
                         <thead>
                         <tr>
-                            <th>Kayıt Şekli</th>
                             <th>Başvuru Tarihi</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
@@ -113,6 +114,7 @@
                         </tr>
                         </thead>
                         <tbody id="basvuruListesi">
+
                         </tbody>
                     </table>
                 </div>

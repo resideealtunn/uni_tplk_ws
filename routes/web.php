@@ -110,3 +110,5 @@ Route::get('denetim/etkinlik', [EtkinlikController::class, 'onayBekleyenEtkinlik
 Route::post('/onay', [EtkinlikController::class, 'onayIslemi'])->name('onay.islemi');
 Route::get('/denetim/uye', [ToplulukController::class, 'index'])->name('denetim.uye');
 Route::get('/denetim/uye/{id}', [ToplulukController::class, 'uyeListesi'])->name('topluluk.uyeler');
+Route::get('/denetim/uye/basvuru/{id}', [ToplulukController::class, 'basvuruListesi'])->name('topluluk.basvurular');
+Route::post('/denetim/uye/onayla', [ToplulukController::class, 'updateApplicationStatus'])->name('topluluk.update');

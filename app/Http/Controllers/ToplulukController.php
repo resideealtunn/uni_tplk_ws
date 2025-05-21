@@ -144,7 +144,30 @@ class ToplulukController extends Controller
         $uyeler = DB::table('uyeler')
             ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
             ->where('uyeler.top_id', $id)
+            ->where('uyeler.durum','=',1)
             ->select(
+                'uyeler.tarih as tarih',
+                'ogrenci_bilgi.numara as numara',
+                'ogrenci_bilgi.isim as isim',
+                'ogrenci_bilgi.soyisim as soyisim',
+                'ogrenci_bilgi.fak_ad as fak_ad',
+                'ogrenci_bilgi.bol_ad as bol_ad',
+                'ogrenci_bilgi.tel as tel',
+                'uyeler.belge as belge'
+            )
+            ->get();
+        return response()->json($uyeler);
+    }
+    public function basvuruListesi($id)
+    {
+        $topluluklar = Topluluk::all();
+        $uyeler = DB::table('uyeler')
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+            ->where('uyeler.top_id', $id)
+            ->where('uyeler.durum', '=', 0)
+            ->select(
+                'ogrenci_bilgi.id as id',
+                'uyeler.tarih as tarih', // 🆕 Başvuru tarihi ekledik
                 'ogrenci_bilgi.numara as numara',
                 'ogrenci_bilgi.isim as isim',
                 'ogrenci_bilgi.soyisim as soyisim',
@@ -157,6 +180,19 @@ class ToplulukController extends Controller
         return response()->json($uyeler);
     }
 
+    public function updateApplicationStatus(Request $request)
+    {
+        $id = $request->input('id'); // Gelen öğrenci numarası
+        $durum = $request->input('durum'); // Onay (1) veya Reddetme (2)
+        $affected = DB::table('uyeler')
+            ->where('ogr_id', $id)
+            ->update(['durum' => $durum]);
+        if ($affected) {
+            return response()->json(['success' => true, 'message' => 'Başvuru durumu güncellendi.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Güncelleme başarısız oldu.']);
+        }
+    }
 
 }
 
