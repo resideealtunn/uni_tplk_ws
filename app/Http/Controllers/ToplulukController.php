@@ -4,10 +4,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OgrenciBilgi;
 use App\Models\Topluluk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Uye;
+use Illuminate\Support\Facades\Log;
 
 class ToplulukController extends Controller
 {
@@ -146,6 +148,7 @@ class ToplulukController extends Controller
             ->where('uyeler.top_id', $id)
             ->where('uyeler.durum','=',1)
             ->select(
+                'uyeler.id as id',
                 'uyeler.tarih as tarih',
                 'ogrenci_bilgi.numara as numara',
                 'ogrenci_bilgi.isim as isim',
@@ -153,7 +156,8 @@ class ToplulukController extends Controller
                 'ogrenci_bilgi.fak_ad as fak_ad',
                 'ogrenci_bilgi.bol_ad as bol_ad',
                 'ogrenci_bilgi.tel as tel',
-                'uyeler.belge as belge'
+                'uyeler.belge as belge',
+                'uyeler.rol as rol'
             )
             ->get();
         return response()->json($uyeler);
@@ -167,7 +171,7 @@ class ToplulukController extends Controller
             ->where('uyeler.durum', '=', 0)
             ->select(
                 'ogrenci_bilgi.id as id',
-                'uyeler.tarih as tarih', // 🆕 Başvuru tarihi ekledik
+                'uyeler.tarih as tarih', //
                 'ogrenci_bilgi.numara as numara',
                 'ogrenci_bilgi.isim as isim',
                 'ogrenci_bilgi.soyisim as soyisim',
@@ -182,8 +186,8 @@ class ToplulukController extends Controller
 
     public function updateApplicationStatus(Request $request)
     {
-        $id = $request->input('id'); // Gelen öğrenci numarası
-        $durum = $request->input('durum'); // Onay (1) veya Reddetme (2)
+        $id = $request->input('id');
+        $durum = $request->input('durum');
         $affected = DB::table('uyeler')
             ->where('ogr_id', $id)
             ->update(['durum' => $durum]);
@@ -193,6 +197,66 @@ class ToplulukController extends Controller
             return response()->json(['success' => false, 'message' => 'Güncelleme başarısız oldu.']);
         }
     }
+    public function updateRol(Request $request)
+    {
+        $id = $request->input('id');
+        $durum = $request->input('rol');
+        $affected = DB::table('uyeler')
+            ->where('id', $id)
+            ->update(['rol' => $durum]);
+        if ($affected) {
+            return response()->json(['success' => true, 'message' => 'Rol durumu güncellendi.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Güncelleme başarısız oldu.']);
+        }
+    }
+    public function yeniUyeEkle(Request $request)
+    {
+        $ogrno = $request->post('ogrno');
+        //Log::info('ogr',$ogrno);
+        $toplulukId = $request->input('topluluk_id');
+        $belge = $request->file('belge');
+        //Log::info('geldim');
+        $ogrenci    = OgrenciBilgi::where('numara', $ogrno);
+       // $ogrenci = DB::table('ogrenci_bilgi')->where('numara', $ogrno)->first();
+        //Log::info('gördüm', $ogrenci);
+
+        if ($ogrenci->count() > 0) {
+
+            $ogrenci_detay = $ogrenci->first();
+
+            $uyeVarMi   = Uye::where('ogr_id', $ogrenci_detay["id"])
+                ->where('top_id', $toplulukId);
+            if ($uyeVarMi->count() > 0) {
+                return response()->json(['success' => true, 'message' => 'Üye Kaydedildi güncellendi.']);
+            } else {
+                $tcKimlik = $ogrenci_detay["tc"];
+                $timestamp = now()->format('Ymd_His');
+                $gun = now()->format('Ymd');
+                $fileName = $tcKimlik.'_'.$timestamp.'_'.$belge->getClientOriginalExtension();
+                $belge->move(public_path('docs/kayit_belge'), $fileName);
+                $uyeClass = new Uye();
+                $uyeClass->ogr_id   = $ogrenci_detay["id"];
+                $uyeClass->top_id   = $toplulukId;
+                $uyeClass->belge   = $fileName;
+                $uyeClass->tarih   = $gun;
+                $uyeClass->rol   = 1;
+                $save_uye   = $uyeClass->save();
+                if ($save_uye) {
+                    return response()->json(['success' => true, 'message' => 'Üye kaydedildi.']);
+                } else {
+                    return response()->json(['danger' => true, 'message' => 'Üye kaydedilemedi.']);
+                }
+
+            }
+        }
+        else
+        {
+            return response()->json(['danger' => true, 'message' => 'öğrenci bulunamadı']);
+        }
+    }
+
+
 
 }
 

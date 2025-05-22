@@ -32,7 +32,16 @@
 <div class="content" id="web">
     <div class="form-container">
         <h2>Üye Denetim İşlemleri</h2>
-
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('danger'))
+            <div class="alert alert-danger">
+                {{ session('danger') }}
+            </div>
+        @endif
         <div class="info-section mb-4">
             <h3>Topluluklar </h3>
             <div class="table-responsive">
@@ -121,21 +130,6 @@
                 <button type="button" class="btn btn-cancel" onclick="closeModal('basvuruListeModal')">Kapat</button>
             </div>
         </div>
-
-        <div id="redSebebiModal" class="modal">
-            <div class="modal-content">
-                <h2>Red Sebebi</h2>
-                <div class="form-group">
-                    <label for="redSebebi">Red Sebebini Giriniz:</label>
-                    <textarea id="redSebebi" class="form-control" rows="4" placeholder="Red sebebini buraya yazınız..."></textarea>
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-success" >Gönder</button>
-                    <button type="button" class="btn btn-cancel" onclick="closeModal('redSebebiModal')">İptal</button>
-                </div>
-            </div>
-        </div>
-
         <div id="guncelleModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Güncelleme Listesi</h2>
@@ -146,8 +140,6 @@
                     <table>
                         <thead>
                         <tr>
-                            <th>Üyelik Türü</th>
-                            <th>Kayıt Şekli</th>
                             <th>Başvuru Tarihi</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
@@ -155,6 +147,8 @@
                             <th>Fakülte</th>
                             <th>Bölüm</th>
                             <th>Üyelik Formu</th>
+                            <th>Üyelik Türü</th>
+                            <th>Yeni Rol</th>
                             <th>İşlem</th>
                         </tr>
                         </thead>
@@ -165,66 +159,28 @@
                 <button type="button" class="btn btn-cancel" onclick="closeModal('guncelleModal')">Kapat</button>
             </div>
         </div>
-        <div id="duzenleModal" class="modal">
-            <div class="modal-content">
-                <h2>Üye Bilgilerini Düzenle</h2>
-                <form id="duzenleForm">
-                    <div>
-                        <label>Öğrenci No</label>
-                        <input type="text" id="editOgrenciNo" pattern="[0-9]*" inputmode="numeric" onkeypress="return onlyNumbers(event)" required>
-                    </div>
-                    <div>
-                        <label>Ad Soyad</label>
-                        <input type="text" id="editAdSoyad" required>
-                    </div>
-                    <div>
-                        <label>Cep Tel</label>
-                        <input type="text" id="editCepTel" pattern="[0-9]*" inputmode="numeric" onkeypress="return onlyNumbers(event)" maxlength="11" required>
-                    </div>
-                    <div>
-                        <label>Fakülte</label>
-                        <input type="text" id="editFakulte" required>
-                    </div>
-                    <div>
-                        <label>Bölüm</label>
-                        <input type="text" id="editBolum" required>
-                    </div>
-                    <div>
-                        <label>Üyelik Formu</label>
-                        <div class="file-upload-container">
-                            <input type="file" id="editUyeFormu" accept=".pdf" onchange="validatePDF(this)" required>
-                            <div id="currentPdf" class="current-pdf"></div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="button-group">
-                        <button type="button" class="btn btn-success btn-equal-size" >Kaydet</button>
-                        <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('duzenleModal')">İptal</button>
-                    </div>
-                </form>
-            </div>
-        </div>
         <div id="yeniUyeModal" class="modal">
             <div class="modal-content">
                 <h2>Yeni Üye Ekle</h2>
                 <form id="yeniUyeForm">
+                    @csrf
                     <div>
                         <label>Öğrenci No:</label>
-                        <input type="text" id="yeniOgrNo" required>
+                        <input type="text" id="yeniOgrNo" name="ogrno" required>
+                        <label>Üyelik Belgesi:</label>
+                        <input type="file" id="belge" name="belge" required>
                     </div>
                     <br>
                     <div class="button-group">
-                        <button type="button" class="btn btn-success btn-equal-size"">Kaydet</button>
+                        <button id="kaydetButton" type="submit" class="btn btn-success btn-equal-size">Kaydet</button>
                         <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('yeniUyeModal')">İptal</button>
                     </div>
                 </form>
             </div>
         </div>
-
         <div id="silModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Silme Listesi</h2>
-                <!-- Search Input for Öğrenci No -->
                 <div class="search-container">
                     <input type="text" id="searchSilNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListDelete('silListesi', 'searchSilNo')">
                 </div>
@@ -241,17 +197,15 @@
                             <th>Bölüm</th>
                             <th>Üyelik Formu</th>
                             <th>Onay Durumu</th>
-                            <th>Ayrılış Sebebi</th> <!-- Change here -->
+                            <th>Ayrılış Sebebi</th>
                             <th>İşlem</th>
                         </tr>
                         </thead>
                         <tbody id="silListesi">
-                        <!-- Üyeler JavaScript ile doldurulacak -->
+
                         </tbody>
                     </table>
                 </div>
-                <!-- Add combobox for Exit Reason -->
-
                 <button type="button" class="btn btn-cancel" onclick="closeModal('silModal')">Kapat</button>
             </div>
         </div>

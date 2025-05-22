@@ -112,3 +112,6 @@ Route::get('/denetim/uye', [ToplulukController::class, 'index'])->name('denetim.
 Route::get('/denetim/uye/{id}', [ToplulukController::class, 'uyeListesi'])->name('topluluk.uyeler');
 Route::get('/denetim/uye/basvuru/{id}', [ToplulukController::class, 'basvuruListesi'])->name('topluluk.basvurular');
 Route::post('/denetim/uye/onayla', [ToplulukController::class, 'updateApplicationStatus'])->name('topluluk.update');
+Route::post('/denetim/uye/rol', [ToplulukController::class, 'updateRol'])->name('rol.update');
+
+Route::post('/denetim/uye/ekle', [ToplulukController::class, 'yeniUyeEkle'])->name('uye.ekle');
