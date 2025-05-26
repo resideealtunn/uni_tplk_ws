@@ -84,6 +84,9 @@
                     </a>
 
                     <div class="text-center">,
+                        <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
+                        <br/>
+                        <input type="hidden" class="g-recaptcha" name="">
                         <input type="hidden" value="{{ $topluluk->id }}" name="topluluk">
                         <button type="submit" class="btn btn-primary">Topluluğa Üye Ol</button>
                     </div>
@@ -128,7 +131,12 @@
             </div>
         </div>
     </footer>
-
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        document.getElementById("demo-form").submit();
+    }
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/tplk_uyeislemleri.js') }}"></script>
 </body>

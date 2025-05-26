@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Uye;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class ToplulukController extends Controller
 {
@@ -35,8 +36,13 @@ class ToplulukController extends Controller
     }
     public function kayitol(Request $request)
     {
+        $response = $request->input('g-recaptcha-response');
+        $secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $response;
+        $recaptchaResponse = Http::asForm()->post($url);
+        $recaptcha = $recaptchaResponse->json();
+        if ($recaptcha["success"]) {
         $curl = curl_init();
-
         $tc = $request->input('tc');
         $sifre = $request->input('sifre');
         $jsonVerisi = [
@@ -65,7 +71,7 @@ class ToplulukController extends Controller
         if($data["Durum"]) {
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo=' . "123",
+                CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo=' . $tc,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -78,7 +84,6 @@ class ToplulukController extends Controller
                 ),
             ));
             $response = curl_exec($curl);
-            @dd($response);
             curl_close($curl);
             $data = json_decode($response, true);
             $yeniTarih = \Carbon\Carbon::createFromFormat('d.m.Y', $data[0]["KAY_TAR"])->format('Y-m-d');
@@ -134,6 +139,11 @@ class ToplulukController extends Controller
         else
         {
             return redirect()->back()->with('danger', 'Üniversiteye Kaydınız Bulunamadı!');
+        }
+        }
+        else
+        {
+            return redirect()->back()->with('danger', 'Lütfen Doğrulamayı Yapın!');
         }
     }
     public function index()
@@ -291,33 +301,43 @@ class ToplulukController extends Controller
     }
     public function Iletisim(Request $request)
     {
-        $id = $request->input('id');
-        $isim = $request->input('name');
-        $email = $request->input('email');
-        $mesaj = $request->input('message');
+        $response = $request->input('g-recaptcha-response');
+        $secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $response;
+        $recaptchaResponse = Http::asForm()->post($url);
+        $recaptcha = $recaptchaResponse->json();
+        if ($recaptcha["success"]) {
+            $id = $request->input('id');
+            $isim = $request->input('name');
+            $email = $request->input('email');
+            $mesaj = $request->input('message');
 
-        $yonetici = DB::table('uyeler')
-            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
-            ->where('top_id', '=', $id)
-            ->where('rol', '=', 2)
-            ->where('uyeler.durum', '=', 1)
-            ->pluck('eposta');
-        $emailAdresleri = $yonetici[0];
-        if (empty($emailAdresleri)) {
-            return back()->with('error', 'Topluluk yöneticileri bulunamadı veya e-posta adresi eksik.');
+            $yonetici = DB::table('uyeler')
+                ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+                ->where('top_id', '=', $id)
+                ->where('rol', '=', 2)
+                ->where('uyeler.durum', '=', 1)
+                ->pluck('eposta');
+            $emailAdresleri = $yonetici[0];
+            if (empty($emailAdresleri)) {
+                return back()->with('error', 'Topluluk yöneticileri bulunamadı veya e-posta adresi eksik.');
+            }
+            $emailData = [
+                'isim' => $isim,
+                'email' => $email,
+                'mesaj' => $mesaj
+            ];
+
+            Mail::send('email', $emailData, function ($message) use ($emailAdresleri) {
+                $message->to($emailAdresleri)
+                    ->subject("Yeni Geri Bildirim");
+            });
+
+            return back()->with('success', 'Geri bildiriminiz başarıyla gönderildi.');
         }
-        $emailData = [
-            'isim' => $isim,
-            'email' => $email,
-            'mesaj' => $mesaj
-        ];
-
-        Mail::send('email', $emailData, function ($message) use ($emailAdresleri) {
-            $message->to($emailAdresleri)
-                ->subject("Yeni Geri Bildirim");
-        });
-
-        return back()->with('success', 'Geri bildiriminiz başarıyla gönderildi.');
+        else{
+            return back()->with('danger', 'Lütfen Doğrulamayı yapın.');
+        }
     }
 
 }

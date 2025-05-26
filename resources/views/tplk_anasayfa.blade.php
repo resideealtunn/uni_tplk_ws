@@ -112,10 +112,12 @@
                     <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                 </div>
                 <input type="hidden" value="{{$topluluk->id}}" name="id">
+                <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
+                <br/>
+                <input type="hidden" class="g-recaptcha" name="">
                 <div class="text-center">
                     <button type="submit" class="btn btn-submit">Geri Bildirim Gönder</button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -157,7 +159,12 @@
         </div>
     </div>
 </footer>
-
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        document.getElementById("demo-form").submit();
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/tplk_anasayfa.js') }}"></script>
 </body>

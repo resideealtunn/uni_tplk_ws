@@ -195,6 +195,9 @@ class YoneticiController extends Controller
             }
         }
     }
+        else{
+            return redirect()->back()->with('danger', 'Üniversiteye Kaydınız Bulunamadı!');
+        }
     }
     public function yoneticiPanel()
     {

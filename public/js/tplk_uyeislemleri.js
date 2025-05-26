@@ -30,12 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 return;
             }
-
-            if (membershipForm.type !== 'application/pdf') {
-                alert('Lütfen sadece PDF formatında dosya yükleyiniz.');
-                e.preventDefault();
-                return;
-            }
         });
     }
 });
