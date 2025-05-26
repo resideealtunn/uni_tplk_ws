@@ -184,21 +184,54 @@ function openYeniUyeModal(toplulukId) {
     });
 }
 
-function openSilModal() {
+function openSilModal(toplulukId) {
     document.getElementById("silModal").style.display = "block";
-}
 
-// Modal kapatma fonksiyonu
+    fetch(`/denetim/uye/sil/${toplulukId}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("silListesi");
+            tbody.innerHTML = "";
+
+            data.forEach(uye => {
+                const belgeURL = `docs/kayit_belge/${uye.belge}`;
+                const row = `<tr>
+                    <td>${uye.tarih ?? 'Bilinmiyor'}</td>
+                    <td>${uye.numara}</td>
+                    <td>${uye.isim} ${uye.soyisim}</td>
+                    <td>${uye.tel}</td>
+                    <td>${uye.fakulte}</td>
+                    <td>${uye.bolum}</td>
+                    <td><a href="${belgeURL}" target="_blank">İndir</a></td>
+                    <td>
+                        <button onclick="deleteUye(${uye.id})" class="btn btn-danger">Sil</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Üye listesi çekme hatası:", error));
+}
+function deleteUye(uyeId) {
+    fetch(`/denetim/uye/sil`, {
+        method: "POST", // 🟢 GET yerine POST
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+        },
+        body: JSON.stringify({ id: uyeId, durum: 2 })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Üye başarıyla Silindi!");
+                location.reload();
+            } else {
+                alert("Hata: " + data.message);
+            }
+        })
+        .catch(error => console.error("Silme hatası:", error));
+}
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-}
-
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-
-    function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }

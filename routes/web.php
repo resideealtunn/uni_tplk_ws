@@ -115,3 +115,6 @@ Route::post('/denetim/uye/onayla', [ToplulukController::class, 'updateApplicatio
 Route::post('/denetim/uye/rol', [ToplulukController::class, 'updateRol'])->name('rol.update');
 
 Route::post('/denetim/uye/ekle', [ToplulukController::class, 'yeniUyeEkle'])->name('uye.ekle');
+Route::get('/denetim/uye/sil/{id}', [ToplulukController::class, 'getSilinecekUyeler'])->name('uye.sil');
+Route::post('/denetim/uye/sil', [ToplulukController::class, 'deleteUye'])->name('uye.delete');
+

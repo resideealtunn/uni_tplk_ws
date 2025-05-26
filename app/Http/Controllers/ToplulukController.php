@@ -213,18 +213,11 @@ class ToplulukController extends Controller
     public function yeniUyeEkle(Request $request)
     {
         $ogrno = $request->post('ogrno');
-        //Log::info('ogr',$ogrno);
         $toplulukId = $request->input('topluluk_id');
         $belge = $request->file('belge');
-        //Log::info('geldim');
         $ogrenci    = OgrenciBilgi::where('numara', $ogrno);
-       // $ogrenci = DB::table('ogrenci_bilgi')->where('numara', $ogrno)->first();
-        //Log::info('gördüm', $ogrenci);
-
         if ($ogrenci->count() > 0) {
-
             $ogrenci_detay = $ogrenci->first();
-
             $uyeVarMi   = Uye::where('ogr_id', $ogrenci_detay["id"])
                 ->where('top_id', $toplulukId);
             if ($uyeVarMi->count() > 0) {
@@ -255,9 +248,46 @@ class ToplulukController extends Controller
             return response()->json(['danger' => true, 'message' => 'öğrenci bulunamadı']);
         }
     }
+    public function getSilinecekUyeler($toplulukId)
+    {
+        $uyeler = DB::table('uyeler')
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+            ->select(
+                'uyeler.id',
+                'uyeler.tarih as tarih',
+                'ogrenci_bilgi.numara as numara',
+                'ogrenci_bilgi.isim as isim',
+                'ogrenci_bilgi.soyisim as soyisim',
+                'ogrenci_bilgi.tel',
+                'ogrenci_bilgi.fak_ad as fakulte',
+                'ogrenci_bilgi.bol_ad as bolum',
+                'uyeler.belge'
+            )
+            ->where('uyeler.top_id', $toplulukId)
+            ->where('uyeler.durum', 1)
+            ->get();
 
+        return response()->json($uyeler);
+    }
+    public function deleteUye(Request $request)
+    {
+        $uyeId = $request->input('id');
+        $yeniDurum = $request->input('durum');
+        Log::info('Gelen Request:', $request->all());
+        $uye = DB::table('uyeler')->where('id', $uyeId)->first();
+        if (!$uye) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Üye bulunamadı.'
+            ], 404);
+        }
+        DB::table('uyeler')->where('id', $uyeId)->update(['durum' => $yeniDurum]);
 
-
+        return response()->json([
+            'success' => true,
+            'message' => 'Üyenin durumu başarıyla güncellendi.'
+        ], 200);
+    }
 }
 
 

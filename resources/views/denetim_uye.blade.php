@@ -188,7 +188,6 @@
                     <table>
                         <thead>
                         <tr>
-                            <th>Kayıt Şekli</th>
                             <th>Başvuru Tarihi</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
@@ -196,8 +195,6 @@
                             <th>Fakülte</th>
                             <th>Bölüm</th>
                             <th>Üyelik Formu</th>
-                            <th>Onay Durumu</th>
-                            <th>Ayrılış Sebebi</th>
                             <th>İşlem</th>
                         </tr>
                         </thead>
@@ -209,10 +206,6 @@
                 <button type="button" class="btn btn-cancel" onclick="closeModal('silModal')">Kapat</button>
             </div>
         </div>
-
-
-
-        <!-- Footer -->
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-section">
