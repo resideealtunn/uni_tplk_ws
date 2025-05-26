@@ -11,7 +11,7 @@
 <body>
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">
             <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
         </a>
 
@@ -38,15 +38,23 @@
                 </li>
             </ul>
 
-            <!-- NEU Logo -->
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{route('kesfet')}}">
                 <img src="{{ asset('images/logo/neu_logo.png') }}" >
             </a>
         </div>
     </div>
 </nav>
-
-<section class="hero-section">
+@if(session('success'))
+    <div class="alert alert-success" style="text-align:center">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('danger'))
+    <div class="alert alert-danger" ali>
+        {{ session('danger') }}
+    </div>
+@endif
+<section class="hero-section" style="background-image: url('{{ asset('images/arkaplan/'.$topluluk->bg) }}');">
     <div class="hero-content">
         <h1 class="hero-title">{{ $topluluk->isim }}</h1>
         <p class="hero-subtitle">{{$topluluk->slogan}}</p>
@@ -57,7 +65,9 @@
     <div class="container">
         <h2 class="section-title">Vizyonumuz ve Misyonumuz</h2>
         <div class="row">
+
             <div class="col-md-6 mb-4">
+
                 <div class="card vision-card p-4">
                     <div class="text-center">
                         <i class="fas fa-eye card-icon"></i>
@@ -87,7 +97,7 @@
     <div class="container">
         <h2 class="section-title">İletişim</h2>
         <div class="contact-form">
-            <form action="" method="POST">
+            <form action="{{route('iletisim')}}" method="post">
                 @csrf
                 <div class="mb-3">
                     <label for="name" class="form-label">Ad Soyad</label>
@@ -101,9 +111,11 @@
                     <label for="message" class="form-label">Mesajınız</label>
                     <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                 </div>
+                <input type="hidden" value="{{$topluluk->id}}" name="id">
                 <div class="text-center">
                     <button type="submit" class="btn btn-submit">Geri Bildirim Gönder</button>
                 </div>
+
             </form>
         </div>
     </div>

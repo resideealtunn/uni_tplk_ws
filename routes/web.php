@@ -58,6 +58,8 @@ Route::get('etkinlikler', function () {
 })->name('etkinlikler');
 
 Route::get('/topluluklar/{isim}/{id}', [ToplulukController::class, 'show'])->name('topluluk_anasayfa');
+Route::post('/topluluklar/iletisim', [ToplulukController::class, 'Iletisim'])->name('iletisim');
+
 Route::get('/etkinlikler/{topluluk_isim}/{topluluk_id}', [EtkinlikController::class, 'show'])->name('etkinlikler');
 
 Route::get('/uyeislemleri/{isim}/{id}', [ToplulukController::class, 'uyeIslemleri'])->name('uyeislemleri');
@@ -117,4 +119,3 @@ Route::post('/denetim/uye/rol', [ToplulukController::class, 'updateRol'])->name(
 Route::post('/denetim/uye/ekle', [ToplulukController::class, 'yeniUyeEkle'])->name('uye.ekle');
 Route::get('/denetim/uye/sil/{id}', [ToplulukController::class, 'getSilinecekUyeler'])->name('uye.sil');
 Route::post('/denetim/uye/sil', [ToplulukController::class, 'deleteUye'])->name('uye.delete');
-

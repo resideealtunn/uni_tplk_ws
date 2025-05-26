@@ -17,7 +17,6 @@
     color: #007bff;
 }
 .hero-section {
-    background-image: url("../images/background_panel.png");
     background-size: cover;
     background-position: center;
     height: 100vh;

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Uye;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ToplulukController extends Controller
 {
@@ -288,6 +289,37 @@ class ToplulukController extends Controller
             'message' => 'Üyenin durumu başarıyla güncellendi.'
         ], 200);
     }
+    public function Iletisim(Request $request)
+    {
+        $id = $request->input('id');
+        $isim = $request->input('name');
+        $email = $request->input('email');
+        $mesaj = $request->input('message');
+
+        $yonetici = DB::table('uyeler')
+            ->join('ogrenci_bilgi', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+            ->where('top_id', '=', $id)
+            ->where('rol', '=', 2)
+            ->where('uyeler.durum', '=', 1)
+            ->pluck('eposta');
+        $emailAdresleri = $yonetici[0];
+        if (empty($emailAdresleri)) {
+            return back()->with('error', 'Topluluk yöneticileri bulunamadı veya e-posta adresi eksik.');
+        }
+        $emailData = [
+            'isim' => $isim,
+            'email' => $email,
+            'mesaj' => $mesaj
+        ];
+
+        Mail::send('email', $emailData, function ($message) use ($emailAdresleri) {
+            $message->to($emailAdresleri)
+                ->subject("Yeni Geri Bildirim");
+        });
+
+        return back()->with('success', 'Geri bildiriminiz başarıyla gönderildi.');
+    }
+
 }
 
 
