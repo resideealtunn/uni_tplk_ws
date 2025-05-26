@@ -4,10 +4,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Etkinlik_bilgi;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+
 class YoneticiController extends Controller
 {
     public function giris(Request $request)
     {
+        $response = $request->input('g-recaptcha-response');
+        $secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
+        $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $response;
+        $recaptchaResponse = Http::asForm()->post($url);
+        $recaptcha = $recaptchaResponse->json();
+        if ($recaptcha["success"]) {
         $curl = curl_init();
         $tc = $request->input('tc');
         $sifre = $request->input('sifre');
@@ -64,12 +72,50 @@ class YoneticiController extends Controller
                     'rol' => $rol->rol
                 ]);
                 return redirect()->route('yonetici.panel');
-            }
-            else{
+            } else {
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo=' . $tc,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $data = json_decode($response, true);
+                if ($data) {
+                    DB::table('ogrenci_bilgi')->insert([
+                        'isim' => $data[0]['AD'],
+                        'soyisim' => $data[0]['SOYAD'],
+                        'tc' => $request->tc,
+                        'numara' => $data[0]['OGR_NO'],
+                        'fak_ad' => $data[0]['FAK_AD'],
+                        'bol_ad' => $data[0]['BOL_AD'],
+                        'prog_ad' => $data[0]['PROG_AD'],
+                        'sınıf' => $data[0]['SINIF'],
+                        'kay_tar' => date("Y-m-d", strtotime(str_replace('.', '-', $data[0]['KAY_TAR']))),
+                        'ogrenim_durum' => $data[0]['OGRENIM_DURUM'],
+                        'ogrenim_tip' => $data[0]['OGRENIM_TIP'],
+                        'ayr_tar' => $data[0]['AYR_TAR'],
+                        'tel' => $data[0]['TELEFON'],
+                        'tel2' => $data[0]['TELEFON2'],
+                        'eposta' => $data[0]['EPOSTA1'],
+                        'eposta2' => $data[0]['EPOSTA2'],
+                        'program_tip' => $data[0]['PROGRAM_TIP'],
+                        'durum' => $data[0]['DURUM'],
+                    ]);
+                }
                 return redirect()->route('kesfet');
             }
-        }
-        else {
+        } else {
             $jsonVerisi = [
                 "Tip" => "personel",
                 "TcKn" => $tc,
@@ -105,13 +151,11 @@ class YoneticiController extends Controller
                         'birim' => $personel->birim
                     ]);
                     return redirect()->route('denetim.panel');
-                }
-                else
-                {
+                } else {
                     $curl = curl_init();
 
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getPersonelBilgi?tc='.$request->tc,
+                        CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getPersonelBilgi?tc=' . $request->tc,
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => '',
                         CURLOPT_MAXREDIRS => 10,
@@ -127,9 +171,9 @@ class YoneticiController extends Controller
                     $response = curl_exec($curl);
                     curl_close($curl);
                     $data = json_decode($response, true);
-                    if($data){
+                    if ($data) {
                         DB::table('personel')->insert([
-                            'isim' => $data['personelAd'].' '.$data['personelSoyad'],
+                            'isim' => $data['personelAd'] . ' ' . $data['personelSoyad'],
                             'tc' => $request->tc,
                             'unvan' => $data['personelUnvan'],
                             'birim' => $data['personelBirim']
@@ -146,12 +190,11 @@ class YoneticiController extends Controller
                         return redirect()->route('denetim.panel');
                     }
                 }
-            }
-            else{
+            } else {
                 return redirect()->route('kesfet');
             }
         }
-
+    }
     }
     public function yoneticiPanel()
     {

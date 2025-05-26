@@ -1,40 +1,36 @@
-document.querySelectorAll('.event-card').forEach(card => {
-    card.addEventListener('click', function () {
-        const imgSrc = this.querySelector('img').getAttribute('src');
-        const title = this.querySelector('h3').innerText;
-        const community = this.querySelectorAll('p')[0].innerText;
-        const shortDesc = this.querySelectorAll('p')[1].innerText;
+function openEventModal(item) {
+    document.getElementById("modalImage").src = `/images/etkinlik/${item.eb_gorsel}`;
+    document.getElementById("modalTitle").innerText = item.eb_isim;
+    document.getElementById("modalCommunity").innerText = item.t_isim;
+    document.getElementById("modalShortDesc").innerText = item.eb_bilgi;
+    document.getElementById("modalLongDesc").innerText = item.eb_metin;
 
-        // Modal bilgilerini doldur
-        document.getElementById('modalImage').src = imgSrc;
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalCommunity').innerText = community;
-        document.getElementById('modalShortDesc').innerText = shortDesc;
+    document.getElementById("eventModal").style.display = "block";
+}
 
-        // Modal aç
-        document.getElementById('eventModal').style.display = 'block';
-    });
+document.getElementById("closeModal").addEventListener("click", function () {
+    document.getElementById("eventModal").style.display = "none";
+});
+
+window.addEventListener("click", function (event) {
+    if (event.target === document.getElementById("eventModal")) {
+        document.getElementById("eventModal").style.display = "none";
+    }
 });
 
 // Modal kapatma işlemi
 document.getElementById('closeModal').addEventListener('click', function () {
     document.getElementById('eventModal').style.display = 'none';
 });
-// Modal ve içerik seçimi
 const modal = document.querySelector('.event-modal');
 const modalContent = document.querySelector('.modal-content');
 const closeBtn = document.querySelector('.close-btn');
-
-// Modal kapatıcı fonksiyon
 function closeModal() {
     modal.style.display = 'none';
     document.body.classList.remove('modal-open');
 }
-
-// Çarpıya tıklayınca kapat
 closeBtn.addEventListener('click', closeModal);
 
-// Modal dışında bir yere tıklayınca kapat
 modal.addEventListener('click', function(e) {
     if (!modalContent.contains(e.target)) {
         closeModal();

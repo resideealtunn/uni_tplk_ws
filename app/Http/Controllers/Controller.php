@@ -40,7 +40,9 @@ class Controller extends BaseController
     {
         $kesfet = DB::table('topluluklar')
             ->join('etkinlik_bilgi', 'etkinlik_bilgi.t_id', '=', 'topluluklar.id')
+            ->join('etkinlik_onay', 'etkinlik_bilgi.id', '=', 'etkinlik_onay.e_id')
             ->where('etkinlik_bilgi.b_durum', '=', '1')
+            ->where('etkinlik_onay.onay', '=', '1')
             ->orderBy('etkinlik_bilgi.tarih', 'desc')
             ->select(
                 'etkinlik_bilgi.id as eb_id',
@@ -53,7 +55,7 @@ class Controller extends BaseController
             )
             ->get();
 
-        return view('kesfet', compact('kesfet')); // DİKKAT: değişken adı "kesfet"
+        return view('kesfet', compact('kesfet'));
     }
 
 }

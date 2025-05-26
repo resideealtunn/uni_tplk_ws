@@ -47,7 +47,7 @@
     <div class="content">
         <div id="contentArea" class="explore-grid">
             @foreach ($kesfet as $item)
-                <div class="event-card">
+                <div class="event-card" onclick="openEventModal({{ json_encode($item) }})">
                     <img src="{{ asset('images/etkinlik/'.$item->eb_gorsel) }}" alt="Etkinlik Görseli">
                     <div class="event-details">
                         <h3>{{ $item->eb_isim }}</h3>
@@ -56,6 +56,23 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="event-modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <img id="modalImage" src="" alt="Etkinlik Detayı" style="width:500px; height: 500px; border-radius: 10px;">
+            </div>
+            <div class="modal-right">
+                <h3 id="modalTitle"></h3>
+                <p id="modalCommunity"></p>
+                <p id="modalShortDesc"></p>
+                <p id="modalLongDesc"></p>
+                <button class="apply-btn" id="applyBtn">Başvur</button>
+            </div>
+            <button class="close-btn" id="closeModal"></button>
         </div>
     </div>
 </div>
@@ -87,23 +104,6 @@
         © 2022 Necmettin Erbakan Üniversitesi
     </div>
 </footer>
-
-<!-- Modal -->
-<div class="event-modal" id="eventModal">
-    <div class="modal-content">
-        <div class="modal-left">
-            <img id="modalImage" src="" alt="Etkinlik Detayı" style="width:500px; height: 500px; border-radius: 10px;">
-        </div>
-        <div class="modal-right">
-            <h3 id="modalTitle"></h3>
-            <p id="modalCommunity"></p>
-            <p id="modalShortDesc"></p>
-            <p id="modalLongDesc"></p>
-            <button class="apply-btn" id="applyBtn">Başvur</button>
-        </div>
-        <button class="close-btn" id="closeModal">&times;</button>
-    </div>
-</div>
 
 <script src="{{ asset('js/js_kesfet.js') }}"></script>
 <script>

@@ -23,9 +23,19 @@
                 <label for="sifre">Şifre</label>
                 <input type="password" id="sifre" name="sifre" required>
             </div>
+                <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
+                <br/>
+            <input type="hidden" class="g-recaptcha" name="">
             <button type="submit" class="login-button">Giriş Yap</button>
         </form>
     </div>
 </div>
 </body>
 </html>
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        document.getElementById("demo-form").submit();
+    }
+</script>
+
