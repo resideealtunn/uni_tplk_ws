@@ -98,8 +98,8 @@
             <div class="form-list">
                 @foreach($forms as $form)
                 <div class="form-item">
-                    <a href="#">
-                        <span>{{ $form['name'] }}</span>
+                    <a href="{{asset('docs/formlar/'.$form->dosya)}}" target="_blank">
+                        <span>{{ $form->isim }}</span>
                         <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

@@ -165,7 +165,7 @@
                 <form id="yeniUyeForm">
                     @csrf
                     <div>
-                        <label>Öğrenci No:</label>
+                        <label>TCK No:</label>
                         <input type="text" id="yeniOgrNo" name="ogrno" required>
                         <label>Üyelik Belgesi:</label>
                         <input type="file" id="belge" name="belge" required>

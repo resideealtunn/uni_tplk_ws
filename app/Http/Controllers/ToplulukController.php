@@ -223,21 +223,22 @@ class ToplulukController extends Controller
     }
     public function yeniUyeEkle(Request $request)
     {
-        $ogrno = $request->post('ogrno');
+        $tc = $request->post('ogrno');
         $toplulukId = $request->input('topluluk_id');
         $belge = $request->file('belge');
-        $ogrenci    = OgrenciBilgi::where('numara', $ogrno);
+        $ogrenci    = OgrenciBilgi::where('tc', $tc);
         if ($ogrenci->count() > 0) {
             $ogrenci_detay = $ogrenci->first();
             $uyeVarMi   = Uye::where('ogr_id', $ogrenci_detay["id"])
                 ->where('top_id', $toplulukId);
             if ($uyeVarMi->count() > 0) {
                 return response()->json(['success' => true, 'message' => 'Üye Kaydedildi güncellendi.']);
-            } else {
+            }
+            else {
                 $tcKimlik = $ogrenci_detay["tc"];
                 $timestamp = now()->format('Ymd_His');
                 $gun = now()->format('Ymd');
-                $fileName = $tcKimlik.'_'.$timestamp.'_'.$belge->getClientOriginalExtension();
+                $fileName = $tcKimlik.'_'.$timestamp.'.'.$belge->getClientOriginalExtension();
                 $belge->move(public_path('docs/kayit_belge'), $fileName);
                 $uyeClass = new Uye();
                 $uyeClass->ogr_id   = $ogrenci_detay["id"];
@@ -256,7 +257,64 @@ class ToplulukController extends Controller
         }
         else
         {
-            return response()->json(['danger' => true, 'message' => 'öğrenci bulunamadı']);
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo=' . $tc,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $data = json_decode($response, true);
+            $yeniTarih = \Carbon\Carbon::createFromFormat('d.m.Y', $data[0]["KAY_TAR"])->format('Y-m-d');
+            $id = DB::table('ogrenci_bilgi')->insertGetId([
+                    'numara' => $data[0]["OGR_NO"],
+                    'tc' => $data[0]["TCK"],
+                    'isim' => $data[0]["AD"],
+                    'soyisim' => $data[0]["SOYAD"],
+                    'fak_ad' => $data[0]["FAK_AD"],
+                    'bol_ad' => $data[0]["BOL_AD"],
+                    'prog_ad' => $data[0]["PROG_AD"],
+                    'sınıf' => $data[0]["SINIF"],
+                    'kay_tar' => $yeniTarih,
+                    'ogrenim_durum' => $data[0]["OGRENIM_DURUM"],
+                    'ogrenim_tip' => $data[0]["OGRENIM_TIP"],
+                    'ayr_tar' => $data[0]["AYR_TAR"],
+                    'tel' => $data[0]["TELEFON"],
+                    'tel2' => $data[0]["TELEFON2"],
+                    'eposta' => $data[0]["EPOSTA1"],
+                    'eposta2' => $data[0]["EPOSTA2"],
+                    'program_tip' => $data[0]["PROGRAM_TIP"],
+                    'durum' => $data[0]["DURUM"]
+                ]);
+            if($id)
+            {
+                $timestamp = now()->format('Ymd_His');
+                $gun = now()->format('Ymd');
+                $fileName = $tc.'_'.$timestamp.'.'.$belge->getClientOriginalExtension();
+                $belge->move(public_path('docs/kayit_belge'), $fileName);
+                $uyeClass = new Uye();
+                $uyeClass->ogr_id   = $id;
+                $uyeClass->top_id   = $toplulukId;
+                $uyeClass->belge   = $fileName;
+                $uyeClass->tarih   = $gun;
+                $uyeClass->rol   = 1;
+                $save_uye   = $uyeClass->save();
+                if ($save_uye) {
+                    return response()->json(['success' => true, 'message' => 'Üye kaydedildi.']);
+                } else {
+                    return response()->json(['danger' => true, 'message' => 'Üye kaydedilemedi.']);
+                }
+            }
+
         }
     }
     public function getSilinecekUyeler($toplulukId)
@@ -338,6 +396,25 @@ class ToplulukController extends Controller
         else{
             return back()->with('danger', 'Lütfen Doğrulamayı yapın.');
         }
+    }
+    public function form()
+    {
+        $perPage = 10; // Sayfa başına gösterilecek form sayısı
+        $currentPage = request()->query('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Veritabanından belirtilen aralıktaki kayıtları çekelim
+        $forms = DB::table('formlar')
+            ->select('isim', 'dosya')
+            ->skip($offset)
+            ->take($perPage)
+            ->get();
+
+        // Toplam sayfa sayısını hesapla
+        $totalForms = DB::table('formlar')->count();
+        $lastPage = ceil($totalForms / $perPage);
+
+        return view('formlar', compact('forms', 'currentPage', 'lastPage'));
     }
 
 }
