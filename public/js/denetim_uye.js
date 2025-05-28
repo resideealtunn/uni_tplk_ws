@@ -1,4 +1,6 @@
+let id = null;
 function openUyeListesiModal(toplulukId) {
+    id = toplulukId
     const baseURL = "/docs/kayit_belge/";
     fetch(`/denetim/uye/${toplulukId}`)
         .then(response => response.json())
@@ -26,6 +28,7 @@ function openUyeListesiModal(toplulukId) {
         .catch(error => console.error("Veri çekme hatası:", error));
 }
 function openBasvuruListeModal(toplulukId) {
+    id = toplulukId
     const baseURL = "/docs/kayit_belge/"; // Public klasör içindeki dosya yolu
     fetch(`/denetim/uye/basvuru/${toplulukId}`)
         .then(response => response.json())
@@ -55,14 +58,16 @@ function openBasvuruListeModal(toplulukId) {
         })
         .catch(error => console.error("Veri çekme hatası:", error));
 }
-function approveApplication(id, durum) {
+function approveApplication(ogr_id, durum)
+{
+    t_id=id
     fetch(`/denetim/uye/onayla`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         },
-        body: JSON.stringify({ id: id, durum: durum })
+        body: JSON.stringify({ id: ogr_id, durum: durum,t_id: t_id })
     })
         .then(response => response.json())
         .then(data => {
@@ -80,6 +85,7 @@ function approveApplication(id, durum) {
 const baseURL = "/docs/kayit_belge/";
 
 function openGuncelleModal(toplulukId) {
+    id = toplulukId
     fetch(`/denetim/uye/${toplulukId}`)
         .then(response => response.json())
         .then(data => {
@@ -146,6 +152,7 @@ function updateRole(id) {
 }
 
 function openYeniUyeModal(toplulukId) {
+    id = toplulukId
     document.getElementById("yeniUyeModal").style.display = "block";
 
     document.getElementById("yeniUyeForm").addEventListener("submit", function (event) {
@@ -185,6 +192,7 @@ function openYeniUyeModal(toplulukId) {
 }
 
 function openSilModal(toplulukId) {
+    id = toplulukId
     document.getElementById("silModal").style.display = "block";
 
     fetch(`/denetim/uye/sil/${toplulukId}`)
@@ -214,7 +222,7 @@ function openSilModal(toplulukId) {
 }
 function deleteUye(uyeId) {
     fetch(`/denetim/uye/sil`, {
-        method: "POST", // 🟢 GET yerine POST
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
@@ -235,3 +243,132 @@ function deleteUye(uyeId) {
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
+document.getElementById('searchInputDelete').addEventListener("keyup", function () {
+    let query = this.value;
+    console.log("Query değeri:", query);
+    console.log("Topluluk ID:", id);
+    fetch('/ogrenci-ara?q='+query+'&topluluk_id='+id+'')
+        .then(response => response.json())
+        .then(data => {
+            let tbody = document.getElementById("silListesi");
+            tbody.innerHTML = "";
+            data.forEach(uye => {
+                const belgeURL = `docs/kayit_belge/${uye.belge}`;
+                const row = `<tr>
+                    <td>${uye.tarih ?? 'Bilinmiyor'}</td>
+                    <td>${uye.numara}</td>
+                    <td>${uye.isim} ${uye.soyisim}</td>
+                    <td>${uye.tel}</td>
+                    <td>${uye.fakulte}</td>
+                    <td>${uye.bolum}</td>
+                    <td><a href="${belgeURL}" target="_blank">İndir</a></td>
+                    <td>
+                        <button onclick="deleteUye(${uye.id})" class="btn btn-danger">Sil</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+            );
+        })
+        .catch(error => console.error("Hata oluştu:", error));
+});
+document.getElementById('searchInputUpdate').addEventListener("keyup", function () {
+    let query = this.value;
+    console.log("Query değeri:", query);
+    console.log("Topluluk ID:", id);
+    fetch('/ogrenci-ara?q='+query+'&topluluk_id='+id+'')
+        .then(response => response.json())
+        .then(data => {
+            let tbody = document.getElementById("guncelleUyeListesi");
+            tbody.innerHTML = "";
+            const roleText = {
+                1: "Üye",
+                2: "Başkan",
+                3: "Başkan Yardımcısı"
+            };
+            data.forEach(uye => {
+                const belgeURL = baseURL + uye.belge;
+                const row = `<tr>
+                    <td>${uye.tarih ?? 'Bilinmiyor'}</td>
+                    <td>${uye.numara}</td>
+                    <td>${uye.isim} ${uye.soyisim}</td>
+                    <td>${uye.tel}</td>
+                    <td>${uye.fak_ad}</td>
+                    <td>${uye.bol_ad}</td>
+                    <td><a href="${belgeURL}" target="_blank">İndir</a></td>
+                    <td>${roleText[uye.rol] ?? "Bilinmiyor"}</td>
+                    <td>
+                        <select id="roleSelect-${uye.id}">
+                            <option value="1" ${uye.rol == 1 ? 'selected' : ''}>Üye</option>
+                            <option value="2" ${uye.rol == 2 ? 'selected' : ''}>Başkan</option>
+                            <option value="3" ${uye.rol == 3 ? 'selected' : ''}>Başkan Yardımcısı</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="updateRole(${uye.id})" class="btn btn-primary">Güncelle</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Hata oluştu:", error));
+});
+document.getElementById('searchInputBasvuru').addEventListener("keyup", function () {
+    let query = this.value;
+    console.log("Query değeri:", query);
+    console.log("Topluluk ID:", id);
+    fetch('/basvuru-ara?q='+query+'&topluluk_id='+id+'')
+        .then(response => response.json())
+        .then(data => {
+            let tbody = document.getElementById("basvuruListesi");
+            tbody.innerHTML = "";
+            data.forEach(uye => {
+                console.log("Uye ID:", uye.id);
+                const belgeURL = baseURL + uye.belge;
+                const row = `<tr>
+                    <td>${uye.tarih ?? 'Bilinmiyor'}</td>
+                    <td>${uye.numara}</td>
+                    <td>${uye.isim} ${uye.soyisim}</td>
+                    <td>${uye.tel}</td>
+                    <td>${uye.fakülte}</td>
+                    <td>${uye.bolum}</td>
+                    <td><a href="${belgeURL}" target="_blank">İndir</a></td>
+                    <td>
+                        <button onclick="approveApplication(${uye.id} , 1)" class="btn btn-success">Onayla</button>
+                        <button onclick="approveApplication(${uye.id}, 2)" class="btn btn-danger">Reddet</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Hata oluştu:", error));
+});
+document.getElementById('searchInputUye').addEventListener("keyup", function () {
+    let query = this.value;
+    console.log("Query değeri:", query);
+    console.log("Topluluk ID:", id);
+    fetch('/ogrenci-ara?q='+query+'&topluluk_id='+id+'')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("uyeListesi");
+            tbody.innerHTML = ""; // Önce tabloyu temizle
+
+            data.forEach(uye => {
+                const belgeURL = baseURL + uye.belge;
+                const row = `<tr>
+                    <td>${uye.tarih ?? 'Bilinmiyor'}</td>
+                    <td>${uye.numara}</td>
+                    <td>${uye.isim} ${uye.soyisim}</td>
+                    <td>${uye.tel}</td>
+                    <td>${uye.fak_ad}</td>
+                    <td>${uye.bol_ad}</td>
+                    <td><a href="${belgeURL}" target="_blank">İndir</a></td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById("uyeListeModal").style.display = "block"; // Modalı aç
+        })
+        .catch(error => console.error("Veri çekme hatası:", error));
+});
+

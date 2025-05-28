@@ -80,6 +80,9 @@
         <div id="uyeListeModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2>Üye Listesi</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInputUye"  class="search-input" placeholder="Öğrenci No ile Ara..." >
+                </div>
                 <div class="uye-listesi">
                     <table>
                         <thead>
@@ -106,7 +109,7 @@
             <div class="modal-content">
                 <h2>Üyelik Başvuruları</h2>
                 <div class="search-container">
-                    <input type="text" id="searchBasvuruNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListBasvuru('basvuruListesi', 'searchBasvuruNo')">
+                    <input type="text" id="searchInputBasvuru" class="search-input" placeholder="Öğrenci No ile Ara...">
                 </div>
                 <div class="uye-listesi">
                     <table>
@@ -123,7 +126,6 @@
                         </tr>
                         </thead>
                         <tbody id="basvuruListesi">
-
                         </tbody>
                     </table>
                 </div>
@@ -134,7 +136,7 @@
             <div class="modal-content">
                 <h2>Üye Güncelleme Listesi</h2>
                 <div class="search-container">
-                    <input type="text" id="searchGuncelleNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListUpdate('guncelleUyeListesi', 'searchGuncelleNo')">
+                    <input type="text" id="searchInputUpdate" class="search-input" placeholder="Öğrenci No ile Ara..." >
                 </div>
                 <div class="uye-listesi">
                     <table>
@@ -182,7 +184,7 @@
             <div class="modal-content">
                 <h2>Üye Silme Listesi</h2>
                 <div class="search-container">
-                    <input type="text" id="searchSilNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListDelete('silListesi', 'searchSilNo')">
+                    <input type="text" id="searchInputDelete"  class="search-input" placeholder="Öğrenci No ile Ara...">
                 </div>
                 <div class="uye-listesi">
                     <table>
@@ -233,10 +235,8 @@
                 © 2022 Necmettin Erbakan Üniversitesi
             </div>
         </footer>
-        <!-- Bootstrap JS (Popper + Bootstrap) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="{{ asset('js/denetim_uye.js') }}"></script>
-
 </body>
 
 </html>

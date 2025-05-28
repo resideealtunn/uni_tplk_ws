@@ -199,8 +199,10 @@ class ToplulukController extends Controller
     {
         $id = $request->input('id');
         $durum = $request->input('durum');
+        $t_id = $request->input('t_id');
         $affected = DB::table('uyeler')
             ->where('ogr_id', $id)
+            ->where('top_id', $t_id)
             ->update(['durum' => $durum]);
         if ($affected) {
             return response()->json(['success' => true, 'message' => 'Başvuru durumu güncellendi.']);
@@ -403,18 +405,52 @@ class ToplulukController extends Controller
         $currentPage = request()->query('page', 1);
         $offset = ($currentPage - 1) * $perPage;
 
-        // Veritabanından belirtilen aralıktaki kayıtları çekelim
         $forms = DB::table('formlar')
             ->select('isim', 'dosya')
             ->skip($offset)
             ->take($perPage)
             ->get();
 
-        // Toplam sayfa sayısını hesapla
         $totalForms = DB::table('formlar')->count();
         $lastPage = ceil($totalForms / $perPage);
 
         return view('formlar', compact('forms', 'currentPage', 'lastPage'));
+    }
+    public function searchTopluluk(Request $request)
+    {
+        $query = $request->input('q');
+        $topluluklar = DB::table('topluluklar')
+            ->where('isim', 'LIKE', "%{$query}%")
+            ->select('id', 'isim', 'gorsel')
+            ->get();
+
+        return response()->json($topluluklar);
+    }
+    public function searchUye(Request $request)
+    {
+        $query = $request->input('q');
+        $toplulukId = $request->input('topluluk_id');
+        $ogrenciler = DB::table('ogrenci_bilgi')
+            ->join('uyeler', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+            ->where('numara', 'LIKE', "%{$query}%")
+            ->where('uyeler.durum', '=', '1')
+            ->where('uyeler.top_id', '=',  "{$toplulukId}")
+            ->select('uyeler.tarih as tarih', 'numara', 'isim', 'soyisim', 'tel', 'fak_ad as fakülte', 'bol_ad as bolum', 'uyeler.belge as belge','uyeler.rol as rol')
+            ->get();
+        return response()->json($ogrenciler);
+    }
+    public function searchApply(Request $request)
+    {
+        $query = $request->input('q');
+        $toplulukId = $request->input('topluluk_id');
+        $ogrenciler = DB::table('ogrenci_bilgi')
+            ->join('uyeler', 'uyeler.ogr_id', '=', 'ogrenci_bilgi.id')
+            ->where('numara', 'LIKE', "%{$query}%")
+            ->where('uyeler.durum', '=', '0')
+            ->where('uyeler.top_id', '=',  "{$toplulukId}")
+            ->select('ogrenci_bilgi.id','uyeler.tarih as tarih', 'numara', 'isim', 'soyisim', 'tel', 'fak_ad as fakülte', 'bol_ad as bolum', 'uyeler.belge as belge','uyeler.rol as rol')
+            ->get();
+        return response()->json($ogrenciler);
     }
 
 }

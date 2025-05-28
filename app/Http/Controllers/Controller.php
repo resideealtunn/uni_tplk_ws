@@ -7,8 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Topluluk;
-use App\Models\Etkinlik_bilgi;
-use App\Models\Etkinlikler;
+use App\Models\OgrenciBilgi;
 use Illuminate\Support\Facades\DB;
 
 class Controller extends BaseController
@@ -19,23 +18,9 @@ class Controller extends BaseController
     public function topluluklarIndex()
     {
         $topluluklar = Topluluk::all();
-        return view('topluluklar', compact('topluluklar'));
+        $uyeler = OgrenciBilgi::all();
+        return view('topluluklar', compact('topluluklar','uyeler'));
     }
-
-    // Etkinlikler bilgisi sayfası
-    public function etkinlikBilgiIndex()
-    {
-        $e_bilgi = Etkinlik_bilgi::all();
-        return view('etkinlikler.index', compact('e_bilgi'));
-    }
-
-    // Etkinlikler sayfası
-    public function etkinliklerIndex()
-    {
-        $etkinlikler = Etkinlikler::all();
-        return view('etkinlikler.index', compact('etkinlikler'));
-    }
-
     public function kesfetIndex()
     {
         $kesfet = DB::table('topluluklar')

@@ -89,3 +89,7 @@ Route::post('/denetim/uye/rol', [ToplulukController::class, 'updateRol'])->name(
 Route::post('/denetim/uye/ekle', [ToplulukController::class, 'yeniUyeEkle'])->name('uye.ekle');
 Route::get('/denetim/uye/sil/{id}', [ToplulukController::class, 'getSilinecekUyeler'])->name('uye.sil');
 Route::post('/denetim/uye/sil', [ToplulukController::class, 'deleteUye'])->name('uye.delete');
+Route::get('/topluluk-ara', [ToplulukController::class, 'searchTopluluk']);
+
+Route::GET('/ogrenci-ara', [ToplulukController::class, 'searchUye']);
+Route::GET('/basvuru-ara', [ToplulukController::class, 'searchApply']);

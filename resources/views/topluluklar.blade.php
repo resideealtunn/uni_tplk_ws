@@ -46,7 +46,7 @@
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     <span style="font-size: 16px; font-weight: bold; color: #003366;">ÜYE SAYISI</span>
                     <!--! Değiştirilecek !-->
-                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($topluluklar)}}</span>
+                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($uyeler)}}</span>
                 </div>
             </div>
 
