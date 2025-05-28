@@ -20,9 +20,11 @@
         <p>{{session('birim')}}</p>
 
         <div class="menu">
-            <a href="{{ route('denetim.panel') }}" class="menu-item">Web Arayüz İşlemleri</a>
+            <a href="{{ route('denetim.topluluk') }}" class="menu-item">Topluluk İşlemleri</a>
             <a href="{{ route('denetim.etkinlik') }}" class="menu-item active">Etkinlik İşlemleri</a>
             <a href="{{ route('denetim.uye') }}" class="menu-item">Üye İşlemleri</a>
+            <a href="{{ route('denetim.formlar') }}" class="menu-item">Form İşlemleri</a>
+            <a href="{{ route('denetim.panel') }}" class="menu-item">Web Arayüz İşlemleri</a>
             <div class="menu-item" onclick="window.location.href='{{ route('kesfet') }}'">Çıkış</div>
         </div>
 

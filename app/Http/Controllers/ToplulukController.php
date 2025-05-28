@@ -12,6 +12,7 @@ use App\Models\Uye;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class ToplulukController extends Controller
 {
@@ -150,6 +151,21 @@ class ToplulukController extends Controller
     {
         $topluluklar = Topluluk::all();
         return view('denetim_uye', compact('topluluklar'));
+    }
+    public function indextopluluk()
+    {
+        $perPage = 1;
+        $currentPage = request()->query('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+        $topluluklar = DB::table('topluluklar')
+            ->where('durum','=','1')
+            ->skip($offset)
+            ->take($perPage)
+            ->get();
+        $totalForms = DB::table('topluluklar')->count();
+        $lastPage = ceil($totalForms / $perPage);
+
+        return view('denetim_topluluk', compact('topluluklar', 'currentPage', 'lastPage', 'perPage', 'totalForms'));
     }
     public function uyeListesi($id)
     {
@@ -401,7 +417,7 @@ class ToplulukController extends Controller
     }
     public function form()
     {
-        $perPage = 10; // Sayfa başına gösterilecek form sayısı
+        $perPage = 10;
         $currentPage = request()->query('page', 1);
         $offset = ($currentPage - 1) * $perPage;
 
@@ -452,7 +468,84 @@ class ToplulukController extends Controller
             ->get();
         return response()->json($ogrenciler);
     }
+    public function toplulukEkle(Request $request) {
+            $tc = $request->input('baskan_no');
 
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo='.$tc,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Basic a2lzbWl6YW1hbmxpOlRRZ0FSajlTRUItdmg0MQ=='
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $data = json_decode($response, true);
+            $yeniTarih = \Carbon\Carbon::createFromFormat('d.m.Y', $data[0]["KAY_TAR"])->format('Y-m-d');
+            $ogrenci = DB::table('ogrenci_bilgi')->where('tc', $tc)->first();
+            if(!$ogrenci) {
+                $id = DB::table('ogrenci_bilgi')->insertGetId([
+                    'numara' => $data[0]["OGR_NO"],
+                    'tc' => $data[0]["TCK"],
+                    'isim' => $data[0]["AD"],
+                    'soyisim' => $data[0]["SOYAD"],
+                    'fak_ad' => $data[0]["FAK_AD"],
+                    'bol_ad' => $data[0]["BOL_AD"],
+                    'prog_ad' => $data[0]["PROG_AD"],
+                    'sınıf' => $data[0]["SINIF"],
+                    'kay_tar' => $yeniTarih,
+                    'ogrenim_durum' => $data[0]["OGRENIM_DURUM"],
+                    'ogrenim_tip' => $data[0]["OGRENIM_TIP"],
+                    'ayr_tar' => $data[0]["AYR_TAR"],
+                    'tel' => $data[0]["TELEFON"],
+                    'tel2' => $data[0]["TELEFON2"],
+                    'eposta' => $data[0]["EPOSTA1"],
+                    'eposta2' => $data[0]["EPOSTA2"],
+                    'program_tip' => $data[0]["PROGRAM_TIP"],
+                    'durum' => $data[0]["DURUM"]
+                ]);
+            }
+            else{
+                $id=$ogrenci->id;
+            }
+            if($id) {
+                $belgeAdi = time() . '.' . $request->kurulus_belge->extension();
+                $request->kurulus_belge->move(public_path('belgeler/kurulus'), $belgeAdi);
+
+                $toplulukId = DB::table('topluluklar')->insertGetId([
+                    'isim' => $request->isim,
+                    'kurulus' => Carbon::now()
+                ]);
+                if($toplulukId){
+                    $uye=DB::table('uyeler')->insert([
+                        'ogr_id' => $id,
+                        'top_id' => $toplulukId,
+                        'tarih' => Carbon::now(),
+                        'rol' => 2
+                    ]);
+                    if($uye){
+                        return back()->with('success', 'Topluluk Eklendi, Başkan Atandı');
+                    }
+                    else{
+                        return back()->with('success', 'Topluluk Eklendi.');
+
+                    }
+                }
+                else{
+                    return back()->with('success', 'Topluluk eklenemedi.');
+                }
+            }
+            else{
+                return back()->with('success', 'Öğrenci Bulunamadı.');
+            }
+    }
 }
 
 

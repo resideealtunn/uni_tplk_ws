@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "0a1b7b08-13a2-4681-bb04-527bd00946b4",
+		"name": "KismiZamanli",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8918668"
+	},
+	"item": [
+		{
+			"name": "getOgrenciOzluk",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "TQgARj9SEB-vh41",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "kismizamanli",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://api.erbakan.edu.tr/KismiZamanli/getOgrenciOzlukBilgi?tcKimlikNo=14846572782&dTarih=01.09.1992",
+					"protocol": "http",
+					"host": [
+						"api",
+						"erbakan",
+						"edu",
+						"tr"
+					],
+					"path": [
+						"KismiZamanli",
+						"getOgrenciOzlukBilgi"
+					],
+					"query": [
+						{
+							"key": "tcKimlikNo",
+							"value": "14846572782"
+						},
+						{
+							"key": "dTarih",
+							"value": "01.09.1992"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getGirisDogrula",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "TQgARj9SEB-vh41",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "kismizamanli",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"Tip\" :\"personel\",\r\n            \t\"TcKn\": \"14846572782\", \r\n                \"Sifre\" : \"Ayn3342.\"\t\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.erbakan.edu.tr/LDap/getGirisDogrula",
+					"protocol": "http",
+					"host": [
+						"api",
+						"erbakan",
+						"edu",
+						"tr"
+					],
+					"path": [
+						"LDap",
+						"getGirisDogrula"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPersonelBilgi",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "TQgARj9SEB-vh41",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "kismizamanli",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"Tip\" :\"personel\",\r\n            \t\"TcKn\": \"14846572782\", \r\n                \"Sifre\" : \"Ayn3342.\"\t\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.erbakan.edu.tr/KismiZamanli/getPersonelBilgi?tc=14846572782",
+					"protocol": "http",
+					"host": [
+						"api",
+						"erbakan",
+						"edu",
+						"tr"
+					],
+					"path": [
+						"KismiZamanli",
+						"getPersonelBilgi"
+					],
+					"query": [
+						{
+							"key": "tc",
+							"value": "14846572782"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

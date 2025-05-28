@@ -93,3 +93,15 @@ Route::get('/topluluk-ara', [ToplulukController::class, 'searchTopluluk']);
 
 Route::GET('/ogrenci-ara', [ToplulukController::class, 'searchUye']);
 Route::GET('/basvuru-ara', [ToplulukController::class, 'searchApply']);
+
+
+Route::get('denetim/topluluk', function () {
+    return view('denetim_topluluk');
+})->name('denetim.topluluk');
+
+Route::get('denetim/formlar', function () {
+    return view('denetim_formlar');
+})->name('denetim.formlar');
+
+Route::get('/denetim/topluluk', [ToplulukController::class, 'indextopluluk'])->name('denetim.topluluk');
+Route::any('/denetim/topluluk-ekle', [ToplulukController::class, 'toplulukEkle'])->name('denetim.topluluk-ekle');

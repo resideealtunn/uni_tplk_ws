@@ -1,0 +1,20 @@
+ public async Task<bool> VerifyCaptcha(string response)
+ {
+     // var secretKey = "6LeqDYAqAAAAAHdeboh9q5BDDOhZ0jnnLWNVTJpQ";
+     var secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
+     var url = $"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={response}";
+
+     var httpResponse = await _httpClient.PostAsync(url, null);
+     var jsonResponse = await httpResponse.Content.ReadAsStringAsync();
+     var captchaResponse = JsonSerializer.Deserialize<CaptchaResponse>(jsonResponse);
+
+     return captchaResponse?.success ?? false;
+ }
+
+ public class CaptchaResponse
+    {
+        public bool success { get; set; }
+        public string challengeTs { get; set; }
+        public string hostname { get; set; }
+    }
+
