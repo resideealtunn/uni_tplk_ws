@@ -27,19 +27,65 @@
         <div class="form-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2>Form Denetim İşlemleri</h2>
-                <button class="btn btn-primary" id="btnAddForm">Form Ekle</button>
             </div>
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('danger'))
+                <div class="alert alert-danger">
+                    {{ session('danger') }}
+                </div>
+            @endif
+            <div class="mb-4">
+                <h4>Yeni Form Ekle</h4>
+            </div>
+
+            <form id="formAddEditForm" method="POST" action="" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-3">
+                    <label for="formTitle" class="form-label">Form Başlığı</label>
+                    <input type="text" class="form-control" id="formTitle" name="formTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Form (PDF)</label>
+                    <input type="file" class="form-control" id="formFile" name="formFile" accept="application/pdf">
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success">Kaydet</button>
+                </div>
+            </form>
+
             <div class="info-section mb-4">
                 <h3>Formlar</h3>
                 <div id="formList">
-                    <!-- Formlar burada listelenecek -->
-                    <!-- Örnek form kartı -->
-                    <!--
-                    <div class="form-item" data-id="1">
-                        <span>Form Başlığı.pdf</span>
+                    <div class="form-list">
+                        @foreach($forms as $form)
+                            <div class="form-item">
+                                <a href="{{asset('docs/formlar/'.$form->dosya)}}" target="_blank">
+                                    <span>{{ $form->isim }}</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <a href="{{ route('denetim.form-sil', ['id' => $form->id]) }}" class="btn btn-danger btn-sm">Sil</a>
+                            </div>
+                        @endforeach
                     </div>
-                    -->
+
+                    <!-- Sayfalama -->
+                    <div class="pagination" style="text-align: center; margin-top: 20px;">
+                        @if ($currentPage > 1)
+                            <a href="{{ route('denetim.formlar', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
+                        @endif
+
+                        <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
+
+                        @if ($currentPage < $lastPage)
+                            <a href="{{ route('denetim.formlar', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
+                        @endif
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>

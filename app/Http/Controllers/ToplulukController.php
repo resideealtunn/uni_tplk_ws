@@ -154,7 +154,7 @@ class ToplulukController extends Controller
     }
     public function indextopluluk()
     {
-        $perPage = 1;
+        $perPage = 9;
         $currentPage = request()->query('page', 1);
         $offset = ($currentPage - 1) * $perPage;
         $topluluklar = DB::table('topluluklar')
@@ -166,7 +166,7 @@ class ToplulukController extends Controller
             ->where('durum','=','1')
             ->count();
         $lastPage = ceil($totalForms / $perPage);
-        $pperPage = 1;
+        $pperPage = 9;
         $pcurrentPage = request()->query('sayfa', 1);
         $poffset = ($pcurrentPage - 1) * $pperPage;
         $ptopluluklar = DB::table('topluluklar')
@@ -437,6 +437,7 @@ class ToplulukController extends Controller
 
         $forms = DB::table('formlar')
             ->select('isim', 'dosya')
+            ->where('durum','=','1')
             ->skip($offset)
             ->take($perPage)
             ->get();
@@ -559,6 +560,37 @@ class ToplulukController extends Controller
             else{
                 return back()->with('success', 'Öğrenci Bulunamadı.');
             }
+    }
+    public function formlistele()
+    {
+        $perPage = 10;
+        $currentPage = request()->query('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $forms = DB::table('formlar')
+            ->select('id','isim', 'dosya')
+            ->where('durum','=','1')
+            ->skip($offset)
+            ->take($perPage)
+            ->get();
+
+        $totalForms = DB::table('formlar')->count();
+        $lastPage = ceil($totalForms / $perPage);
+
+        return view('denetim_formlar', compact('forms', 'currentPage', 'lastPage'));
+    }
+    public function formSil($id)
+    {
+        // Formu veritabanından bul
+        $form = DB::table('formlar')->where('id', $id)->first();
+
+        if (!$form) {
+            return back()->with('danger', 'Form Bulunamadı.');
+        }
+
+        DB::table('formlar')->where('id', $id)->update(['durum' => 0]);
+
+        return back()->with('success', 'Form Başarıyla Silindi');
     }
 }
 
