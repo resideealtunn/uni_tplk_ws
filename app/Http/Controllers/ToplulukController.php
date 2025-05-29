@@ -162,10 +162,24 @@ class ToplulukController extends Controller
             ->skip($offset)
             ->take($perPage)
             ->get();
-        $totalForms = DB::table('topluluklar')->count();
+        $totalForms = DB::table('topluluklar')
+            ->where('durum','=','1')
+            ->count();
         $lastPage = ceil($totalForms / $perPage);
-
-        return view('denetim_topluluk', compact('topluluklar', 'currentPage', 'lastPage', 'perPage', 'totalForms'));
+        $pperPage = 1;
+        $pcurrentPage = request()->query('sayfa', 1);
+        $poffset = ($pcurrentPage - 1) * $pperPage;
+        $ptopluluklar = DB::table('topluluklar')
+            ->where('durum','=','2')
+            ->skip($poffset)
+            ->take($pperPage)
+            ->get();
+        $ptotalForms = DB::table('topluluklar')
+            ->where('durum','=','2')
+            ->count();
+        $plastPage = ceil($ptotalForms / $perPage);
+        $pcurrentPage = request()->query('sayfa', 1);
+        return view('denetim_topluluk', compact('topluluklar', 'currentPage', 'lastPage', 'perPage', 'totalForms','ptopluluklar', 'ptotalForms', 'plastPage', 'pcurrentPage'));
     }
     public function uyeListesi($id)
     {

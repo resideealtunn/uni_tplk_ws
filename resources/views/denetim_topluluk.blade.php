@@ -60,13 +60,13 @@
         </div>
         <div class="pagination" style="text-align: center; margin-top: 20px;">
             @if ($currentPage > 1)
-                <a href="{{ route('formlar', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
+                <a href="{{ route('denetim.topluluk', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
             @endif
 
             <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
 
             @if ($currentPage < $lastPage)
-                <a href="{{ route('formlar', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
+                <a href="{{ route('denetim.topluluk', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
             @endif
         </div>
 
@@ -109,7 +109,7 @@
         </div>
 
         <div class="community-cards">
-            @foreach($topluluklar as $topluluk)
+            @foreach($ptopluluklar as $topluluk)
                 <div class="community-card">
                     <div class="card-content">
                         <img src="{{ asset('images/logo/' . $topluluk->gorsel) }}" alt="Logo">
@@ -120,14 +120,14 @@
         </div>
 
         <div class="pagination" style="text-align: center; margin-top: 20px;">
-            @if ($currentPage > 1)
-                <a href="{{ route('formlar', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
+            @if ($pcurrentPage > 1)
+                <a href="{{ route('denetim.topluluk', ['sayfa' => $pcurrentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
             @endif
 
-            <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
+            <span class="current-page" style="margin: 0 10px;">Sayfa {{ $pcurrentPage }} / {{ $plastPage }}</span>
 
-            @if ($currentPage < $lastPage)
-                <a href="{{ route('formlar', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
+            @if ($pcurrentPage < $plastPage)
+                <a href="{{ route('denetim.topluluk', ['sayfa' => $pcurrentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
             @endif
         </div>
 
