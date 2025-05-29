@@ -105,3 +105,6 @@ Route::any('/denetim/topluluk-ekle', [ToplulukController::class, 'toplulukEkle']
 Route::get('/denetim/formlar', [ToplulukController::class, 'formlistele'])->name('denetim.formlar');
 
 Route::get('/denetim/form-sil/{id}', [ToplulukController::class, 'formSil'])->name('denetim.form-sil');
+
+Route::post('denetim/topluluk-sil', [ToplulukController::class, 'topluluksil'])->name('topluluk.sil');
+

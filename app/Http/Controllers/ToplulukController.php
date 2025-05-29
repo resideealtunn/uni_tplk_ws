@@ -592,6 +592,28 @@ class ToplulukController extends Controller
 
         return back()->with('success', 'Form Başarıyla Silindi');
     }
+    public function topluluksil(Request $request)
+    {
+        $id = $request->input('id');
+
+        $topluluk = Topluluk::find($id);
+        if ($topluluk) {
+            $topluluk->durum = 2;
+            $topluluk->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Topluluk başarıyla silindi.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Topluluk silinemedi.'
+        ]);
+    }
+
+
 }
 
 

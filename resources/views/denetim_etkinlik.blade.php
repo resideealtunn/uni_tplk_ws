@@ -33,7 +33,6 @@
     <div class="content" id="web">
         <div class="form-container">
             <h2>Etkinlik Denetim İşlemleri</h2>
-
             <div class="info-section mb-4">
                 @if(session('success'))
                     <div class="alert alert-success">

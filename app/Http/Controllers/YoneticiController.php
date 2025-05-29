@@ -113,7 +113,7 @@ class YoneticiController extends Controller
                         'durum' => $data[0]['DURUM'],
                     ]);
                 }
-                return redirect()->route('kesfet');
+                return redirect()->route('yonetici.giris');
             }
         } else {
             $jsonVerisi = [
@@ -191,7 +191,7 @@ class YoneticiController extends Controller
                     }
                 }
             } else {
-                return redirect()->route('kesfet');
+                return redirect()->route('yonetici.giris');
             }
         }
     }
