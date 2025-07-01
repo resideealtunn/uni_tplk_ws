@@ -393,3 +393,54 @@
     color: #003366;
     font-weight: bold;
 }
+
+#redModal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+#redModal .red-modal-content {
+    background: #fff;
+    padding: 32px 24px 24px 24px;
+    border-radius: 12px;
+    min-width: 320px;
+    max-width: 95vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+#redModal input[type="text"], #redModal textarea {
+    margin: 10px 0 16px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+#redModal button {
+    margin-top: 8px;
+    margin-right: 8px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#redModal button[type="button"]:last-child {
+    background: #888;
+}
+#redModal label {
+    margin-bottom: 6px;
+    font-size: 15px;
+}

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formlar</title>
-    <link rel="stylesheet" href="{{ asset('css/style_topluluklar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/formlar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
@@ -22,7 +21,7 @@
         }
         .content {
             flex: 1;
-            padding: 20px;
+            padding: 0px;
         }
         .title-section {
             background-color: rgb(163, 219, 252);
@@ -70,10 +69,15 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <img src="{{ asset('images/logo/neu_logo.png') }}">
+                <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
+                <div class="logo-text">
+                    <h3>NECMETTİN<br>ERBAKAN<br>ÜNİVERSİTESİ</h3>
+                    <p>Öğrenci Toplulukları Koordinatörlüğü</p>
+                </div>
             </div>
             <ul class="menu">
-                <li><a href="/kesfet">Ana Sayfa</a></li>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/kesfet">Keşfet</a></li>
                 <li><a href="/topluluklar" >Topluluklar</a></li>
                 <li><a href="/formlar" class="active">Formlar</a></li>
                 <li><a href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a></li>
@@ -107,15 +111,21 @@
             </div>
 
             <!-- Sayfalama -->
-            <div class="pagination" style="text-align: center; margin-top: 20px;">
+            <div class="pagination">
                 @if ($currentPage > 1)
-                    <a href="{{ route('formlar', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
+                    <a href="{{ route('formlar', ['page' => $currentPage - 1]) }}">&laquo; Önceki</a>
                 @endif
 
-                <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
+                @for($i = 1; $i <= $lastPage; $i++)
+                    @if($i == $currentPage)
+                        <span class="current-page">{{ $i }}</span>
+                    @else
+                        <a href="{{ route('formlar', ['page' => $i]) }}">{{ $i }}</a>
+                    @endif
+                @endfor
 
                 @if ($currentPage < $lastPage)
-                    <a href="{{ route('formlar', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
+                    <a href="{{ route('formlar', ['page' => $currentPage + 1]) }}">Sonraki &raquo;</a>
                 @endif
             </div>
         </div>
@@ -136,11 +146,11 @@
             <div class="footer-section">
                 <h3>Sosyal Medya & Eposta</h3>
                 <div class="social-icons">
-                    <i class="fab fa-facebook-f"></i>
-                    <i class="fab fa-twitter"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-linkedin-in"></i>
-                    <i class="fab fa-youtube"></i>
+                    <a href="https://www.facebook.com/NEUniversitesi" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/NEUniversitesi" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/neuniversitesi/?source=omni_redirect" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/school/neuniversitesi/about/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.youtube.com/necmettinerbakan%C3%BCniversitesitv" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
                 <p>topluluk@erbakan.edu.tr</p>
             </div>

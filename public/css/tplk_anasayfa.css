@@ -1,10 +1,10 @@
 .navbar {
-    background-color: #f8f9fa;
+    background-color: #a8dcf1;
     padding: 1.5rem 0;
     min-height: 80px;
 }
 .navbar-brand img {
-    height: 50px;
+    height: 70px;
 }
 .nav-link {
     color: #333;
@@ -15,6 +15,13 @@
 }
 .nav-link:hover {
     color: #007bff;
+}
+.nav-link.active {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #007bff !important;
+    border-bottom: 3px solid #007bff;
+    background: transparent;
 }
 .hero-section {
     background-size: cover;
@@ -263,4 +270,70 @@
     color: #666;
     max-width: 600px;
     margin: 0 auto;
+}
+
+/* İstatistik kutucukları */
+.stat-box {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+.stat-content {
+    text-align: left;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Responsive tasarım için */
+@media (max-width: 768px) {
+    .stat-box {
+        margin: 5px;
+        padding: 15px;
+        min-height: 100px;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+        margin-right: 10px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+    }
 }

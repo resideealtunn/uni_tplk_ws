@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -13,6 +12,16 @@
         <div class="logo-container">
             <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo" class="neu-logo">
         </div>
+        @if(session('error'))
+            <div class="alert alert-danger" style="text-align:center">
+                {{ session('error') }}
+            </div>
+        @endif
+        @if(session('danger'))
+            <div class="alert alert-danger" style="text-align:center">
+                {{ session('danger') }}
+            </div>
+        @endif
         <form id="loginForm" class="login-form" method="POST" action="{{ route('yonetici.giris.post') }}">
             @csrf
             <div class="form-group">
@@ -23,19 +32,14 @@
                 <label for="sifre">Şifre</label>
                 <input type="password" id="sifre" name="sifre" required>
             </div>
-                <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
-                <br/>
-            <input type="hidden" class="g-recaptcha" name="">
+            <!-- <div class="form-group">
+            <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
+            </div> -->
             <button type="submit" class="login-button">Giriş Yap</button>
         </form>
     </div>
 </div>
+<!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
 </body>
 </html>
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script>
-    function onSubmit(token) {
-        document.getElementById("demo-form").submit();
-    }
-</script>
 

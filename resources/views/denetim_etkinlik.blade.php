@@ -9,6 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/denetim_etkinlik.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #modalTextContent {
+            word-break: break-word;
+            white-space: pre-line;
+        }
+    </style>
 </head>
 
 <body>
@@ -47,7 +53,9 @@
                                 <th>Topluluk Adı</th>
                                 <th>Logo</th>
                                 <th>Etkinlik Başlığı</th>
-                                <th>Etkinlik Tarihi</th>
+                                <th>Etkinlik Başlangıç Tarihi</th>
+                                <th>Etkinlik Bitiş Tarihi</th>
+                                <th>Etkinlik Konumu</th>
                                 <th>Etkinlik Tanıtım Afişi</th>
                                 <th>Etkinlik Detayları</th>
                                 <th>İşlemler</th>
@@ -62,20 +70,22 @@
                                         </a></td>
                                     <td>{{$etkinlik->etkinlik_adi}}</td>
                                     <td>{{ \Carbon\Carbon::parse($etkinlik->tarih)->format('d.m.Y H:i') }}</td>
+                                    <td>{{ $etkinlik->bitis_tarihi ? \Carbon\Carbon::parse($etkinlik->bitis_tarihi)->format('d.m.Y H:i') : '-' }}</td>
+                                    <td>{{ $etkinlik->konum ?: '-' }}</td>
                                     <td>
                                         <a href="#" onclick="openImage('{{ asset('images/etkinlik/'.$etkinlik->gorsel) }}')">
                                             <img src="{{  asset('images/etkinlik/'.$etkinlik->gorsel) }}" alt="Afiş" width="100">
                                         </a>
                                     </td>
                                     <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#textModal"
-                                                data-text="**Kısa Metin:** {{$etkinlik->bilgi}}**Açıklama:** {{$etkinlik->metin}}">Detaylar</button></td>
+                                                data-text="<b>Kısa Metin:</b><br>{{$etkinlik->bilgi}}<br><b>Açıklama:</b><br>{{$etkinlik->metin}}">Detaylar</button></td>
                                     <td>
                                         <form action="{{ route('onay.islemi') }}" method="POST" class="etkinlik-form">
                                             @csrf
                                             <input type="hidden" name="tip" value=1>
                                         <input type="hidden" value="{{$etkinlik->onay_id}}" name="onay_id">
                                         <button  type="submit" class="btn btn-approve" name="onay" value="1">Onayla</button>
-                                        <button  type="submit" class="btn btn-reject btn-sm" name='reddet'onclick="toggleRejectReason(this)">Reddet</button>
+                                        <button  type="button" class="btn btn-reject btn-sm" name='reddet' onclick="toggleRejectReason(this)">Reddet</button>
                                         <div class="red-reason" style="display:none">
                                             <textarea name="mesaj" placeholder="Red sebebini yazınız..."></textarea>
                                             <button type="submit" name="onay" value="2" class="btn-send btn-sm">Gönder</button>
@@ -91,7 +101,7 @@
 
 
             <div class="info-section mb-4">
-                <h3>Gerçekleşmiş Etkinlikler</h3>
+                <h3>Geçmiş Etkinlikler</h3>
                 @if(session('successp    '))
                     <div class="alert alert-success">
                         {{ session('successp') }}
@@ -104,7 +114,9 @@
                                 <th>Topluluk Adı</th>
                                 <th>Logo</th>
                                 <th>Etkinlik Başlığı</th>
-                                <th>Etkinlik Tarihi</th>
+                                <th>Etkinlik Başlangıç Tarihi</th>
+                                <th>Etkinlik Bitiş Tarihi</th>
+                                <th>Etkinlik Konumu</th>
                                 <th>Etkinlik Resmi</th>
                                 <th>Etkinlik Detayları</th>
                                 <th>İşlemler</th>
@@ -119,13 +131,15 @@
                                     </a></td>
                                 <td>{{$etkinlik->etkinlik_adi}}</td>
                                 <td>{{ \Carbon\Carbon::parse($etkinlik->tarih)->format('d.m.Y H:i') }}</td>
+                                <td>{{ $etkinlik->bitis_tarihi ? \Carbon\Carbon::parse($etkinlik->bitis_tarihi)->format('d.m.Y H:i') : '-' }}</td>
+                                <td>{{ $etkinlik->konum ?: '-' }}</td>
                                 <td>
                                     <a onclick="openImage('{{ asset('images/etkinlik/'.$etkinlik->gorsel) }}')">
                                         <img src="{{  asset('images/etkinlik/'.$etkinlik->gorsel) }}" alt="Afiş" width="100">
                                     </a>
                                 </td>
                                 <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#textModal"
-                                            data-text="**Kısa Metin:** {{$etkinlik->bilgi}}**Açıklama:** {{$etkinlik->metin}}">Detaylar</button></td>
+                                            data-text="<b>Kısa Metin:</b><br>{{$etkinlik->bilgi}}<br><b>Açıklama:</b><br>{{$etkinlik->metin}}">Detaylar</button></td>
                                 <td>
                                     <form action="{{ route('onay.islemi') }}" method="POST" class="etkinlik-form">
                                         @csrf
@@ -185,14 +199,7 @@
                 <p>Fax : 0 332 235 98 03</p>
             </div>
             <div class="footer-section">
-                <h3>Sosyal Medya & Eposta</h3>
-                <div class="social-icons">
-                    <i class="fab fa-facebook-f"></i>
-                    <i class="fab fa-twitter"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-linkedin-in"></i>
-                    <i class="fab fa-youtube"></i>
-                </div>
+                <h3>Eposta</h3>
                 <p>topluluk@erbakan.edu.tr</p>
             </div>
         </div>

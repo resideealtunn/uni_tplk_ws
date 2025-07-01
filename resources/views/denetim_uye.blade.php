@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Topluluk Denetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/denetim_etkinlik.css') }}">
 
     <link rel="stylesheet" href="{{ asset('css/denetim_uye.css') }}">
+    <!-- jQuery (Select2'den önce eklenmeli) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </head>
 
@@ -33,10 +40,18 @@
 
 <div class="content" id="web">
     <div class="form-container">
-        <h2>Üye Denetim İşlemleri</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Üye Denetim İşlemleri</h2>
+            <button class="btn btn-success" onclick="openExcelModal()">
+                <i class="fas fa-file-excel"></i> Üye Listesini Excel Formatında İndir
+            </button>
+        </div>
 
         <div class="info-section mb-4">
             <h3>Topluluklar </h3>
+            <div class="search-container">
+                <input type="text" id="searchToplulukName" class="search-input" placeholder="Topluluk adına göre ara...">
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped align-middle text-center w-100">
                     <thead class="table-dark">
@@ -50,7 +65,7 @@
                         <th>Üye Sil</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="topluluklarTableBody">
                     @foreach ($topluluklar as $index => $topluluk)
                         <tr>
                             <td>{{ $topluluk->isim }}</td>
@@ -73,9 +88,12 @@
         <div id="uyeListeModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2>Üye Listesi</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInputUyeListesi" class="search-input" placeholder="Öğrenci No ile Ara...">
+                </div>
                 <div class="uye-listesi">
-                    <table>
-                        <thead>
+                    <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
+                        <thead class="table-dark lacivert-table-head">
                         <tr>
                             <th>Tarih</th>
                             <th>Öğrenci No</th>
@@ -102,8 +120,8 @@
                     <input type="text" id="searchBasvuruNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListBasvuru('basvuruListesi', 'searchBasvuruNo')">
                 </div>
                 <div class="uye-listesi">
-                    <table>
-                        <thead>
+                    <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
+                        <thead class="table-dark lacivert-table-head">
                         <tr>
                             <th>Başvuru Tarihi</th>
                             <th>Öğrenci No</th>
@@ -145,18 +163,18 @@
                     <input type="text" id="searchGuncelleNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListUpdate('guncelleUyeListesi', 'searchGuncelleNo')">
                 </div>
                 <div class="uye-listesi">
-                    <table>
-                        <thead>
+                    <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
+                        <thead class="table-dark lacivert-table-head">
                         <tr>
-                            <th>Üyelik Türü</th>
-                            <th>Kayıt Şekli</th>
-                            <th>Başvuru Tarihi</th>
+                            <th>Tarih</th>
                             <th>Öğrenci No</th>
                             <th>Ad Soyad</th>
                             <th>Cep Tel</th>
                             <th>Fakülte</th>
                             <th>Bölüm</th>
                             <th>Üyelik Formu</th>
+                            <th>Rol</th>
+                            <th>Görev</th>
                             <th>İşlem</th>
                         </tr>
                         </thead>
@@ -211,87 +229,188 @@
                 <h2>Yeni Üye Ekle</h2>
                 <form id="yeniUyeForm">
                     <div>
-                        <label>Öğrenci No:</label>
-                        <input type="text" id="yeniOgrNo" required>
+                        <label>Kayıt Şekli:</label>
+                        <input type="text" id="kayitSekli" value="denetim" readonly required>
+                    </div>
+                    <div>
+                        <label>Başvuru Tarihi:</label>
+                        <input type="date" id="basvuruTarihi" value="{{ date('Y-m-d') }}" readonly required>
+                    </div>
+                    <div>
+                        <label>TC Kimlik No:</label>
+                        <input type="text" id="tcKimlikNo" name="tcKimlikNo" required maxlength="11" pattern="[0-9]{11}">
+                    </div>
+                    <div>
+                        <label>Üyelik Formu:</label>
+                        <input type="file" id="uyelikFormu" name="uyelikFormu" accept=".pdf" required>
+                        <small>PDF formatında üyelik formu yükleyiniz</small>
                     </div>
                     <br>
                     <div class="button-group">
-                        <button type="button" class="btn btn-success btn-equal-size"">Kaydet</button>
+                        <button type="submit" class="btn btn-success btn-equal-size">Ekle</button>
                         <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('yeniUyeModal')">İptal</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div id="silModal" class="modal">
-            <div class="modal-content">
-                <h2>Üye Silme Listesi</h2>
-                <!-- Search Input for Öğrenci No -->
-                <div class="search-container">
-                    <input type="text" id="searchSilNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListDelete('silListesi', 'searchSilNo')">
-                </div>
-                <div class="uye-listesi">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Kayıt Şekli</th>
-                            <th>Başvuru Tarihi</th>
-                            <th>Öğrenci No</th>
-                            <th>Ad Soyad</th>
-                            <th>Cep Tel</th>
-                            <th>Fakülte</th>
-                            <th>Bölüm</th>
-                            <th>Üyelik Formu</th>
-                            <th>Onay Durumu</th>
-                            <th>Ayrılış Sebebi</th> <!-- Change here -->
-                            <th>İşlem</th>
-                        </tr>
-                        </thead>
-                        <tbody id="silListesi">
-                        <!-- Üyeler JavaScript ile doldurulacak -->
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Add combobox for Exit Reason -->
-
-                <button type="button" class="btn btn-cancel" onclick="closeModal('silModal')">Kapat</button>
-            </div>
+        <!-- Silinen Üyeler Geri Bildirimleri Modalı -->
+<div id="silinenUyelerGeriModal" class="modal">
+    <div class="modal-content">
+        <h2>Üye Silme Geri Bildirimleri</h2>
+        <div class="uye-listesi">
+            <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
+                <thead class="table-dark lacivert-table-head">
+                    <tr>
+                        <th>Öğrenci No</th>
+                        <th>Ad Soyad</th>
+                        <th>Cep Tel</th>
+                        <th>Fakülte</th>
+                        <th>Bölüm</th>
+                        <th>Üyelik Formu</th>
+                        <th>Silinme Sebebi</th>
+                    </tr>
+                </thead>
+                <tbody id="silinenUyelerGeriListesi">
+                    <!-- JS ile doldurulacak -->
+                </tbody>
+            </table>
         </div>
+        <button type="button" class="btn btn-cancel" onclick="closeModal('silinenUyelerGeriModal')">Kapat</button>
+    </div>
+</div>
 
+<!-- Silinme Sebebi Mini Modalı -->
+<div id="silSebepMiniModal" class="modal" style="display:none;">
+    <div class="modal-content small-modal">
+        <h3>Silinme Sebebi</h3>
+        <div id="silSebepIcerik" style="white-space:pre-line; margin: 20px 0;"></div>
+        <button type="button" class="btn btn-cancel" onclick="closeModal('silSebepMiniModal')">Kapat</button>
+    </div>
+</div>
 
+<!-- Sil Modal -->
+<div id="silModal" class="modal">
+    <div class="modal-content">
+        <h2>Silinecek Üyeler</h2>
+        <div class="search-container">
+            <input type="text" id="searchInputSilListesi" class="search-input" placeholder="Öğrenci numarası ile ara...">
+        </div>
+        <div class="uye-listesi">
+            <table class="uye-lacivert-table">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Öğrenci No</th>
+                        <th>Ad</th>
+                        <th>Soyad</th>
+                        <th>Cep Tel</th>
+                        <th>Fakülte</th>
+                        <th>Bölüm</th>
+                        <th>Üyelik Formu</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="silListesi">
+                </tbody>
+            </table>
+        </div>
+        <button class="btn-cancel" onclick="closeModal('silModal')">Kapat</button>
+    </div>
+</div>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Adres</h3>
-                    <p>Yaka Mah. Yeni Meram Cad. Kasım Halife Sok. No:11 (B Blok) 42090 Meram/Konya</p>
-                </div>
-                <div class="footer-section">
-                    <h3>İletişim</h3>
-                    <p>Tel : 0 332 221 0 561</p>
-                    <p>Fax : 0 332 235 98 03</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Sosyal Medya & Eposta</h3>
-                    <div class="social-icons">
-                        <i class="fab fa-facebook-f"></i>
-                        <i class="fab fa-twitter"></i>
-                        <i class="fab fa-instagram"></i>
-                        <i class="fab fa-linkedin-in"></i>
-                        <i class="fab fa-youtube"></i>
-                    </div>
-                    <p>topluluk@erbakan.edu.tr</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                © 2022 Necmettin Erbakan Üniversitesi
-            </div>
-        </footer>
-        <!-- Bootstrap JS (Popper + Bootstrap) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="{{ asset('js/denetim_uye.js') }}"></script>
+<!-- Silme Sebebi Modal -->
+<div id="silSebebiModal" class="modal">
+    <div class="modal-content">
+        <h2>Silme Sebebi</h2>
+        <div class="form-group">
+            <label for="silinmeSebebi">Silme Sebebi:</label>
+            <textarea id="silinmeSebebi" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-success">Sil</button>
+            <button class="btn btn-cancel" onclick="closeModal('silSebebiModal')">İptal</button>
+        </div>
+    </div>
+</div>
 
+<!-- Excel İndirme Modal -->
+<div id="excelModal" class="modal">
+    <div class="modal-content">
+        <h2>Üye Listesini Excel Formatında İndir</h2>
+        <div class="form-group">
+            <label for="toplulukSelect">Topluluk Seçiniz:</label>
+            <select id="toplulukSelect" class="form-control select2" style="width:100%">
+                <option value="">Topluluk seçiniz...</option>
+            </select>
+        </div>
+        <div class="button-group">
+            <button id="indirButton" class="btn btn-success" onclick="indirExcel()" disabled>
+                <i class="fas fa-download"></i> Üyeleri Excel Olarak İndir
+            </button>
+            <button class="btn btn-cancel" onclick="closeModal('excelModal')">İptal</button>
+        </div>
+    </div>
+</div>
+
+</div> <!-- .content bitişi -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Adres</h3>
+            <p>Yaka Mah. Yeni Meram Cad. Kasım Halife Sok. No:11 (B Blok) 42090 Meram/Konya</p>
+        </div>
+        <div class="footer-section">
+            <h3>İletişim</h3>
+            <p>Tel : 0 332 221 0 561</p>
+            <p>Fax : 0 332 235 98 03</p>
+        </div>
+        <div class="footer-section">
+            <h3>Eposta</h3>
+
+            <p>topluluk@erbakan.edu.tr</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © 2022 Necmettin Erbakan Üniversitesi
+    </div>
+</footer>
+<style>
+.content { padding-bottom: 60px !important; }
+.footer { position: static !important; margin-top: 40px; }
+</style>
+<!-- Bootstrap JS (Popper + Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/denetim_uye.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchToplulukName');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#topluluklarTableBody tr');
+            rows.forEach(row => {
+                const name = row.children[0]?.textContent.toLowerCase() || '';
+                row.style.display = name.includes(value) ? '' : 'none';
+            });
+        });
+    }
+    // Select2 başlat
+    if (window.jQuery) {
+        $('#toplulukSelect').select2({
+            dropdownParent: $('#excelModal'),
+            width: '100%',
+            placeholder: 'Topluluk seçiniz...'
+        });
+        // Select2 input'una maxlength atanmışsa kaldır
+        $('#toplulukSelect').on('select2:open', function() {
+            setTimeout(function() {
+                $(document).find('.select2-search__field').removeAttr('maxlength');
+            }, 100);
+        });
+    }
+});
+</script>
 </body>
 
 </html>

@@ -42,7 +42,7 @@
                 <h4>Yeni Form Ekle</h4>
             </div>
 
-            <form id="formAddEditForm" method="POST" action="" enctype="multipart/form-data">
+            <form id="formAddEditForm" method="POST" action="{{ route('denetim.form-ekle') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="formTitle" class="form-label">Form Başlığı</label>
@@ -150,14 +150,7 @@
                 <p>Fax : 0 332 235 98 03</p>
             </div>
             <div class="footer-section">
-                <h3>Sosyal Medya & Eposta</h3>
-                <div class="social-icons">
-                    <i class="fab fa-facebook-f"></i>
-                    <i class="fab fa-twitter"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-linkedin-in"></i>
-                    <i class="fab fa-youtube"></i>
-                </div>
+                <h3>Eposta</h3>
                 <p>topluluk@erbakan.edu.tr</p>
             </div>
         </div>

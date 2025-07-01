@@ -10,6 +10,28 @@ function closeModal(modalId) {
 // Etkinlik Ekle Modal
 function showEtkinlikEkleModal() {
     showModal('etkinlikEkleModal');
+    
+    // Tarih validasyonu ekle
+    const baslangicTarih = document.getElementById('etkinlikBaslangicTarih');
+    const bitisTarih = document.getElementById('etkinlikBitisTarih');
+    
+    baslangicTarih.addEventListener('change', function() {
+        // Başlangıç tarihi seçildiğinde bitiş tarihinin minimum değerini ayarla
+        bitisTarih.min = this.value;
+        
+        // Eğer bitiş tarihi başlangıç tarihinden önceyse temizle
+        if (bitisTarih.value && bitisTarih.value <= this.value) {
+            bitisTarih.value = '';
+        }
+    });
+    
+    bitisTarih.addEventListener('change', function() {
+        // Bitiş tarihi başlangıç tarihinden önceyse uyarı ver
+        if (baslangicTarih.value && this.value <= baslangicTarih.value) {
+            alert('Bitiş tarihi başlangıç tarihinden sonra olmalıdır!');
+            this.value = '';
+        }
+    });
 }
 
 // Başvuru Aç/Kapat Modal
@@ -111,5 +133,63 @@ function showBasvuruListeModal() {
     showModal('basvuruListeModal');
 
 
+}
+
+// Keşfette Göster/Gizle Modal
+function showKesfetModal() {
+    showModal('kesfetModal');
+    
+    // Event listener'ı bir kez ekle
+    const selectElement = document.getElementById('kesfetEtkinlikSec');
+    if (selectElement) {
+        // Önceki event listener'ları temizle
+        selectElement.removeEventListener('change', updateKesfetDurum);
+        // Yeni event listener ekle
+        selectElement.addEventListener('change', function() {
+            updateKesfetDurumu(this.value);
+        });
+    }
+}
+
+// Keşfet durumunu güncelle
+function updateKesfetDurumu(etkinlikId) {
+    const selectElement = document.getElementById('kesfetEtkinlikSec');
+    const secilen = selectElement.options[selectElement.selectedIndex];
+    const durum = secilen.getAttribute("data-durum");
+    
+    const durumElement = document.getElementById('kesfetMevcutDurum');
+    if (durum === "1") {
+        durumElement.textContent = "Keşfette Görünür";
+        durumElement.className = "durum-text durum-acik";
+    } else if (durum === "0") {
+        durumElement.textContent = "Keşfette Gizli";
+        durumElement.className = "durum-text durum-kapali";
+    } else {
+        durumElement.textContent = "Durum bilinmiyor";
+        durumElement.className = "durum-text";
+    }
+}
+
+// Etkinlik form validasyonu
+function validateEtkinlikForm() {
+    const baslangicTarih = document.getElementById('etkinlikBaslangicTarih').value;
+    const bitisTarih = document.getElementById('etkinlikBitisTarih').value;
+    
+    if (!baslangicTarih) {
+        alert('Lütfen etkinlik başlangıç tarihini seçin!');
+        return false;
+    }
+    
+    if (!bitisTarih) {
+        alert('Lütfen etkinlik bitiş tarihini seçin!');
+        return false;
+    }
+    
+    if (bitisTarih <= baslangicTarih) {
+        alert('Bitiş tarihi başlangıç tarihinden sonra olmalıdır!');
+        return false;
+    }
+    
+    return true;
 }
 

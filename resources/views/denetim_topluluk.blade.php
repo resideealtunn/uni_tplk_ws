@@ -31,32 +31,54 @@
         </div>
 
         @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if(session('danger'))
-            <div class="alert alert-danger">
-                {{ session('danger') }}
-            </div>
+            <div class="alert alert-danger">{{ session('danger') }}</div>
         @endif
 
+        <!-- Topluluk Ekle -->
+        <div class="mb-4">
+            <h4>Topluluk Ekle</h4>
+        </div>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Topluluk Adı</th>
+                    <th>Geçici Başkan TCK No</th>
+                    <th>Kuruluş Başvuru Belgesi</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <form method="POST" action="{{ route('denetim.topluluk-ekle') }}" enctype="multipart/form-data">
+                        @csrf
+                        <td><input type="text" class="form-control" name="isim" required></td>
+                        <td><input type="text" class="form-control" name="baskan_no" required></td>
+                        <td><input type="file" class="form-control" name="kurulus_belge" required></td>
+                        <td><button type="submit" class="btn btn-success">Kaydet</button></td>
+                    </form>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Aktif Topluluklar -->
         <div class="mb-4">
             <h4>Aktif Topluluklar</h4>
         </div>
-
         <div class="search-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Topluluk ara...">
         </div>
-
         <div class="community-cards">
             @foreach($topluluklar as $topluluk)
                 <div class="community-card" data-community-id="{{ $topluluk->id }}"
                      data-community-name="{{ $topluluk->isim }}"
-                     data-community-gorsel="{{ asset('images/logo/' . $topluluk->gorsel) }}"
-                     data-community-slogan="{{ $topluluk->slogan }}">
+                     data-community-gorsel="{{ $topluluk->gorsel ? asset('images/logo/' . $topluluk->gorsel) : asset('images/logo/default.png') }}"
+                     data-community-slogan="{{ $topluluk->slogan }}"
+                     data-durum="1">
                     <div class="card-content">
-                        <img src="{{ asset('images/logo/' . $topluluk->gorsel) }}" alt="Logo">
+                        <img src="{{ $topluluk->gorsel ? asset('images/logo/' . $topluluk->gorsel) : asset('images/logo/default.png') }}" alt="Logo">
                         <h3>{{ $topluluk->isim }}</h3>
                     </div>
                 </div>
@@ -75,8 +97,7 @@
                         <p id="communityDescription"></p>
                     </div>
                     <div class="modal-footer">
-                        <button id="deleteCommunity" class="btn btn-danger">Sil</button>
-                        <a id="goToCommunityPage"  class="btn btn-primary">Sayfaya Git</a>
+                        <!-- Butonlar JS ile eklenecek, başlangıçta boş -->
                     </div>
                 </div>
             </div>
@@ -86,74 +107,39 @@
             @if ($currentPage > 1)
                 <a href="{{ route('denetim.topluluk', ['page' => $currentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
             @endif
-
             <span class="current-page" style="margin: 0 10px;">Sayfa {{ $currentPage }} / {{ $lastPage }}</span>
-
             @if ($currentPage < $lastPage)
                 <a href="{{ route('denetim.topluluk', ['page' => $currentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
             @endif
         </div>
+
+        <!-- Pasif Topluluklar -->
         <div class="mb-4">
-            <h4>Topluluk Ekle</h4>
+            <h4>Pasif Topluluklar</h4>
         </div>
-
-        <table class="table table-bordered">
-            <thead class="table-dark">
-            <tr>
-                <th>Topluluk Adı</th>
-                <th>Geçici Başkan TCK No</th>
-                <th>Kuruluş Başvuru Belgesi</th>
-                <th>İşlem</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <form method="POST" action="{{ route('denetim.topluluk-ekle') }}" enctype="multipart/form-data">
-                    @csrf
-                    <td>
-                        <input type="text" class="form-control" name="isim" required>
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" name="baskan_no" required>
-                    </td>
-                    <td>
-                        <input type="file" class="form-control" name="kurulus_belge" required>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-success">Kaydet</button>
-                    </td>
-                </form>
-            </tr>
-            </tbody>
-        </table>
-
-        <div class="mb-4">
-            <h4>Kapanan Topluluklar</h4>
-        </div>
-
         <div class="community-cards">
             @foreach($ptopluluklar as $topluluk)
-                <div class="community-card">
+                <div class="community-card" data-community-id="{{ $topluluk->id }}"
+                     data-community-name="{{ $topluluk->isim }}"
+                     data-community-gorsel="{{ $topluluk->gorsel ? asset('images/logo/' . $topluluk->gorsel) : asset('images/logo/default.png') }}"
+                     data-community-slogan="{{ $topluluk->slogan }}"
+                     data-durum="2">
                     <div class="card-content">
-                        <img src="{{ asset('images/logo/' . $topluluk->gorsel) }}" alt="Logo">
+                        <img src="{{ $topluluk->gorsel ? asset('images/logo/' . $topluluk->gorsel) : asset('images/logo/default.png') }}" alt="Logo">
                         <h3>{{ $topluluk->isim }}</h3>
                     </div>
                 </div>
             @endforeach
         </div>
-
         <div class="pagination" style="text-align: center; margin-top: 20px;">
             @if ($pcurrentPage > 1)
                 <a href="{{ route('denetim.topluluk', ['sayfa' => $pcurrentPage - 1]) }}" style="margin-right: 10px;">&laquo; Önceki</a>
             @endif
-
             <span class="current-page" style="margin: 0 10px;">Sayfa {{ $pcurrentPage }} / {{ $plastPage }}</span>
-
             @if ($pcurrentPage < $plastPage)
                 <a href="{{ route('denetim.topluluk', ['sayfa' => $pcurrentPage + 1]) }}" style="margin-left: 10px;">Sonraki &raquo;</a>
             @endif
         </div>
-
     </div>
 </div>
 
@@ -169,7 +155,7 @@
             <p>Fax : 0 332 235 98 03</p>
         </div>
         <div class="footer-section">
-            <h3>Sosyal Medya & Eposta</h3>
+            <h3>Eposta</h3>
             <p>topluluk@erbakan.edu.tr</p>
         </div>
     </div>

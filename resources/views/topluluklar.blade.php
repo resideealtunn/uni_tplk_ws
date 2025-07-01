@@ -7,6 +7,7 @@
     <title>Topluluklar</title>
     <link rel="stylesheet" href="{{ asset('css/style_topluluklar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <style>
         .menu li a.active {
             color: #FFA500;
@@ -22,10 +23,15 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <img src="{{ asset('images/logo/neu_logo.png') }}">
+                <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
+                <div class="logo-text">
+                    <h3>NECMETTİN<br>ERBAKAN<br>ÜNİVERSİTESİ</h3>
+                    <p>Öğrenci Toplulukları Koordinatörlüğü</p>
+                </div>
             </div>
             <ul class="menu">
-                <li><a href="/kesfet">Ana Sayfa</a></li>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/kesfet">Keşfet</a></li>
                 <li><a href="/topluluklar" class="active">Topluluklar</a></li>
                 <li><a href="/formlar">Formlar</a></li>
                 <li><a href="{{route('yonetici.giris')}}">Yönetici İşlemleri</a></li>
@@ -34,7 +40,7 @@
 
         <!-- İçerik -->
         <div class="content">
-            <div id="contentTitle">öğrenci toplulukları koordinatörlüğü</div>
+            <div id="contentTitle">ÖĞRENCİ TOPLULUKLARI KOORDİNATÖRLÜĞÜ</div>
 
             <!-- Bilgi Kutuları -->
             <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 40px;">
@@ -45,8 +51,7 @@
 
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     <span style="font-size: 16px; font-weight: bold; color: #003366;">ÜYE SAYISI</span>
-                    <!--! Değiştirilecek !-->
-                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($uyeler)}}</span>
+                    <span style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{$uye_sayisi}}</span>
                 </div>
             </div>
 
@@ -93,11 +98,11 @@
             <div class="footer-section">
                 <h3>Sosyal Medya & Eposta</h3>
                 <div class="social-icons">
-                    <i class="fab fa-facebook-f"></i>
-                    <i class="fab fa-twitter"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-linkedin-in"></i>
-                    <i class="fab fa-youtube"></i>
+                    <a href="https://www.facebook.com/NEUniversitesi" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/NEUniversitesi" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/neuniversitesi/?source=omni_redirect" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/school/neuniversitesi/about/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.youtube.com/necmettinerbakan%C3%BCniversitesitv" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
                 <p>topluluk@erbakan.edu.tr</p>
             </div>

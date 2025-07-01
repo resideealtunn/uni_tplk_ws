@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topluluk Denetimi</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/denetim_etkinlik.css') }}">
@@ -42,67 +43,82 @@
                         <th>Logo</th>
                         <th>Arkaplan</th>
                         <th>Slogan</th>
+                        <th>Tüzük</th>
                         <th>Vizyon & Misyon</th>
                         <th>İşlemler</th>
                     </tr>
                     </thead>
                     <tbody>
+                    @foreach($topluluklar as $topluluk)
                     <tr>
-                        <td>1</td>
-                        <td>Bilişim Topluluğu</td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#logoModal1"><img src="{{ asset('images/logo/bilisimlogo.png') }}" alt="Logo" width="60"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#backgroundModal1"><img src="{{ asset('images/etkinlik/img1.jpg') }}" alt="Arkaplan" width="100"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#sloganModal1">"Geleceği beraber şekillendireceğiz"</a></td>
-                        <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#textModal"
-                                    data-text="**Vizyon:** Teknolojiyi anlayan, üreten ve geleceğe yön veren bir topluluk olmak.&#10;**Misyon:** Üyelerimize en son teknolojiler hakkında eğitimler vermek, projeler geliştirmelerini desteklemek ve sektördeki gelişmelerden haberdar olmalarını sağlamak.">Detaylar</button></td>
+                        <td>{{ $topluluk->id }}</td>
+                        <td>{{ $topluluk->isim }}</td>
                         <td>
-                            <button class="btn btn-approve btn-sm" onclick="approve()">Onayla</button>
-                            <button class="btn btn-reject btn-sm" onclick="showRejectReason(this)">Reddet</button>
-                            <div class="red-reason" style="display:none;">
-                                <textarea placeholder="Red sebebini yazınız..."></textarea>
-                                <button class="btn-send btn-sm">Gönder</button>
-                            </div>
+                            @if($topluluk->gorsel)
+                                <img src="{{ asset('images/logo/' . $topluluk->gorsel) }}" alt="Logo" width="60" style="cursor:pointer" onclick="openImageModal('{{ asset('images/logo/' . $topluluk->gorsel) }}')">
+                            @else
+                                Yok
+                            @endif
+                        </td>
+                        <td>
+                            @if($topluluk->bg)
+                                @php
+                                    $bgPathEtkinlik = public_path('images/etkinlik/' . $topluluk->bg);
+                                    $bgPathBackground = public_path('images/background/' . $topluluk->bg);
+                                @endphp
+                                @if(file_exists($bgPathBackground))
+                                    <img src="{{ asset('images/background/' . $topluluk->bg) }}" alt="Arkaplan" width="100" style="cursor:pointer" onclick="openImageModal('{{ asset('images/background/' . $topluluk->bg) }}')">
+                                @elseif(file_exists($bgPathEtkinlik))
+                                    <img src="{{ asset('images/etkinlik/' . $topluluk->bg) }}" alt="Arkaplan" width="100" style="cursor:pointer" onclick="openImageModal('{{ asset('images/etkinlik/' . $topluluk->bg) }}')">
+                                @else
+                                    {{ $topluluk->bg }}
+                                @endif
+                            @else
+                                Yok
+                            @endif
+                        </td>
+                        <td>{{ $topluluk->slogan ?? 'Yok' }}</td>
+                        <td>
+                            @if($topluluk->tuzuk)
+                                <a href="{{ asset('files/tuzuk/' . $topluluk->tuzuk) }}" target="_blank">
+                                    <i class="fa fa-file-pdf" style="font-size:24px;color:red"></i>
+                                </a>
+                            @else
+                                Yok
+                            @endif
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-sm" onclick="showVizyonMisyonModal(`{{ $topluluk->vizyon ?? 'Yok' }}`, `{{ $topluluk->misyon ?? 'Yok' }}`)">Görüntüle</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-approve btn-sm" onclick="approveAll({{ $topluluk->id }})">Onayla</button>
+                            <button class="btn btn-reject btn-sm" onclick="openRedModal({{ $topluluk->id }})">Reddet</button>
                         </td>
                     </tr>
-
-                    <tr>
-                        <td>2</td>
-                        <td>Sağlık Topluluğu</td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#logoModal2"><img src="{{ asset('images/logo/logo.png') }}" alt="Logo" width="60"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#backgroundModal2"><img src="{{ asset('images/etkinlik/img2.jpg') }}" alt="Arkaplan" width="100"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#sloganModal2">"Sağlıkla Geleceğe"</a></td>
-                        <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#textModal"
-                                    data-text="**Vizyon:** Sağlıklı bir üniversite topluluğu ve bilinçli bireyler yetiştirmek.&#10;**Misyon:** Sağlık seminerleri düzenlemek, farkındalık kampanyaları yürütmek ve öğrencilerin sağlıklı yaşam alışkanlıkları kazanmalarına destek olmak.">Detaylar</button></td>
-                        <td>
-                            <button class="btn btn-approve btn-sm" onclick="approve()">Onayla</button>
-                            <button class="btn btn-reject btn-sm" onclick="toggleRejectReason(this)">Reddet</button>
-                            <div class="red-reason" style="display:none;">
-                                <textarea placeholder="Red sebebini yazınız..."></textarea>
-                                <button class="btn-send btn-sm">Gönder</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>3</td>
-                        <td>Müzik Topluluğu</td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#logoModal3"><img src="{{ asset('images/logo/logo2.png') }}" alt="Logo" width="60"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#backgroundModal3"><img src="{{ asset('images/etkinlik/img3.jpg') }}" alt="Arkaplan" width="100"></a></td>
-                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#sloganModal3">"Ritmi Hissedin"</a></td>
-                        <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#textModal"
-                                    data-text="**Vizyon:** Müziğin birleştirici gücünü kullanarak sanata değer veren bir öğrenci topluluğu oluşturmak.&#10;**Misyon:** Müzik etkinlikleri organize etmek, farklı enstrümanları tanıtmak ve öğrencilerin müzikal yeteneklerini geliştirmelerine olanak sağlamak.">Detaylar</button></td>
-                        <td>
-                            <button class="btn btn-approve btn-sm" onclick="approve()">Onayla</button>
-                            <button class="btn btn-reject btn-sm" onclick="toggleRejectReason(this)">Reddet</button>
-                            <div class="red-reason" style="display:none;">
-                                <textarea placeholder="Red sebebini yazınız..."></textarea>
-                                <button class="btn-send btn-sm">Gönder</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <h2>Sosyal Medya Denetim İşlemleri</h2>
+        <div class="form-container">
+            <table class="table" id="sosyalMedyaTable">
+                <thead>
+                    <tr>
+                        <th>Topluluk ID</th>
+                        <th>Topluluk Adı</th>
+                        <th>Logo</th>
+                        <th>Instagram</th>
+                        <th>WhatsApp</th>
+                        <th>LinkedIn</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="sosyalMedyaBody">
+                    <!-- JS ile doldurulacak -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -130,6 +146,38 @@
     </div>
 </div>
 
+<div class="modal fade" id="vizyonMisyonModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vizyon & Misyon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="vizyonMisyonContent"></div>
+        </div>
+    </div>
+</div>
+
+<div id="redModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; padding:30px; border-radius:8px; min-width:300px; max-width:90vw;">
+        <h4 id="redModalTitle">Red Sebebi</h4>
+        <form id="redForm">
+            <div id="redCheckboxes">
+                <label><input type="checkbox" name="redTypes" value="logo"> Logo</label><br>
+                <label><input type="checkbox" name="redTypes" value="bg"> Arkaplan</label><br>
+                <label><input type="checkbox" name="redTypes" value="slogan"> Slogan</label><br>
+                <label><input type="checkbox" name="redTypes" value="vizyon"> Vizyon</label><br>
+                <label><input type="checkbox" name="redTypes" value="misyon"> Misyon</label><br>
+                <label><input type="checkbox" name="redTypes" value="tuzuk"> Tüzük</label><br>
+            </div>
+            <input type="hidden" id="red_topluluk_id" name="topluluk_id">
+            <textarea id="red_aciklama" name="aciklama" placeholder="Red sebebini giriniz" style="width:100%; margin:10px 0; height:100px;"></textarea>
+            <button type="button" id="redGonderBtn" disabled>Gönder</button>
+            <button type="button" onclick="closeRedModal()">İptal</button>
+        </form>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/denetim_etkinlik.js') }}"></script>
@@ -143,18 +191,81 @@
         });
     });
 
-    function toggleRejectReason(button) {
-        const reasonDiv = button.closest('tr').querySelector('.red-reason');
-        reasonDiv.style.display = reasonDiv.style.display === 'block' ? 'none' : 'block';
+    let selectedToplulukId = null;
+    function openRedModal(toplulukId) {
+        selectedToplulukId = toplulukId;
+        document.getElementById('red_topluluk_id').value = toplulukId;
+        document.getElementById('redModal').style.display = 'flex';
+    }
+    
+    function closeRedModal() {
+        document.getElementById('redModal').style.display = 'none';
+        // Reset form
+        document.getElementById('redForm').reset();
+        document.getElementById('redGonderBtn').disabled = true;
+    }
+    
+    // Enable/disable submit button based on form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const redForm = document.getElementById('redForm');
+        const redGonderBtn = document.getElementById('redGonderBtn');
+        
+        redForm.addEventListener('change', function() {
+            const checked = redForm.querySelectorAll('input[type=checkbox]:checked').length > 0;
+            const aciklama = document.getElementById('red_aciklama').value.trim().length > 0;
+            redGonderBtn.disabled = !(checked && aciklama);
+        });
+        
+        document.getElementById('red_aciklama').addEventListener('input', function() {
+            const checked = redForm.querySelectorAll('input[type=checkbox]:checked').length > 0;
+            const aciklama = this.value.trim().length > 0;
+            redGonderBtn.disabled = !(checked && aciklama);
+        });
+        
+        redGonderBtn.addEventListener('click', function() {
+            const fields = [];
+            redForm.querySelectorAll('input[type=checkbox]:checked').forEach(function(checkbox) {
+                fields.push(checkbox.value);
+            });
+            const aciklama = document.getElementById('red_aciklama').value;
+            const toplulukId = document.getElementById('red_topluluk_id').value;
+            
+            $.post('/denetim/panel/reddet', {
+                _token: '{{ csrf_token() }}',
+                topluluk_id: toplulukId,
+                fields: fields,
+                aciklama: aciklama
+            }, function(resp) {
+                alert('Red işlemi kaydedildi!');
+                closeRedModal();
+                location.reload();
+            });
+        });
+    });
+
+    function approveAll(toplulukId) {
+        $.post('/denetim/panel/onayla', {
+            _token: '{{ csrf_token() }}',
+            topluluk_id: toplulukId
+        }, function(resp) {
+            alert('Tüm bilgiler onaylandı!');
+            location.reload();
+        });
     }
 
-    function approve() {
-        alert("Topluluk Onaylandı.");
+    function showVizyonMisyonModal(vizyon, misyon) {
+        let html = `<strong>Vizyon:</strong> ${vizyon}<br><strong>Misyon:</strong> ${misyon}`;
+        document.getElementById('vizyonMisyonContent').innerHTML = html;
+        var myModal = new bootstrap.Modal(document.getElementById('vizyonMisyonModal'));
+        myModal.show();
     }
-    function openImage(imageUrl) {
-        $('#modalImage').attr('src', imageUrl);
-        $('#imageModal').modal('show');
+
+    function openImageModal(imageUrl) {
+        document.getElementById('modalImage').src = imageUrl;
+        var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        myModal.show();
     }
+
     function showContent(id) {
         var contents = document.querySelectorAll('.content');
         contents.forEach(function(content) {
@@ -182,6 +293,140 @@
     document.addEventListener('DOMContentLoaded', function() {
         showContent('web');
     });
+
+    // Sosyal medya verilerini çek ve tabloya doldur
+    fetch('/denetim/sosyal-medya-listesi')
+        .then(r => r.json())
+        .then(data => {
+            const tbody = document.getElementById('sosyalMedyaBody');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                // Sadece en az bir sosyal medya linki beklemede ise göster
+                const igBeklemede = row.i_onay == 2;
+                const wpBeklemede = row.w_onay == 2;
+                const lnBeklemede = row.l_onay == 2;
+                if (!igBeklemede && !wpBeklemede && !lnBeklemede) return; // Hepsi onaylı veya reddedilmişse gösterme
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${row.t_id}</td>
+                        <td>${row.topluluk_adi}</td>
+                        <td><img src="/images/logo/${row.logo}" style="max-width:40px;"></td>
+                        <td>
+                            ${row.instagram ? `<button class='btn btn-sm' style='background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border: none; color: white;' onclick="window.open('${row.instagram}','_blank')">Sayfaya Git</button>` : '-'}
+                            ${igBeklemede ? '' : (row.i_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.i_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                        </td>
+                        <td>
+                            ${row.whatsapp ? `<button class='btn btn-success btn-sm' onclick="window.open('${row.whatsapp}','_blank')">Grubu Görüntüle</button>` : '-'}
+                            ${wpBeklemede ? '' : (row.w_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.w_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                        </td>
+                        <td>
+                            ${row.linkedln ? `<button class='btn btn-info btn-sm' onclick="window.open('${row.linkedln}','_blank')">Sayfaya Git</button>` : '-'}
+                            ${lnBeklemede ? '' : (row.l_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.l_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                        </td>
+                        <td>
+                            ${(igBeklemede || wpBeklemede || lnBeklemede) ? `<button class='btn btn-approve btn-sm' onclick='onaylaHepsi(${JSON.stringify(row)})'>Onayla</button> <button class='btn btn-reject btn-sm' onclick='acRedModal(${JSON.stringify(row)})'>Reddet</button>` : '<span style=\"color:#888\">İşlem Yok</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+
+    function acRedModal(row) {
+        let html = '<form id="redFormCheck">';
+        if(row.i_onay == 2) html += '<label><input type="checkbox" name="redTypes" value="instagram"> Instagram</label><br>';
+        if(row.w_onay == 2) html += '<label><input type="checkbox" name="redTypes" value="whatsapp"> WhatsApp</label><br>';
+        if(row.l_onay == 2) html += '<label><input type="checkbox" name="redTypes" value="linkedln"> LinkedIn</label><br>';
+        html += '<input type="hidden" id="redTId" value="'+row.t_id+'">';
+        html += '<input type="text" id="redReasonInput" placeholder="Red sebebini giriniz" style="width:100%; margin:10px 0;">';
+        html += '<button type="button" id="redSubmitBtn">Gönder</button>';
+        html += '<button type="button" onclick="document.getElementById(\'redModal\').style.display=\'none\'">İptal</button>';
+        html += '</form>';
+        document.getElementById('redModal').style.display = 'flex';
+        document.getElementById('redModal').innerHTML = '<div class="red-modal-content">'+html+'</div>';
+        document.getElementById('redSubmitBtn').onclick = function() {
+            const t_id = document.getElementById('redTId').value;
+            const sebep = document.getElementById('redReasonInput').value.trim();
+            const checked = Array.from(document.querySelectorAll('#redFormCheck input[name=redTypes]:checked')).map(x=>x.value);
+            const allTypes = [];
+            if(row.i_onay == 2) allTypes.push('instagram');
+            if(row.w_onay == 2) allTypes.push('whatsapp');
+            if(row.l_onay == 2) allTypes.push('linkedln');
+            if (!sebep || checked.length === 0) { alert('Red sebebi ve en az bir seçim zorunlu!'); return; }
+            // Seçilenler için red (0), seçilmeyenler için onay (1)
+            const promises = [];
+            allTypes.forEach(type => {
+                if (checked.includes(type)) {
+                    promises.push(fetch('/denetim/sosyal-medya-reddet', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},
+                        body: JSON.stringify({ t_id, type, sebep })
+                    }));
+                } else {
+                    promises.push(fetch('/denetim/sosyal-medya-onayla', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},
+                        body: JSON.stringify({ t_id, type })
+                    }));
+                }
+            });
+            Promise.all(promises).then(()=>{
+                // Satırı tablodan kaldır
+                document.getElementById('redModal').style.display = 'none';
+                // Tabloyu yeniden yükle (sayfa yenilemeden)
+                fetch('/denetim/sosyal-medya-listesi')
+                    .then(r => r.json())
+                    .then(data => {
+                        const tbody = document.getElementById('sosyalMedyaBody');
+                        tbody.innerHTML = '';
+                        data.forEach(row => {
+                            const igBeklemede = row.i_onay == 2;
+                            const wpBeklemede = row.w_onay == 2;
+                            const lnBeklemede = row.l_onay == 2;
+                            if (!igBeklemede && !wpBeklemede && !lnBeklemede) return;
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${row.t_id}</td>
+                                    <td>${row.topluluk_adi}</td>
+                                    <td><img src="/images/logo/${row.logo}" style="max-width:40px;"></td>
+                                    <td>
+                                        ${row.instagram ? `<button class='btn btn-sm' style='background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border: none; color: white;' onclick="window.open('${row.instagram}','_blank')">Sayfaya Git</button>` : '-'}
+                                        ${igBeklemede ? '' : (row.i_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.i_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                                    </td>
+                                    <td>
+                                        ${row.whatsapp ? `<button class='btn btn-success btn-sm' onclick=\"window.open('${row.whatsapp}','_blank')\">Grubu Görüntüle</button>` : '-'}
+                                        ${wpBeklemede ? '' : (row.w_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.w_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                                    </td>
+                                    <td>
+                                        ${row.linkedln ? `<button class='btn btn-info btn-sm' onclick=\"window.open('${row.linkedln}','_blank')\">Sayfaya Git</button>` : '-'}
+                                        ${lnBeklemede ? '' : (row.l_onay == 1 ? '<span style=\'color:green\'>Onaylandı</span>' : row.l_onay == 0 ? '<span style=\'color:red\'>Reddedildi</span>' : '')}
+                                    </td>
+                                    <td>
+                                        ${(igBeklemede || wpBeklemede || lnBeklemede) ? `<button class='btn btn-approve btn-sm' onclick='onaylaHepsi(${JSON.stringify(row)})'>Onayla</button> <button class='btn btn-reject btn-sm' onclick='acRedModal(${JSON.stringify(row)})'>Reddet</button>` : '<span style=\"color:#888\">İşlem Yok</span>'}
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    });
+            });
+        }
+    }
+
+    function onaylaHepsi(row) {
+        const t_id = row.t_id;
+        const bekleyenler = [];
+        if(row.i_onay == 2) bekleyenler.push('instagram');
+        if(row.w_onay == 2) bekleyenler.push('whatsapp');
+        if(row.l_onay == 2) bekleyenler.push('linkedln');
+        if(bekleyenler.length === 0) return;
+        Promise.all(bekleyenler.map(type => fetch('/denetim/sosyal-medya-onayla', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},
+            body: JSON.stringify({ t_id, type })
+        }))).then(()=>{
+            alert('Tüm hesaplar onaylanmıştır!');
+            location.reload();
+        });
+    }
 </script>
 <footer class="footer" style="margin-left:150px; width: calc(100%); background-color: #ffffff; color: #003366; padding: 40px 20px 20px; font-family: Arial, sans-serif; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); border-top: 2px solid #dce3ea;">
     <div class="footer-content">
@@ -195,14 +440,7 @@
             <p>Fax : 0 332 235 98 03</p>
         </div>
         <div class="footer-section">
-            <h3>Sosyal Medya & Eposta</h3>
-            <div class="social-icons">
-                <i class="fab fa-facebook-f"></i>
-                <i class="fab fa-twitter"></i>
-                <i class="fab fa-instagram"></i>
-                <i class="fab fa-linkedin-in"></i>
-                <i class="fab fa-youtube"></i>
-            </div>
+            <h3>Eposta</h3>
             <p>topluluk@erbakan.edu.tr</p>
         </div>
     </div>

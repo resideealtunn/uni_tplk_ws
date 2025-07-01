@@ -12,7 +12,9 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">
-            <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
+            @if(isset($logo_onay) && ($logo_onay == 1 || $logo_onay == 4) && $topluluk->gorsel)
+                <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
+            @endif
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -22,7 +24,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">Anasayfa</a>
+                    <a class="nav-link active" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">Anasayfa</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('etkinlikler', ['topluluk_isim' => $topluluk->isim, 'topluluk_id' => $topluluk->id]) }}">
@@ -54,38 +56,83 @@
         {{ session('danger') }}
     </div>
 @endif
-<section class="hero-section" style="background-image: url('{{ asset('images/arkaplan/'.$topluluk->bg) }}');">
+<section class="hero-section" style="@if(isset($bg_onay) && ($bg_onay == 1 || $bg_onay == 4) && $topluluk->bg)background-image: url('{{ asset('images/background/'.$topluluk->bg) }}');@endif">
     <div class="hero-content">
         <h1 class="hero-title">{{ $topluluk->isim }}</h1>
-        <p class="hero-subtitle">{{$topluluk->slogan}}</p>
+        @if(isset($slogan_onay) && ($slogan_onay == 1 || $slogan_onay == 4))
+            <p class="hero-subtitle">{{$topluluk->slogan}}</p>
+        @endif
+        
+        <!-- İstatistik kutucukları -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ $uye_sayisi }}</div>
+                        <div class="stat-label">Üye</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ $etkinlik_sayisi }}</div>
+                        <div class="stat-label">Etkinlik</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
 <section class="vision-mission">
     <div class="container">
-        <h2 class="section-title">Vizyonumuz ve Misyonumuz</h2>
+        <h2 class="section-title">Vizyonumuz, Misyonumuz ve Tüzüğümüz</h2>
         <div class="row">
-
-            <div class="col-md-6 mb-4">
-
+            <div class="col-md-4 mb-4">
                 <div class="card vision-card p-4">
                     <div class="text-center">
                         <i class="fas fa-eye card-icon"></i>
                         <h3 class="card-title">Vizyonumuz</h3>
                     </div>
                     <p class="card-text">
-                        {{ $topluluk->vizyon }}
+                        @if(isset($vizyon_onay) && ($vizyon_onay == 1 || $vizyon_onay == 4))
+                            {{ $topluluk->vizyon }}
+                        @endif
                     </p>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
                 <div class="card mission-card p-4">
                     <div class="text-center">
                         <i class="fas fa-bullseye card-icon"></i>
                         <h3 class="card-title">Misyonumuz</h3>
                     </div>
                     <p class="card-text">
-                        {{ $topluluk->misyon }}
+                        @if(isset($misyon_onay) && ($misyon_onay == 1 || $misyon_onay == 4))
+                            {{ $topluluk->misyon }}
+                        @endif
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card mission-card p-4">
+                    <div class="text-center">
+                        <i class="fas fa-file-pdf card-icon"></i>
+                        <h3 class="card-title">Topluluk Tüzüğü</h3>
+                    </div>
+                    <p class="card-text text-center">
+                        @if(isset($tuzuk_onay) && ($tuzuk_onay == 1 || $tuzuk_onay == 4) && $topluluk->tuzuk)
+                            <a href="{{ asset('files/tuzuk/'.$topluluk->tuzuk) }}" target="_blank" class="btn btn-outline-primary">
+                                <i class="fas fa-file-pdf"></i> Tüzüğü Görüntüle
+                            </a>
+                        @endif
                     </p>
                 </div>
             </div>
@@ -100,21 +147,14 @@
             <form action="{{route('iletisim')}}" method="post">
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Ad Soyad</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-posta Adresi</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <label for="tckno" class="form-label">TC Kimlik Numarası</label>
+                    <input type="text" class="form-control" id="tckno" name="tckno" required maxlength="11" minlength="11" pattern="[0-9]{11}">
                 </div>
                 <div class="mb-3">
                     <label for="message" class="form-label">Mesajınız</label>
                     <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                 </div>
                 <input type="hidden" value="{{$topluluk->id}}" name="id">
-                <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
-                <br/>
-                <input type="hidden" class="g-recaptcha" name="">
                 <div class="text-center">
                     <button type="submit" class="btn btn-submit">Geri Bildirim Gönder</button>
                 </div>
@@ -135,7 +175,7 @@
                 <ul class="footer-links">
                     <li><a href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
                     <li><a href="{{ route('etkinlikler', ['topluluk_isim' => $topluluk->isim, 'topluluk_id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Etkinlikler</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> Üye İşlemleri</a></li>
+                    <li><a href="{{ route('uyeislemleri', ['isim' => Str::slug($topluluk->isim), 'id' => $topluluk->id]) }}"><i class="fas fa-chevron-right"></i> Üye İşlemleri</a></li>
                     <li><a href="{{route('yonetici.giris')}}"><i class="fas fa-chevron-right"></i> Yönetici İşlemleri</a></li>
                 </ul>
             </div>
@@ -147,10 +187,15 @@
                     <p><i class="fas fa-phone"></i> +90 332 323 82 20</p>
                 </div>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    @if(isset($sosyal_medya) && $sosyal_medya->w_onay == 1 && $sosyal_medya->whatsapp)
+                        <a href="{{$sosyal_medya->whatsapp}}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    @endif
+                    @if(isset($sosyal_medya) && $sosyal_medya->i_onay == 1 && $sosyal_medya->instagram)
+                        <a href="{{$sosyal_medya->instagram}}" target="_blank"><i class="fab fa-instagram"></i></a>
+                    @endif
+                    @if(isset($sosyal_medya) && $sosyal_medya->l_onay == 1 && $sosyal_medya->linkedln)
+                        <a href="{{$sosyal_medya->linkedln}}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -159,12 +204,6 @@
         </div>
     </div>
 </footer>
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script>
-    function onSubmit(token) {
-        document.getElementById("demo-form").submit();
-    }
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/tplk_anasayfa.js') }}"></script>
 </body>

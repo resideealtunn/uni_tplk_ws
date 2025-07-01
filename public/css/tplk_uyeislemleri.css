@@ -13,29 +13,174 @@
 
 .membership-section {
     padding: 50px 0;
+    background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.membership-form {
-    max-width: 600px;
+.uyeislemleri-accordion-container {
+    max-width: 520px;
     margin: 0 auto;
-    padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
-.form-title {
-    color: #2c3e50;
-    margin-bottom: 30px;
+.custom-accordion .accordion-item {
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(100, 180, 255, 0.10);
+    border: none;
+}
+
+.custom-accordion .accordion-button {
+    background: linear-gradient(90deg, #b3e0ff 0%, #e3f0ff 100%);
+    color: #2563a6;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 1.2rem 1.5rem;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+.custom-accordion .accordion-button:not(.collapsed) {
+    background: linear-gradient(90deg, #7ecbff 0%, #b3e0ff 100%);
+    color: #174c7c;
+}
+
+.custom-accordion .accordion-body {
+    background: #f8fbff;
+    padding: 2rem 2.5rem;
+}
+
+.uye-form .form-label {
+    color: #2563a6;
+    font-weight: 500;
+}
+
+.uye-form .form-control {
+    border-radius: 10px;
+    border: 1px solid #b3e0ff;
+    background: #f4faff;
+    transition: border-color 0.3s;
+}
+
+.uye-form .form-control:focus {
+    border-color: #7ecbff;
+    box-shadow: 0 0 0 0.15rem rgba(126,203,255,.25);
+}
+
+.btn-uye {
+    background: linear-gradient(90deg, #7ecbff 0%, #b3e0ff 100%);
+    color: #174c7c;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 2.5rem;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(100, 180, 255, 0.10);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.btn-uye:hover {
+    background: linear-gradient(90deg, #b3e0ff 0%, #7ecbff 100%);
+    color: #2563a6;
+    transform: translateY(-2px) scale(1.03);
 }
 
 .download-link {
-    display: block;
-    margin: 20px 0;
-    color: #2c3e50;
+    display: inline-block;
+    margin: 18px 0 24px 0;
+    color: #2563a6;
     text-decoration: none;
+    font-weight: 500;
+    background: #e3f0ff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
 }
 
 .download-link:hover {
+    background: #b3e0ff;
+    color: #174c7c;
     text-decoration: underline;
+}
+
+.yoklama-btn {
+    background: linear-gradient(90deg, #7ecbff 0%, #b3e0ff 100%);
+    color: #174c7c;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 2.5rem;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(100, 180, 255, 0.10);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    margin-top: 10px;
+}
+.yoklama-btn:hover {
+    background: linear-gradient(90deg, #b3e0ff 0%, #7ecbff 100%);
+    color: #2563a6;
+    transform: translateY(-2px) scale(1.03);
+}
+
+.yoklama-sonuc {
+    background: #f4faff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(100, 180, 255, 0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.yoklama-katilim .badge {
+    background: linear-gradient(90deg, #b3e0ff 0%, #e3f0ff 100%);
+    color: #174c7c !important;
+    font-size: 1.1rem;
+    padding: 0.7em 1.5em;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(100, 180, 255, 0.10);
+}
+
+.yoklama-table {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(100, 180, 255, 0.08);
+}
+.yoklama-table th, .yoklama-table td {
+    border: none;
+    padding: 0.9em 1.2em;
+    font-size: 1rem;
+}
+.yoklama-table th {
+    background: #e3f0ff;
+    color: #2563a6;
+    font-weight: 600;
+}
+.yoklama-table tr:nth-child(even) {
+    background: #f8fbff;
+}
+.yoklama-table tr:nth-child(odd) {
+    background: #f4faff;
+}
+.yoklama-table .badge-success {
+    background: linear-gradient(90deg, #a8ffb3 0%, #d2ffe3 100%);
+    color: #1e7e34;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5em 1.2em;
+    font-size: 1em;
+}
+.yoklama-table .badge-danger {
+    background: linear-gradient(90deg, #ffd6d6 0%, #ffeaea 100%);
+    color: #c82333;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5em 1.2em;
+    font-size: 1em;
 }
