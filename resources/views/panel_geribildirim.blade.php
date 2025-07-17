@@ -11,8 +11,14 @@
 
 </head>
 <body>
-<div class="sidebar">
-    <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<div class="sidebar" id="sidebar">
+    <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo" width="194.8" height="194.8" style="width:194.8px; height:194.8px;">
     <h2>{{ session('topluluk') }}</h2>
     <h3>{{ session('isim') }}</h3>
     <p>{{ session('rol') }}</p>
@@ -21,10 +27,7 @@
         <a href="/etkinlik_islemleri" class="menu-item">Etkinlik İşlemleri</a>
         <a href="/uye_islemleri" class="menu-item">Üye İşlemleri</a>
         <a href="/panel_geribildirim" class="menu-item active">Denetim Geri Bildirimleri</a>
-        <a href="javascript:void(0);" class="menu-item" onclick="document.getElementById('cikisForm').submit();">Çıkış</a>
-        <form id="cikisForm" action="{{ route('cikis') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
+        <a href="/" class="menu-item">Çıkış</a>
     </div>
 </div>
 <div class="content active">
@@ -229,7 +232,7 @@
                     <div id="modalGerceklesenDurum" class="readonly-field"></div>
                 </div>
                 <div style="text-align:right;margin-top:18px;">
-                    <button type="button" class="guncelle-btn" onclick="saveGerceklesenEdit()">Kaydet</button>
+                    <button type="button" class="guncelle-btn" onclick="saveGerceklesenEdit()">Değişiklikleri Kaydet</button>
                 </div>
             </form>
         </div>
@@ -298,6 +301,7 @@
     </div>
 </footer>
 <script src="{{ asset('js/panel_geribildirim.js') }}"></script>
+<script src="{{ asset('js/hamburger.js') }}"></script>
 <script>
 
 function showImageModal(imgPath) {

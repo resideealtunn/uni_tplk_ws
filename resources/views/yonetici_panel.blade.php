@@ -9,9 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 <div class="page-wrapper">
-    <div class="sidebar">
-        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+    <div class="sidebar" id="sidebar">
+        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo" width="194.8" height="194.8" style="width:194.8px; height:194.8px;">
         <h2>{{ session('topluluk') }}</h2>
         <h3>{{ session('isim') }}</h3>
         <p>{{ session('rol') }}</p>
@@ -194,6 +200,7 @@
     </div>
 </footer>
 <script src="{{ asset('js/js_panels.js') }}"></script>
+<script src="{{ asset('js/js_panels_menu.js') }}"></script>
 <script>
     function enableButton(buttonId, input) {
         if (input.type === "file") {

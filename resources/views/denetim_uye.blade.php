@@ -20,7 +20,15 @@
 </head>
 
 <body>
-<div class="sidebar">
+
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="sidebar" id="sidebar">
     <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
     <h2>{{session('isim')}}</h2>
     <h3>{{session('unvan')}}</h3>
@@ -32,7 +40,7 @@
         <a href="{{ route('denetim.uye') }}" class="menu-item active" style="background-color: #3498db !important; color: #fff !important;">Üye İşlemleri</a>
         <a href="{{ route('denetim.formlar') }}" class="menu-item">Form İşlemleri</a>
         <a href="{{ route('denetim.panel') }}" class="menu-item">Web Arayüz İşlemleri</a>
-        <div class="menu-item" onclick="window.location.href='{{ route('kesfet') }}'">Çıkış</div>
+        <div class="menu-item" onclick="window.location.href='{{ route('anasayfa') }}'">Çıkış</div>
     </div>
 
 </div>
@@ -89,7 +97,7 @@
             <div class="modal-content">
                 <h2>Üye Listesi</h2>
                 <div class="search-container">
-                    <input type="text" id="searchInputUyeListesi" class="search-input" placeholder="Öğrenci No ile Ara...">
+                    <input type="text" id="searchInputUyeListesi" class="search-input" placeholder="Öğrenci No ile Ara..." inputmode="numeric" pattern="[0-9]*">
                 </div>
                 <div class="uye-listesi">
                     <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
@@ -109,7 +117,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="document.getElementById('uyeListeModal').style.display='none'">Kapat</button>
             </div>
         </div>
 
@@ -117,7 +124,7 @@
             <div class="modal-content">
                 <h2>Üyelik Başvuruları</h2>
                 <div class="search-container">
-                    <input type="text" id="searchBasvuruNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListBasvuru('basvuruListesi', 'searchBasvuruNo')">
+                    <input type="text" id="searchBasvuruNo" class="search-input" placeholder="Öğrenci No ile Ara..." inputmode="numeric" pattern="[0-9]*" oninput="filterListBasvuru('basvuruListesi', 'searchBasvuruNo')">
                 </div>
                 <div class="uye-listesi">
                     <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
@@ -138,7 +145,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('basvuruListeModal')">Kapat</button>
             </div>
         </div>
 
@@ -151,7 +157,6 @@
                 </div>
                 <div class="button-group">
                     <button type="button" class="btn btn-success" >Gönder</button>
-                    <button type="button" class="btn btn-cancel" onclick="closeModal('redSebebiModal')">İptal</button>
                 </div>
             </div>
         </div>
@@ -160,7 +165,7 @@
             <div class="modal-content">
                 <h2>Üye Güncelleme Listesi</h2>
                 <div class="search-container">
-                    <input type="text" id="searchGuncelleNo" class="search-input" placeholder="Öğrenci No ile Ara..." oninput="filterListUpdate('guncelleUyeListesi', 'searchGuncelleNo')">
+                    <input type="text" id="searchGuncelleNo" class="search-input" placeholder="Öğrenci No ile Ara..." inputmode="numeric" pattern="[0-9]*" oninput="filterListUpdate('guncelleUyeListesi', 'searchGuncelleNo')">
                 </div>
                 <div class="uye-listesi">
                     <table class="table table-bordered table-striped align-middle text-center w-100 uye-lacivert-table">
@@ -182,7 +187,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('guncelleModal')">Kapat</button>
             </div>
         </div>
         <div id="duzenleModal" class="modal">
@@ -219,7 +223,6 @@
                     <br>
                     <div class="button-group">
                         <button type="button" class="btn btn-success btn-equal-size" >Kaydet</button>
-                        <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('duzenleModal')">İptal</button>
                     </div>
                 </form>
             </div>
@@ -248,7 +251,6 @@
                     <br>
                     <div class="button-group">
                         <button type="submit" class="btn btn-success btn-equal-size">Ekle</button>
-                        <button type="button" class="btn btn-cancel btn-equal-size" onclick="closeModal('yeniUyeModal')">İptal</button>
                     </div>
                 </form>
             </div>
@@ -276,7 +278,6 @@
                 </tbody>
             </table>
         </div>
-        <button type="button" class="btn btn-cancel" onclick="closeModal('silinenUyelerGeriModal')">Kapat</button>
     </div>
 </div>
 
@@ -285,7 +286,6 @@
     <div class="modal-content small-modal">
         <h3>Silinme Sebebi</h3>
         <div id="silSebepIcerik" style="white-space:pre-line; margin: 20px 0;"></div>
-        <button type="button" class="btn btn-cancel" onclick="closeModal('silSebepMiniModal')">Kapat</button>
     </div>
 </div>
 
@@ -294,7 +294,7 @@
     <div class="modal-content">
         <h2>Silinecek Üyeler</h2>
         <div class="search-container">
-            <input type="text" id="searchInputSilListesi" class="search-input" placeholder="Öğrenci numarası ile ara...">
+            <input type="text" id="searchInputSilListesi" class="search-input" placeholder="Öğrenci numarası ile ara..." inputmode="numeric" pattern="[0-9]*">
         </div>
         <div class="uye-listesi">
             <table class="uye-lacivert-table">
@@ -315,7 +315,6 @@
                 </tbody>
             </table>
         </div>
-        <button class="btn-cancel" onclick="closeModal('silModal')">Kapat</button>
     </div>
 </div>
 
@@ -329,26 +328,30 @@
         </div>
         <div class="button-group">
             <button class="btn btn-success">Sil</button>
-            <button class="btn btn-cancel" onclick="closeModal('silSebebiModal')">İptal</button>
         </div>
     </div>
 </div>
 
 <!-- Excel İndirme Modal -->
 <div id="excelModal" class="modal">
-    <div class="modal-content">
-        <h2>Üye Listesini Excel Formatında İndir</h2>
-        <div class="form-group">
-            <label for="toplulukSelect">Topluluk Seçiniz:</label>
-            <select id="toplulukSelect" class="form-control select2" style="width:100%">
-                <option value="">Topluluk seçiniz...</option>
-            </select>
+    <div class="modal-content excel-modal">
+        <div class="modal-header">
+            <h2>Üye Listesini Excel Formatında İndir</h2>
+            <span class="close" onclick="closeModal('excelModal')">&times;</span>
         </div>
-        <div class="button-group">
+        <div class="modal-body">
+            <div class="search-container">
+                <input type="text" id="toplulukSearch" class="search-input" placeholder="Topluluk adına göre ara...">
+            </div>
+            <div class="topluluk-list" id="toplulukList">
+                <!-- Topluluklar burada listelenecek -->
+            </div>
+        </div>
+        <div class="modal-footer">
             <button id="indirButton" class="btn btn-success" onclick="indirExcel()" disabled>
                 <i class="fas fa-download"></i> Üyeleri Excel Olarak İndir
             </button>
-            <button class="btn btn-cancel" onclick="closeModal('excelModal')">İptal</button>
+            <button class="btn btn-secondary" onclick="closeModal('excelModal')">İptal</button>
         </div>
     </div>
 </div>
@@ -382,6 +385,7 @@
 <!-- Bootstrap JS (Popper + Bootstrap) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/denetim_uye.js') }}"></script>
+<script src="{{ asset('js/denetim_uye_menu.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchToplulukName');
@@ -395,18 +399,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    // Select2 başlat
-    if (window.jQuery) {
-        $('#toplulukSelect').select2({
-            dropdownParent: $('#excelModal'),
-            width: '100%',
-            placeholder: 'Topluluk seçiniz...'
-        });
-        // Select2 input'una maxlength atanmışsa kaldır
-        $('#toplulukSelect').on('select2:open', function() {
-            setTimeout(function() {
-                $(document).find('.select2-search__field').removeAttr('maxlength');
-            }, 100);
+    
+    // Sadece rakam girilebilsin
+    const numberInputs = [
+        document.getElementById('searchInputUyeListesi'),
+        document.getElementById('searchBasvuruNo'),
+        document.getElementById('searchGuncelleNo'),
+        document.getElementById('searchInputSilListesi')
+    ];
+    numberInputs.forEach(function(input) {
+        if (input) {
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+    });
+    
+    // Excel modalı açıldığında arama kutusunu temizle
+    const excelModal = document.getElementById('excelModal');
+    if (excelModal) {
+        excelModal.addEventListener('show', function() {
+            const searchInput = document.getElementById('toplulukSearch');
+            if (searchInput) {
+                searchInput.value = '';
+            }
         });
     }
 });

@@ -122,9 +122,18 @@ class YoneticiController extends Controller
                         ->where('id', $uye->top_id)
                         ->first();
 
+                        if (!$topluluk) {
+                            return back()->with('error', 'Topluluk bulunamadı.');
+                        }
+
                         $rol = DB::table('rol')
                             ->where('id', $uye->rol)
                             ->first();
+
+                        if (!$rol) {
+                            return back()->with('error', 'Rol bilgisi bulunamadı.');
+                        }
+
                         session([
                             'ogrenci_id' => $ogrenci->id,
                             'isim' => $ogrenci->isim,
@@ -321,7 +330,7 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Onaylanmış etkinlikleri getir (talep_onay = 1) ve k_durum değerini de dahil et
+        // Sadece onaylanmış etkinlikleri getir (talep_onay = 1)
         $onaylanmisEtkinlikler = DB::table('etkinlik_bilgi')
             ->where('t_id', $toplulukId)
             ->where('talep_onay', 1)
@@ -351,7 +360,7 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Onaylanmış etkinlikleri getir (talep_onay = 1) ve k_durum değerini de dahil et
+        // Sadece onaylanmış etkinlikleri getir (talep_onay = 1)
         $onaylanmisEtkinlikler = DB::table('etkinlik_bilgi')
             ->where('t_id', $toplulukId)
             ->where('talep_onay', 1)
@@ -430,11 +439,16 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Onaylanmış etkinlikleri getir (talep_onay = 1) ve k_durum değerini de dahil et
-        $onaylanmisEtkinlikler = DB::table('etkinlik_bilgi')
-            ->where('t_id', $toplulukId)
-            ->where('talep_onay', 1)
-            ->select('*') // Tüm alanları getir, k_durum dahil
+        // Onaylanmış etkinlikleri getir (talep_onay = 1) ancak etkinlik_gecmis tablosunda e_onay = 1 veya e_onay = 2 olanları hariç tut
+        $onaylanmisEtkinlikler = DB::table('etkinlik_bilgi as eb')
+            ->leftJoin('etkinlik_gecmis as eg', 'eb.id', '=', 'eg.e_id')
+            ->where('eb.t_id', $toplulukId)
+            ->where('eb.talep_onay', 1)
+            ->where(function($query) {
+                $query->whereNull('eg.e_onay')
+                      ->orWhereNotIn('eg.e_onay', [1, 2]);
+            })
+            ->select('eb.*') // Sadece etkinlik_bilgi tablosundaki alanları getir
             ->get();
 
         return view('etkinlik_islemleri', compact('onaylanmisEtkinlikler'));
@@ -486,7 +500,7 @@ class YoneticiController extends Controller
     {
         $toplulukId = session('t_id');
 
-        // Onaylanmış etkinlikleri getir (talep_onay = 1) ve k_durum değerini de dahil et
+        // Sadece onaylanmış etkinlikleri getir (talep_onay = 1)
         $onaylanmisEtkinlikler = DB::table('etkinlik_bilgi')
             ->where('t_id', $toplulukId)
             ->where('talep_onay', 1)
@@ -842,6 +856,7 @@ class YoneticiController extends Controller
         $topluluk_id = session('topluluk_id') ?? session('t_id');
         $etkinlikler = DB::table('etkinlik_bilgi')
             ->where('t_id', $topluluk_id)
+            ->whereIn('talep_onay', [0, 1, 2])
             ->orderBy('tarih', 'asc')
             ->select('id', 'isim', 'tarih', 'bitis_tarihi', 'gorsel', 'bilgi', 'metin', 'talep_onay', 'talep_red')
             ->get();
@@ -887,6 +902,51 @@ class YoneticiController extends Controller
             ->orderBy('eb.tarih', 'desc')
             ->get();
         return response()->json($etkinlikler);
+    }
+
+    public function panelGeriBildirimGerceklesenEtkinlikGuncelle(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $baslik = $request->input('baslik');
+            $tarih = $request->input('tarih');
+            $aciklama = $request->input('aciklama');
+            
+            $update = [
+                'aciklama' => $aciklama,
+                'e_onay' => 2, // Beklemede durumuna çevir
+                'red_sebebi' => null
+            ];
+            
+            // Resim dosyası varsa işle
+            if ($request->hasFile('resim') && $request->file('resim')->isValid()) {
+                $resim = $request->file('resim');
+                $resimAdi = time() . '_' . $resim->getClientOriginalName();
+                $resim->move(public_path('images/etkinlik'), $resimAdi);
+                $update['resim'] = $resimAdi;
+            }
+            
+            // etkinlik_gecmis tablosunu güncelle
+            $updated = DB::table('etkinlik_gecmis')->where('id', $id)->update($update);
+            
+            // etkinlik_bilgi tablosundaki başlığı da güncelle
+            $etkinlikGecmis = DB::table('etkinlik_gecmis')->where('id', $id)->first();
+            if ($etkinlikGecmis) {
+                DB::table('etkinlik_bilgi')->where('id', $etkinlikGecmis->e_id)->update([
+                    'isim' => $baslik,
+                    'tarih' => $tarih
+                ]);
+            }
+            
+            if ($updated) {
+                return response()->json(['success' => true, 'message' => 'Etkinlik başarıyla güncellendi ve onay için gönderildi.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Güncelleme yapılamadı.']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gerçekleşen etkinlik güncelleme hatası: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Bir hata oluştu: ' . $e->getMessage()]);
+        }
     }
     public function silinenUyelerGeriBildirim(Request $request)
     {

@@ -94,7 +94,11 @@ class EtkinlikController extends Controller
         if ($tip == 1) {
             // Etkinlik bilgisini doğrudan güncelle
                 if ($onayDurumu == 1) {
-                DB::table('etkinlik_bilgi')->where('id', $onayId)->update(['talep_onay' => 1, 'talep_red' => null]);
+                DB::table('etkinlik_bilgi')->where('id', $onayId)->update([
+                    'talep_onay' => 1, 
+                    'talep_red' => null,
+                    'k_durum' => 1
+                ]);
                 } else {
                 DB::table('etkinlik_bilgi')->where('id', $onayId)->update([
                         'talep_onay' => 0,

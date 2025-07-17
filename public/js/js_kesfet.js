@@ -1,3 +1,24 @@
+// Hamburger menü fonksiyonalitesi
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        });
+        
+        // Sidebar dışına tıklandığında menüyü kapat
+        document.addEventListener('click', function(e) {
+            if (!hamburger.contains(e.target) && !sidebar.contains(e.target)) {
+                hamburger.classList.remove('active');
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+});
+
 function openEventModal(item) {
     document.getElementById("modalImage").src = `/images/etkinlik/${item.eb_gorsel}`;
     document.getElementById("modalTitle").innerText = item.eb_isim;
@@ -154,12 +175,83 @@ window.addEventListener('DOMContentLoaded', function() {
             miniModal.style.display = 'none';
         }
     });
+    // TC Kimlik No validasyonu
+    const tcInput = document.getElementById('minitckNo');
+    const tcError = document.getElementById('tcError');
+    
+    if (tcInput) {
+        tcInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            
+            // Sadece sayı girişine izin ver
+            value = value.replace(/[^0-9]/g, '');
+            e.target.value = value;
+            
+            // Hata mesajını temizle
+            tcError.style.display = 'none';
+            tcError.textContent = '';
+            
+            // Validasyon kontrolleri
+            if (value.length > 0) {
+                if (value.length < 11) {
+                    tcError.textContent = 'TC Kimlik No 11 haneli olmalıdır.';
+                    tcError.style.display = 'block';
+                } else if (value.length === 11) {
+                    if (value.startsWith('0')) {
+                        tcError.textContent = 'TC Kimlik No 0 ile başlayamaz.';
+                        tcError.style.display = 'block';
+                    } else {
+                        // TC Kimlik No algoritma kontrolü (basit)
+                        const digits = value.split('').map(Number);
+                        const oddSum = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
+                        const evenSum = digits[1] + digits[3] + digits[5] + digits[7];
+                        const digit10 = ((oddSum * 7) - evenSum) % 10;
+                        const digit11 = (oddSum + evenSum + digits[9]) % 10;
+                        
+                        if (digit10 !== digits[9] || digit11 !== digits[10]) {
+                            tcError.textContent = 'Geçersiz TC Kimlik No.';
+                            tcError.style.display = 'block';
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Paste event için de kontrol
+        tcInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                let value = e.target.value;
+                value = value.replace(/[^0-9]/g, '');
+                e.target.value = value;
+            }, 0);
+        });
+    }
+    
     // Mini başvuru formu
     const miniApplyForm = document.getElementById('miniApplyForm');
     if (miniApplyForm) {
         miniApplyForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // TC validasyonu kontrol et
             const tckn = document.getElementById('minitckNo').value;
+            const tcError = document.getElementById('tcError');
+            
+            if (tcError.style.display === 'block') {
+                alert('Lütfen geçerli bir TC Kimlik No giriniz.');
+                return;
+            }
+            
+            if (tckn.length !== 11) {
+                alert('TC Kimlik No 11 haneli olmalıdır.');
+                return;
+            }
+            
+            if (tckn.startsWith('0')) {
+                alert('TC Kimlik No 0 ile başlayamaz.');
+                return;
+            }
+            
             const sifre = document.getElementById('minitckPass').value;
             const e_id = document.getElementById('miniEId').value;
             const t_id = document.getElementById('miniTId').value;

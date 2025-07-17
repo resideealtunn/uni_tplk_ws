@@ -191,10 +191,29 @@ class ToplulukController extends Controller
             ->where('ogr_id', $id)
             ->where('top_id', $top)
             ->first();
+        
         if ($uyeVarMi) {
-            return redirect()->back()->with('danger', 'Zaten Bu Topluluğa Üyesiniz!');
-        }
-        else {
+            $rol = $uyeVarMi->rol;
+            
+            if (in_array($rol, [1, 2, 3, 6])) {
+                return redirect()->back()->with('danger', 'Zaten Bu Topluluğa Üyesiniz!');
+            } elseif ($rol == 4) {
+                return redirect()->back()->with('danger', 'Bu Topluluğa Üyelik Başvurunuz Bulunmaktadır!');
+            } elseif ($rol == 5) {
+                return redirect()->back()->with('danger', 'Bu Topluluktan Üyelik Kaydınız Silinmiştir, Topluluk Yönetimi ile İletişime Geçin!');
+            } elseif ($rol == 7) {
+                // Başvuru alındıktan sonra rol değerini 4 olarak güncelle
+                DB::table('uyeler')
+                    ->where('ogr_id', $id)
+                    ->where('top_id', $top)
+                    ->update(['rol' => 4]);
+                return redirect()->back()->with('success', 'Başvurunuz Alınmıştır!');
+            } elseif ($rol == 8) {
+                return redirect()->back()->with('danger', 'Sistemde Aktif Öğrencilik Kaydınız Bulunmamaktadır!');
+            } else {
+                return redirect()->back()->with('danger', 'Bu Topluluğa Zaten Kayıtlısınız!');
+            }
+        } else {
             $membershipForm = $request->file('membership_form');
             $tarih = now()->format('Y-m-d_H-i-s');
             $dosyaAdi = $tc . '_' . $tarih . '.' . $membershipForm->getClientOriginalExtension();
@@ -212,12 +231,12 @@ class ToplulukController extends Controller
     }
     public function index()
     {
-        $topluluklar = Topluluk::where('durum', 1)->get();
+        $topluluklar = Topluluk::where('durum', 1)->orderBy('isim')->get();
         return view('denetim_uye', compact('topluluklar'));
     }
     public function indextopluluk()
     {
-        $perPage = 9;
+        $perPage = 15;
         $currentPage = request()->query('page', 1);
         $offset = ($currentPage - 1) * $perPage;
         $topluluklar = DB::table('topluluklar')
@@ -229,7 +248,7 @@ class ToplulukController extends Controller
             ->where('durum','=','1')
             ->count();
         $lastPage = ceil($totalForms / $perPage);
-        $pperPage = 9;
+        $pperPage = 15;
         $pcurrentPage = request()->query('sayfa', 1);
         $poffset = ($pcurrentPage - 1) * $pperPage;
         $ptopluluklar = DB::table('topluluklar')
@@ -240,7 +259,7 @@ class ToplulukController extends Controller
         $ptotalForms = DB::table('topluluklar')
             ->where('durum','=','2')
             ->count();
-        $plastPage = ceil($ptotalForms / $perPage);
+        $plastPage = ceil($ptotalForms / $pperPage);
         $pcurrentPage = request()->query('sayfa', 1);
         return view('denetim_topluluk', compact('topluluklar', 'currentPage', 'lastPage', 'perPage', 'totalForms','ptopluluklar', 'ptotalForms', 'plastPage', 'pcurrentPage'));
     }
@@ -349,7 +368,7 @@ class ToplulukController extends Controller
                 $data = json_decode($data['response'], true);
             }
             if (!is_array($data) || !isset($data[0]) || ($data[0]['DURUM'] ?? '') !== 'Aktif') {
-                return response()->json(['success' => false, 'message' => 'API boş döndü, öğrenci bulunamadı veya öğrenci aktif değil.']);
+                return response()->json(['success' => false, 'message' => 'Bu öğrencinin aktif öğrenci kaydı bulunmamaktadır.']);
             }
             // ogrenci_bilgi'ye ekle
             $ogrenciId = DB::table('ogrenci_bilgi')->insertGetId([
@@ -374,20 +393,41 @@ class ToplulukController extends Controller
             ]);
             $ogrenci = DB::table('ogrenci_bilgi')->where('id', $ogrenciId)->first();
         }
+        
         // Bu kişinin bu toplulukta herhangi bir üyeliği veya başvurusu var mı?
         $uyeVarMi = DB::table('uyeler')
             ->where('ogr_id', $ogrenci->id)
             ->where('top_id', $toplulukId)
             ->first();
+            
         if ($uyeVarMi) {
-            return response()->json(['success' => false, 'message' => 'Bu öğrenci zaten bu topluluğun üyesi veya başvurusu var.']);
+            $rol = $uyeVarMi->rol;
+            
+            if (in_array($rol, [1, 2, 3, 6])) {
+                return response()->json(['success' => false, 'message' => 'Bu öğrenci zaten bu topluluğun üyesidir.']);
+            } elseif ($rol == 4) {
+                return response()->json(['success' => false, 'message' => 'Bu öğrencinin üyelik başvurusu bulunmaktadır.']);
+            } elseif (in_array($rol, [5, 7])) {
+                // Rol değerini 1 olarak güncelle
+                DB::table('uyeler')
+                    ->where('ogr_id', $ogrenci->id)
+                    ->where('top_id', $toplulukId)
+                    ->update(['rol' => 1]);
+                return response()->json(['success' => true, 'message' => 'Kayıt başarıyla yapılmıştır.']);
+            } elseif ($rol == 8) {
+                return response()->json(['success' => false, 'message' => 'Bu öğrencinin aktif öğrenci kaydı bulunmamaktadır.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Bu öğrenci zaten bu topluluğa kayıtlıdır.']);
+            }
         }
-        // --- uyeler tablosuna mutlaka ekle ---
+        
+        // Yeni üye ekleme işlemi
         $belgeAdi = null;
         if ($belge && $belge->isValid()) {
             $belgeAdi = time() . '_' . $belge->getClientOriginalName();
             $belge->move(public_path('docs/kayit_belge'), $belgeAdi);
         }
+        
         DB::table('uyeler')->insert([
             'ogr_id' => $ogrenci->id,
             'top_id' => $toplulukId,
@@ -396,7 +436,8 @@ class ToplulukController extends Controller
             'belge' => $belgeAdi,
             'durum' => 1
         ]);
-        return response()->json(['success' => true]);
+        
+        return response()->json(['success' => true, 'message' => 'Yeni üye başarıyla eklendi.']);
     }
     public function getSilinecekUyeler($toplulukId)
     {
@@ -530,6 +571,17 @@ class ToplulukController extends Controller
             ->get();
         return response()->json($topluluklar);
     }
+
+    public function searchForm(Request $request)
+    {
+        $query = $request->input('q');
+        $forms = DB::table('formlar')
+            ->where('durum', 1)
+            ->where('isim', 'LIKE', "%{$query}%")
+            ->select('id', 'isim', 'dosya')
+            ->get();
+        return response()->json($forms);
+    }
     public function searchUye(Request $request)
     {
         $query = $request->input('q');
@@ -618,6 +670,20 @@ class ToplulukController extends Controller
             $id=$ogrenci->id;
         }
         if($id) {
+            // TCKNO kontrolü: Bu kişi başka bir toplulukta yönetici mi?
+            $yoneticiKontrol = DB::table('uyeler')
+                ->join('topluluklar', 'uyeler.top_id', '=', 'topluluklar.id')
+                ->where('uyeler.ogr_id', $id)
+                ->whereIn('uyeler.rol', [2, 3])
+                ->where('topluluklar.durum', 1)
+                ->select('topluluklar.isim as topluluk_adi', 'uyeler.rol')
+                ->first();
+            
+            if ($yoneticiKontrol) {
+                $rolText = $yoneticiKontrol->rol == 2 ? 'başkan' : 'yönetici';
+                return back()->with('danger', "Bu kişi zaten '{$yoneticiKontrol->topluluk_adi}' topluluğunda {$rolText} olarak görev yapmaktadır. Başka bir kişi seçiniz.");
+            }
+            
             // Get default values from default_web
             $defaultWeb = DB::table('default_web')->first();
             // Check if a community with the same name already exists
@@ -1133,6 +1199,35 @@ class ToplulukController extends Controller
         return \DB::table('sosyal_medya')->where('t_id', $topluluk_id)->first();
     }
 
+    // Üyelik kontrolü için AJAX endpoint
+    public function checkMembership(Request $request)
+    {
+        $tc = $request->input('tc');
+        $topluluk_id = $request->input('topluluk_id');
+
+        // Öğrenci bilgisini bul
+        $ogrenci = DB::table('ogrenci_bilgi')->where('tc', $tc)->first();
+        
+        if (!$ogrenci) {
+            return response()->json(['exists' => false]);
+        }
+
+        // Üyelik kontrolü
+        $uye = DB::table('uyeler')
+            ->where('ogr_id', $ogrenci->id)
+            ->where('top_id', $topluluk_id)
+            ->first();
+
+        if ($uye) {
+            return response()->json([
+                'exists' => true,
+                'rol' => $uye->rol
+            ]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
+
     // Excel indirme fonksiyonu
     public function uyeExcelIndir($topluluk_id)
     {
@@ -1149,10 +1244,55 @@ class ToplulukController extends Controller
     {
         $topluluklar = DB::table('topluluklar')
             ->where('durum', 1)
-            ->select('id', 'isim')
+            ->select('id', 'isim', 'gorsel')
             ->orderBy('isim')
             ->get();
         
+        // Her topluluk için üye sayısını hesapla
+        foreach ($topluluklar as $topluluk) {
+            $topluluk->uye_sayisi = DB::table('uyeler')
+                ->where('top_id', $topluluk->id)
+                ->whereIn('rol', [1, 2, 3, 6])
+                ->count();
+        }
+        
         return response()->json($topluluklar);
+    }
+
+    // Denetim paneli için topluluk arama (tüm aktif topluluklar)
+    public function denetimToplulukAra(Request $request)
+    {
+        $query = $request->input('q');
+        $topluluklar = \DB::table('topluluklar')
+            ->where('durum', 1)
+            ->where('isim', 'LIKE', "%{$query}%")
+            ->select('id', 'isim', 'gorsel', 'slogan')
+            ->get();
+        return response()->json($topluluklar);
+    }
+
+    // Denetim paneli: Bir kişi birden fazla toplulukta başkan/başkan yardımcısı olamaz kontrolü
+    public function rolKontrol(Request $request)
+    {
+        $uye_id = $request->input('uye_id');
+        $yeni_rol = $request->input('rol');
+        $uye = \DB::table('uyeler')->where('id', $uye_id)->first();
+        if (!$uye) {
+            return response()->json(['success' => false, 'message' => 'Üye bulunamadı.']);
+        }
+        if ($yeni_rol == 2 || $yeni_rol == 3) {
+            $baskaToplulugunYonetimi = \DB::table('uyeler')
+                ->where('ogr_id', $uye->ogr_id)
+                ->where('id', '!=', $uye_id)
+                ->whereIn('rol', [2, 3])
+                ->first();
+            if ($baskaToplulugunYonetimi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bir kişi birden fazla topluluğun başkanı veya başkan yardımcısı olamaz!'
+                ]);
+            }
+        }
+        return response()->json(['success' => true]);
     }
 }

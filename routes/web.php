@@ -16,6 +16,7 @@ use App\Http\Controllers\EtkinlikController;
 */
 Route::get('/', [App\Http\Controllers\Controller::class, 'anasayfaIndex'])->name('anasayfa');
 Route::get('/kesfet', [App\Http\Controllers\Controller::class, 'kesfetIndex'])->name('kesfet');
+Route::get('/haberler', [App\Http\Controllers\Controller::class, 'haberlerIndex'])->name('haberler');
 
 
 Route::get('/topluluklar', [App\Http\Controllers\Controller::class, 'topluluklarIndex']);
@@ -86,11 +87,13 @@ Route::get('/denetim/uye/{id}', [ToplulukController::class, 'uyeListesi'])->name
 Route::get('/denetim/uye/basvuru/{id}', [ToplulukController::class, 'basvuruListesi'])->name('topluluk.basvurular');
 Route::post('/denetim/uye/onayla', [ToplulukController::class, 'updateApplicationStatus'])->name('topluluk.update');
 Route::post('/denetim/uye/rol', [ToplulukController::class, 'updateRol'])->name('rol.update');
+Route::post('/denetim/uye/rol-kontrol', [ToplulukController::class, 'rolKontrol']);
 
 Route::post('/denetim/uye/ekle', [ToplulukController::class, 'yeniUyeEkle'])->name('uye.ekle');
 Route::get('/denetim/uye/sil/{id}', [ToplulukController::class, 'getSilinecekUyeler'])->name('uye.sil');
 Route::post('/denetim/uye/sil', [ToplulukController::class, 'deleteUye'])->name('uye.delete');
 Route::get('/topluluk-ara', [ToplulukController::class, 'searchTopluluk']);
+Route::get('/form-ara', [ToplulukController::class, 'searchForm']);
 
 Route::GET('/ogrenci-ara', [ToplulukController::class, 'searchUye']);
 Route::GET('/basvuru-ara', [ToplulukController::class, 'searchApply']);
@@ -140,6 +143,7 @@ Route::get('/panel/geribildirim/talep-etkinlik', [App\Http\Controllers\YoneticiC
 Route::post('/panel/geribildirim/talep-etkinlik-guncelle', [App\Http\Controllers\YoneticiController::class, 'panelGeriBildirimTalepEtkinlikGuncelle']);
 
 Route::get('/panel/geribildirim/gerceklesen-etkinlik', [App\Http\Controllers\YoneticiController::class, 'panelGeriBildirimGerceklesenEtkinlik']);
+Route::post('/panel/geribildirim/gerceklesen-etkinlik-guncelle', [App\Http\Controllers\YoneticiController::class, 'panelGeriBildirimGerceklesenEtkinlikGuncelle']);
 
 Route::post('/denetim/uye/basvuru/onayla', [App\Http\Controllers\ToplulukController::class, 'basvuruOnayla']);
 Route::post('/denetim/uye/basvuru/reddet', [App\Http\Controllers\ToplulukController::class, 'basvuruReddet']);
@@ -164,6 +168,8 @@ Route::post('/yoklama-kaydet', [App\Http\Controllers\Controller::class, 'yoklama
 
 Route::post('/yonetimkurulu-basvuru', [ToplulukController::class, 'yonetimKuruluBasvuru'])->name('yonetimkurulu.basvuru');
 
+Route::post('/check-membership', [ToplulukController::class, 'checkMembership'])->name('check.membership');
+
 Route::post('/yoklama-durumu-goruntule', [App\Http\Controllers\Controller::class, 'yoklamaDurumuGoruntule']);
 
 Route::get('/panel/geribildirim/silinen-uyeler', [\App\Http\Controllers\YoneticiController::class, 'silinenUyelerGeriBildirim']);
@@ -179,3 +185,5 @@ Route::get('/panel/geribildirim/sosyal-medya-bilgileri', [\App\Http\Controllers\
 
 Route::post('/yoklama-uyeler', [App\Http\Controllers\YoneticiController::class, 'yoklamaUyeler']);
 Route::post('/yoklama-durum-guncelle', [App\Http\Controllers\YoneticiController::class, 'yoklamaDurumGuncelle']);
+
+Route::get('/denetim/topluluk-ara', [ToplulukController::class, 'denetimToplulukAra']);

@@ -9,18 +9,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="sidebar">
+
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="sidebar" id="sidebar">
         <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
-        <h2>{{session('unvan')}}</h2>
-        <h3>{{session('isim')}}</h3>
+        <h2>{{session('isim')}}</h2>
+        <h3>{{session('unvan')}}</h3>
         <p>{{session('birim')}}</p>
         <div class="menu">
             <a href="{{ route('denetim.topluluk') }}" class="menu-item">Topluluk İşlemleri</a>
             <a href="{{ route('denetim.etkinlik') }}" class="menu-item">Etkinlik İşlemleri</a>
             <a href="{{ route('denetim.uye') }}" class="menu-item">Üye İşlemleri</a>
             <a href="{{ route('denetim.formlar') }}" class="menu-item active">Form İşlemleri</a>
-            <a href="{{ route('denetim.panel') }}" class="menu-item ">Web Arayüz İşlemleri</a>
-            <div class="menu-item" onclick="window.location.href='{{ route('kesfet') }}'">Çıkış</div>
+            <a href="{{ route('denetim.panel') }}" class="menu-item">Web Arayüz İşlemleri</a>
+            <div class="menu-item" onclick="window.location.href='{{ route('anasayfa') }}'">Çıkış</div>
         </div>
     </div>
     <div class="content" id="web">
@@ -160,5 +168,6 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/denetim_formlar.js') }}"></script>
+    <script src="{{ asset('js/denetim_formlar_menu.js') }}"></script>
 </body>
 </html>

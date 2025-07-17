@@ -23,17 +23,6 @@
             flex: 1;
             padding: 0px;
         }
-        .title-section {
-            background-color: rgb(163, 219, 252);
-            padding: 30px 0;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-        #contentTitle {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            margin-top: 20px;
-        }
         .form-list {
             max-width: 800px;
             margin: 0 auto;
@@ -65,9 +54,15 @@
 </head>
 
 <body>
+    <!-- Hamburger Menü -->
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo">
                 <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
                 <div class="logo-text">
@@ -95,7 +90,11 @@
 
             <!-- Arama Kutusu -->
             <div style="text-align: center; margin-bottom: 30px;">
-                <input type="text" id="searchInput" placeholder="Form ara..." style="padding: 10px 20px; width: 300px; border: 2px solid #003366; border-radius: 25px;">
+                <input type="text" id="searchInput" placeholder="Form ara..." style="padding: 10px 20px; width: 300px; border: 2px solid #003366; border-radius: 25px; padding-right: 40px;">
+                <button id="clearSearch" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #003366; cursor: pointer; font-size: 16px; display: none;">✕</button>
+            </div>
+            <div id="searchStatus" style="text-align: center; margin-bottom: 20px; display: none;">
+                <span style="color: #003366; font-size: 14px;">Aranıyor...</span>
             </div>
 
             <!-- Form Listesi -->
@@ -161,6 +160,7 @@
     </footer>
 
     <script src="{{ asset('js/formlar.js') }}"></script>
+    <script src="{{ asset('js/formlar_menu.js') }}"></script>
 </body>
 
 </html>

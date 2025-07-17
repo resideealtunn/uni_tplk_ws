@@ -19,21 +19,26 @@
 
 <body>
 
-    <div class="sidebar">
-        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
-        <h2>{{session('unvan')}}</h2>
-        <h3>{{session('isim')}}</h3>
-        <p>{{session('birim')}}</p>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 
+    <div class="sidebar" id="sidebar">
+        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+        <h2>{{session('isim')}}</h2>
+        <h3>{{session('unvan')}}</h3>
+        <p>{{session('birim')}}</p>
         <div class="menu">
             <a href="{{ route('denetim.topluluk') }}" class="menu-item">Topluluk İşlemleri</a>
             <a href="{{ route('denetim.etkinlik') }}" class="menu-item active">Etkinlik İşlemleri</a>
             <a href="{{ route('denetim.uye') }}" class="menu-item">Üye İşlemleri</a>
             <a href="{{ route('denetim.formlar') }}" class="menu-item">Form İşlemleri</a>
             <a href="{{ route('denetim.panel') }}" class="menu-item">Web Arayüz İşlemleri</a>
-            <div class="menu-item" onclick="window.location.href='{{ route('kesfet') }}'">Çıkış</div>
+            <div class="menu-item" onclick="window.location.href='{{ route('anasayfa') }}'">Çıkış</div>
         </div>
-
     </div>
 
     <div class="content" id="web">
@@ -87,8 +92,8 @@
                                         <button  type="submit" class="btn btn-approve" name="onay" value="1">Onayla</button>
                                         <button  type="button" class="btn btn-reject btn-sm" name='reddet' onclick="toggleRejectReason(this)">Reddet</button>
                                         <div class="red-reason" style="display:none">
-                                            <textarea name="mesaj" placeholder="Red sebebini yazınız..."></textarea>
-                                            <button type="submit" name="onay" value="2" class="btn-send btn-sm">Gönder</button>
+                                            <textarea name="mesaj" placeholder="Red sebebini yazınız..." oninput="validateRedReason(this)"></textarea>
+                                            <button type="submit" name="onay" value="2" class="btn-send btn-sm" disabled style="opacity: 0.5; cursor: not-allowed;">Gönder</button>
                                         </div>
                                         </form>
                                     </td>
@@ -145,10 +150,11 @@
                                         @csrf
                                         <input type="hidden" name="tip" value=2>
                                         <input type="hidden" value="{{$etkinlik->onay_id}}" name="onay_id">
-                                        <button  type="submit" class="btn btn-approve" name="onay" value="1">Onayla</button>
-                                        <div class="red-reason" style="display:block">
-                                            <textarea name="mesaj" placeholder="Red sebebini yazınız..."></textarea>
-                                            <button type="submit" name="onay" value="2" class="btn-reject btn-sm">Gönder</button>
+                                        <button type="submit" class="btn btn-approve" name="onay" value="1">Onayla</button>
+                                        <button type="button" class="btn btn-reject btn-sm" name='reddet' onclick="toggleRejectReason(this)">Reddet</button>
+                                        <div class="red-reason" style="display:none">
+                                            <textarea name="mesaj" placeholder="Red sebebini yazınız..." oninput="validateRedReason(this)"></textarea>
+                                            <button type="submit" name="onay" value="2" class="btn-send btn-sm" disabled style="opacity: 0.5; cursor: not-allowed;">Gönder</button>
                                         </div>
                                     </form>
                                 </td>
@@ -213,6 +219,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/denetim_etkinlik.js') }}"></script>
+    <script src="{{ asset('js/denetim_etkinlik_menu.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#textModal').on('show.bs.modal', function (event) {

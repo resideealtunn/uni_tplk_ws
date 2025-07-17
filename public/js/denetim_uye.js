@@ -155,6 +155,22 @@ function openGuncelleModal(toplulukId) {
             });
 
             document.getElementById("guncelleModal").style.display = "block"; // Modalı aç
+
+            // Arama kutusu eventini ekle
+            const searchInput = document.getElementById('searchGuncelleNo');
+            searchInput.value = "";
+            searchInput.oninput = function () {
+                let query = this.value.toLowerCase();
+                let rows = document.querySelectorAll("#guncelleUyeListesi tr");
+                if (query === '') {
+                    rows.forEach(row => row.style.display = '');
+                    return;
+                }
+                rows.forEach(row => {
+                    let ogrNo = row.cells[1]?.textContent.toLowerCase() || '';
+                    row.style.display = ogrNo.includes(query) ? '' : 'none';
+                });
+            };
         })
         .catch(error => console.error("Veri çekme hatası:", error));
 }
@@ -162,18 +178,32 @@ function openGuncelleModal(toplulukId) {
 function updateRole(id) {
     const newRole = document.getElementById(`roleSelect-${id}`).value;
 
-    fetch(`/denetim/uye/rol`, {
+    // Önce rol kontrolü yap
+    fetch('/denetim/uye/rol-kontrol', {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         },
-        body: JSON.stringify({ id: id, rol: newRole })
+        body: JSON.stringify({ uye_id: id, rol: newRole })
     })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+        // Kontrol başarılıysa rolü güncelle
+        fetch(`/denetim/uye/rol`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            body: JSON.stringify({ id: id, rol: newRole })
+        })
         .then(response => response.json())
         .then(data => {
-            console.log(`Sunucu Yanıtı - ID: ${id}, Yeni Rol: ${newRole}`, data);
-
             if (data.success) {
                 alert("Üyelik rolü başarıyla güncellendi!");
                 location.reload();
@@ -182,6 +212,7 @@ function updateRole(id) {
             }
         })
         .catch(error => console.error("Rol güncelleme hatası:", error));
+    });
 }
 
 function openYeniUyeModal(toplulukId) {
@@ -434,37 +465,26 @@ function openExcelModal() {
     loadTopluluklar();
 }
 
-// --- Autocomplete Combobox ---
+// --- Topluluk Listesi ve Arama ---
 let allTopluluklar = [];
 let selectedToplulukId = null;
-let dropdownIndex = -1;
 
 function loadTopluluklar() {
     fetch('/denetim/topluluklar')
         .then(response => response.json())
         .then(data => {
-            // Alfabetik sırala
-            data.sort((a, b) => a.isim.localeCompare(b.isim, 'tr'));
-            const select = document.getElementById('toplulukSelect');
-            select.innerHTML = '<option value="">Topluluk seçiniz...</option>';
-            data.forEach(topluluk => {
-                const option = document.createElement('option');
-                option.value = topluluk.id;
-                option.textContent = topluluk.isim;
-                select.appendChild(option);
-            });
-            if (window.jQuery) {
-                $('#toplulukSelect').select2({
-                    dropdownParent: $('#excelModal'),
-                    width: '100%',
-                    placeholder: 'Topluluk seçiniz...',
-                    allowClear: true,
-                    minimumResultsForSearch: 0
-                });
-                $('#toplulukSelect').val('').trigger('change');
-                $('#toplulukSelect').on('change', function() {
-                    const val = $(this).val();
-                    document.getElementById('indirButton').disabled = !val;
+            allTopluluklar = data.sort((a, b) => a.isim.localeCompare(b.isim, 'tr'));
+            displayTopluluklar(allTopluluklar);
+            
+            // Arama fonksiyonunu ekle
+            const searchInput = document.getElementById('toplulukSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const filteredTopluluklar = allTopluluklar.filter(topluluk => 
+                        topluluk.isim.toLowerCase().includes(searchTerm)
+                    );
+                    displayTopluluklar(filteredTopluluklar);
                 });
             }
         })
@@ -474,12 +494,74 @@ function loadTopluluklar() {
         });
 }
 
+function displayTopluluklar(topluluklar) {
+    const toplulukList = document.getElementById('toplulukList');
+    
+    // Topluluk listesini güncelle
+    toplulukList.innerHTML = '';
+    topluluklar.forEach(topluluk => {
+        const toplulukItem = document.createElement('div');
+        toplulukItem.className = 'topluluk-item';
+        toplulukItem.setAttribute('data-id', topluluk.id);
+        
+        const logoUrl = topluluk.gorsel ? `/images/logo/${topluluk.gorsel}` : '/images/logo/default.png';
+        
+        toplulukItem.innerHTML = `
+            <img src="${logoUrl}" alt="${topluluk.isim} Logo" onerror="this.src='/images/logo/default.png'">
+            <span class="topluluk-name">${topluluk.isim}</span>
+            <span class="topluluk-count">${topluluk.uye_sayisi || 0}</span>
+        `;
+        
+        toplulukItem.addEventListener('click', function() {
+            // Önceki seçimi temizle
+            document.querySelectorAll('.topluluk-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Yeni seçimi işaretle
+            this.classList.add('selected');
+            
+            // İndir butonunu aktif et
+            selectedToplulukId = topluluk.id;
+            document.getElementById('indirButton').disabled = false;
+        });
+        
+        toplulukList.appendChild(toplulukItem);
+    });
+}
+
 function indirExcel() {
-    const toplulukId = document.getElementById('toplulukSelect').value;
+    const toplulukId = selectedToplulukId;
     if (!toplulukId) {
         alert('Lütfen bir topluluk seçiniz.');
         return;
     }
+    
+    // İndirme işlemi başlamadan önce kullanıcıya bilgi ver
+    const indirButton = document.getElementById('indirButton');
+    const originalText = indirButton.innerHTML;
+    indirButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İndiriliyor...';
+    indirButton.disabled = true;
+    
+    // Excel dosyasını indir
     window.location.href = `/denetim/uye/excel-indir/${toplulukId}`;
-    closeModal('excelModal');
+    
+    // 2 saniye sonra butonu eski haline getir
+    setTimeout(() => {
+        indirButton.innerHTML = originalText;
+        indirButton.disabled = false;
+        closeModal('excelModal');
+    }, 2000);
 }
+
+// Modal arka planına tıklanınca modalı kapat
+['uyeListeModal','basvuruListeModal','redSebebiModal','guncelleModal','duzenleModal','yeniUyeModal','silinenUyelerGeriModal','silSebepMiniModal','silModal','silSebebiModal','excelModal'].forEach(function(modalId) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+        modal.addEventListener('mousedown', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});

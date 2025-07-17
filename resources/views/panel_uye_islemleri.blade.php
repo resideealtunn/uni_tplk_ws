@@ -10,9 +10,16 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
 <div class="page-wrapper">
-    <div class="sidebar">
-        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+    <div class="sidebar" id="sidebar">
+        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo" width="194.8" height="194.8" style="width:194.8px; height:194.8px;">
         <h2>{{ session('topluluk') }}</h2>
         <h3>{{ session('isim') }}</h3>
         <p>{{ session('rol') }}</p>
@@ -21,10 +28,7 @@
             <a href="/etkinlik_islemleri" class="menu-item">Etkinlik İşlemleri</a>
             <a href="/uye_islemleri" class="menu-item active">Üye İşlemleri</a>
             <a href="/panel_geribildirim" class="menu-item ">Denetim Geri Bildirimleri</a>
-            <a href="javascript:void(0);" class="menu-item" onclick="document.getElementById('cikisForm').submit();">Çıkış</a>
-            <form id="cikisForm" action="{{ route('cikis') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
+            <a href="/" class="menu-item">Çıkış</a>
         </div>
     </div>
     <div class="main-content">
@@ -69,7 +73,7 @@
         <div id="uyeListeModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Listesi</h2>
-                <input type="text" id="uyeSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeListesi()" style="margin-bottom: 15px; max-width: 300px;">
+                <input type="text" id="uyeSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeListesi()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
                 <div class="uye-listesi">
                     <table>
                         <thead>
@@ -90,7 +94,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('uyeListeModal')">Kapat</button>
             </div>
         </div>
         <!-- Diğer modaller buraya eklenecek -->
@@ -98,7 +101,7 @@
         <div id="basvuruListeModal" class="modal">
             <div class="modal-content">
                 <h2>Üyelik Başvuruları</h2>
-                <input type="text" id="basvuruSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchBasvuruListesi()" style="margin-bottom: 15px; max-width: 300px;">
+                <input type="text" id="basvuruSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchBasvuruListesi()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
                 <div class="uye-listesi">
                     <table id="basvuruListesiTable">
                         <thead>
@@ -118,14 +121,13 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('basvuruListeModal')">Kapat</button>
             </div>
         </div>
         <!-- Üye Güncelle Modal -->
         <div id="uyeGuncelleModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Bilgilerini Güncelle</h2>
-                <input type="text" id="guncelleSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeGuncelle()" style="margin-bottom: 15px; max-width: 300px;">
+                <input type="text" id="guncelleSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeGuncelle()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
                 <div class="uye-listesi">
                     <table>
                         <thead>
@@ -146,7 +148,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('uyeGuncelleModal')">Kapat</button>
             </div>
         </div>
 
@@ -159,11 +160,13 @@
                     <input type="hidden" id="duzenleUyeUyeId">
                     <div class="form-group">
                         <label for="duzenleUyeCepTel">Cep Tel:</label>
-                        <input type="text" id="duzenleUyeCepTel" class="form-control" required>
+                        <input type="text" id="duzenleUyeCepTel" class="form-control" required maxlength="11" oninput="validateTelefon(this)" placeholder="0xxxxxxxxxx">
+                        <small id="telefonError" style="color: red; display: none;"></small>
                     </div>
                     <div class="form-group">
                         <label for="duzenleUyeEmail">Email:</label>
-                        <input type="email" id="duzenleUyeEmail" class="form-control" required>
+                        <input type="email" id="duzenleUyeEmail" class="form-control" required oninput="validateEmail(this)" placeholder="ornek@gmail.com">
+                        <small id="emailError" style="color: red; display: none;"></small>
                     </div>
                     <div class="form-group">
                         <label for="duzenleUyeFormu">Üyelik Formu:</label>
@@ -193,7 +196,8 @@
               </div>
               <div class="form-group">
                 <label for="yeniTcNo">TC Kimlik No:</label>
-                <input type="text" id="yeniTcNo" name="tcno" required class="form-control">
+                <input type="text" id="yeniTcNo" name="tcno" required class="form-control" maxlength="11" oninput="validateTCKimlik(this)" placeholder="11 haneli TC kimlik numarası">
+                <small id="tcKimlikError" style="color: red; display: none;"></small>
               </div>
               <div class="form-group">
                 <label for="yeniUyelikFormu">Üyelik Formu:</label>
@@ -213,7 +217,7 @@
         <div id="uyeSilModal" class="modal">
           <div class="modal-content">
             <h2>Üye Sil</h2>
-            <input type="text" id="silSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeSil()" style="margin-bottom: 15px; max-width: 300px;">
+            <input type="text" id="silSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeSil()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
             <div class="uye-listesi">
               <table>
                 <thead>
@@ -233,9 +237,8 @@
                   <!-- JavaScript ile doldurulacak -->
                 </tbody>
               </table>
+                            </div>
             </div>
-            <button type="button" class="btn btn-cancel" onclick="closeModal('uyeSilModal')">Kapat</button>
-          </div>
         </div>
 
         <!-- Ayrılış Sebebi Modalı (Silme için) -->
@@ -270,7 +273,7 @@
         <div id="yonetimBasvurulariModal" class="modal">
             <div class="modal-content">
                 <h2>Yönetim Başvuruları</h2>
-                <input type="text" id="yonetimBasvuruSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchYonetimBasvurulari()" style="margin-bottom: 15px; max-width: 300px;">
+                <input type="text" id="yonetimBasvuruSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchYonetimBasvurulari()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
                 <div class="uye-listesi">
                     <table>
                         <thead>
@@ -291,7 +294,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('yonetimBasvurulariModal')">Kapat</button>
             </div>
         </div>
         <!-- Niyet Metni Modalı -->
@@ -299,13 +301,13 @@
             <div class="modal-content" style="max-width:500px;">
                 <h2>Niyet Metni</h2>
                 <div id="niyetMetniIcerik" style="white-space:pre-line; margin: 20px 0;"></div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('niyetMetniModal')">Kapat</button>
             </div>
         </div>
         <!-- Silinen Üyeler Modal -->
         <div id="silinenUyelerModal" class="modal">
           <div class="modal-content">
             <h2>Silinen Üyeler ve Reddedilen Başvurular</h2>
+            <input type="text" id="silinenUyelerSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchSilinenUyeler()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
             <div class="uye-listesi">
               <table>
                 <thead>
@@ -327,13 +329,13 @@
                 </tbody>
               </table>
             </div>
-            <button type="button" class="btn btn-cancel" onclick="closeModal('silinenUyelerModal')">Kapat</button>
           </div>
         </div>
         <!-- Üye Mesajları Modal -->
         <div id="uyeMesajModal" class="modal">
             <div class="modal-content">
                 <h2>Üye Mesajları</h2>
+                <input type="text" id="uyeMesajSearchInput" class="form-control" placeholder="Öğrenci No ile ara..." onkeyup="searchUyeMesajlar()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 15px; max-width: 300px;">
                 <div class="uye-listesi">
                     <table>
                         <thead>
@@ -353,7 +355,6 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('uyeMesajModal')">Kapat</button>
             </div>
         </div>
         <!-- Mesaj Görüntüle Modalı -->
@@ -361,7 +362,6 @@
             <div class="modal-content" style="max-width:400px;">
                 <h2>Mesaj İçeriği</h2>
                 <div id="mesajIcerik" style="white-space:pre-line; margin: 20px 0;"></div>
-                <button type="button" class="btn btn-cancel" onclick="closeModal('mesajGoruntuleModal')">Kapat</button>
             </div>
         </div>
         <!-- Mesaj Sil Modalı -->
@@ -422,5 +422,6 @@
 </footer>
 
 <script src="{{ asset('js/panel_uye_islemleri.js') }}"></script>
+<script src="{{ asset('js/hamburger.js') }}"></script>
 </body>
 </html>

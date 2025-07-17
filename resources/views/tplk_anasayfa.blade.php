@@ -11,11 +11,18 @@
 <body>
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">
-            @if(isset($logo_onay) && ($logo_onay == 1 || $logo_onay == 4) && $topluluk->gorsel)
-                <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
-            @endif
-        </a>
+        <!-- LOGO FLEX WRAP BAŞLANGIÇ -->
+        <div class="navbar-logos d-flex align-items-center">
+            <a class="navbar-brand" href="{{ route('topluluk_anasayfa', ['isim' => $topluluk->isim, 'id' => $topluluk->id]) }}">
+                @if(isset($logo_onay) && ($logo_onay == 1 || $logo_onay == 4) && $topluluk->gorsel)
+                    <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
+                @endif
+            </a>
+            <a class="navbar-brand neu-logo-mobile d-lg-none" href="{{route('kesfet')}}">
+                <img src="{{ asset('images/logo/neu_logo.png') }}" >
+            </a>
+        </div>
+        <!-- LOGO FLEX WRAP BİTİŞ -->
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -40,7 +47,7 @@
                 </li>
             </ul>
 
-            <a class="navbar-brand" href="{{route('kesfet')}}">
+            <a class="navbar-brand neu-logo-desktop d-none d-lg-block" href="{{route('kesfet')}}">
                 <img src="{{ asset('images/logo/neu_logo.png') }}" >
             </a>
         </div>

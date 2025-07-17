@@ -10,9 +10,15 @@
     <link rel="stylesheet" href="{{ asset('css/etkinlik_islemleri.css') }}">
 </head>
 <body>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 <div class="page-wrapper">
-    <div class="sidebar">
-        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+    <div class="sidebar" id="sidebar">
+        <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo" width="194.8" height="194.8" style="width:194.8px; height:194.8px;">
         <h2>{{ session('topluluk') }}</h2>
         <h3>{{ session('isim') }}</h3>
         <p>{{ session('rol') }}</p>
@@ -21,10 +27,7 @@
             <a href="/etkinlik_islemleri" class="menu-item active">Etkinlik İşlemleri</a>
             <a href="/uye_islemleri" class="menu-item">Üye İşlemleri</a>
             <a href="/panel_geribildirim" class="menu-item ">Denetim Geri Bildirimleri</a>
-            <a href="javascript:void(0);" class="menu-item" onclick="document.getElementById('cikisForm').submit();">Çıkış</a>
-            <form id="cikisForm" action="{{ route('cikis') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
+            <a href="/" class="menu-item">Çıkış</a>
         </div>
     </div>
     <div class="main-content">
@@ -146,13 +149,18 @@
                     @csrf
                     <div class="form-group">
                         <label for="etkinlik_id">Etkinlik Seçin:</label>
-                        <select id="etkinlik_id" name="etkinlik_id" class="form-control" required>
+                        <select id="etkinlik_id" name="etkinlik_id" class="form-control" onchange="guncelleYoklamaDurum(this)" required>
+                            <option value="">Etkinlik seçiniz</option>
                             @foreach($onaylanmisEtkinlikler as $etkinlik)
-                                <option value="{{ $etkinlik->id }}" {{ $etkinlik->y_durum == 1 ? 'selected' : '' }}>
-                                    {{ $etkinlik->isim }} ({{ $etkinlik->y_durum ? 'Açık' : 'Kapalı' }})
+                                <option value="{{ $etkinlik->id }}" data-durum="{{ $etkinlik->y_durum }}">
+                                    {{ $etkinlik->isim }}
                                 </option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mevcut Durum:</label>
+                        <p id="yoklamaMevcutDurum" class="durum-text">Etkinlik seçiniz</p>
                     </div>
 
                     <input type="hidden" name="durum" value="toggle"> {{-- Sadece toggle işlemi yapılır --}}
@@ -336,6 +344,7 @@
 </footer>
 
 <script src="{{ asset('js/js_etkinlik_islemleri.js') }}"></script>
+<script src="{{ asset('js/js_panels_menu.js') }}"></script>
 <script>
     function guncelleDurum(selectElement) {
         const secilen = selectElement.options[selectElement.selectedIndex];
@@ -360,6 +369,20 @@
             durumYazi.textContent = "Keşfette Görünür";
         } else if (durum === "0") {
             durumYazi.textContent = "Keşfette Gizli";
+        } else {
+            durumYazi.textContent = "Durum bilinmiyor";
+        }
+    }
+
+    function guncelleYoklamaDurum(selectElement) {
+        const secilen = selectElement.options[selectElement.selectedIndex];
+        const durum = secilen.getAttribute("data-durum");
+
+        const durumYazi = document.getElementById("yoklamaMevcutDurum");
+        if (durum === "1") {
+            durumYazi.textContent = "Yoklama Açık";
+        } else if (durum === "0") {
+            durumYazi.textContent = "Yoklama Kapalı";
         } else {
             durumYazi.textContent = "Durum bilinmiyor";
         }

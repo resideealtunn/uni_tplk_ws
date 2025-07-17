@@ -1,27 +1,24 @@
 .navbar {
-    background-color: #a8dcf1;
+    background-color: #CCE6FF;
     padding: 1.5rem 0;
     min-height: 80px;
 }
 .navbar-brand img {
-    height: 70px;
+    height: 60px;
 }
 .nav-link {
-    color: #333;
+    color: #003366;
     font-weight: 500;
     margin: 0 15px;
     font-size: 1.1rem;
     padding: 0.5rem 1rem;
 }
 .nav-link:hover {
-    color: #007bff;
+    color: #003366;
 }
 .nav-link.active {
-    font-size: 1.3rem;
     font-weight: 700;
-    color: #007bff !important;
-    border-bottom: 3px solid #007bff;
-    background: transparent;
+    color: #003366 !important;
 }
 .hero-section {
     background-size: cover;
@@ -336,4 +333,24 @@
     .stat-label {
         font-size: 1rem;
     }
+}
+
+@media (max-width: 991.98px) {
+  .navbar-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 12px;
+  }
+  .navbar-logos .navbar-brand img {
+    height: 48px;
+    max-height: 48px;
+    width: auto;
+  }
+  .neu-logo-mobile img {
+    height: 48px;
+    max-height: 48px;
+    width: auto;
+  }
 }

@@ -19,7 +19,7 @@ class Controller extends BaseController
     // Topluluklar sayfası
     public function topluluklarIndex()
     {
-        $topluluklar = Topluluk::where('durum', 1)->get();
+        $topluluklar = Topluluk::where('durum', 1)->orderBy('isim', 'asc')->paginate(15);
         $uye_sayisi = \DB::table('uyeler')->whereIn('rol', [1,2,3,6])->count();
         return view('topluluklar', compact('topluluklar','uye_sayisi'));
     }
@@ -29,7 +29,7 @@ class Controller extends BaseController
     {
         // İstatistikleri hesapla
         $topluluk_sayisi = \DB::table('topluluklar')->where('durum', 1)->count();
-        $uye_sayisi = \DB::table('uyeler')->whereIn('rol', [1,2,3,6])->count();
+        $uye_sayisi = \DB::table('uyeler')->whereIn('rol', [1, 2, 3, 6])->count();
         
         // Toplam etkinlik sayısı (etkinlik_gecmis tablosunda e_onay=1 olanlar)
         $etkinlik_sayisi = \DB::table('etkinlik_gecmis')
@@ -43,18 +43,55 @@ class Controller extends BaseController
             ->where('eg.e_onay', 1)
             ->select('eg.id', 'eg.e_id', 'eb.isim as etkinlik_adi', 'eg.bilgi', 'eg.resim', 'eg.aciklama', 't.id as topluluk_id', 't.isim as topluluk_adi')
             ->orderByDesc('eg.id')
-            ->limit(12)
+            ->limit(15)
             ->get();
         
         return view('anasayfa', compact('topluluk_sayisi', 'uye_sayisi', 'etkinlik_sayisi', 'gecmis_etkinlikler'));
     }
 
+    // Haberler sayfası
+    public function haberlerIndex()
+    {
+        // Tüm onaylı geçmiş etkinlikleri getir
+        $etkinlikler = \DB::table('etkinlik_gecmis as eg')
+            ->join('etkinlik_bilgi as eb', 'eg.e_id', '=', 'eb.id')
+            ->join('topluluklar as t', 'eb.t_id', '=', 't.id')
+            ->where('eg.e_onay', 1)
+            ->select(
+                'eg.id', 
+                'eg.e_id', 
+                'eb.isim as etkinlik_adi', 
+                'eg.bilgi', 
+                'eg.resim', 
+                'eg.aciklama', 
+                't.id as topluluk_id', 
+                't.isim as topluluk_adi',
+                'eb.tarih'
+            )
+            ->orderByDesc('eb.tarih')
+            ->paginate(20);
+        
+        return view('haberler', compact('etkinlikler'));
+    }
+
     public function kesfetIndex()
     {
+        // Mobil cihazlar için sayfa başına 15 etkinlik
+        $perPage = request()->header('User-Agent') && 
+                   (strpos(request()->header('User-Agent'), 'Mobile') !== false || 
+                    strpos(request()->header('User-Agent'), 'Android') !== false ||
+                    strpos(request()->header('User-Agent'), 'iPhone') !== false) ? 15 : 18;
+        
         $kesfet = DB::table('topluluklar')
         ->join('etkinlik_bilgi', 'etkinlik_bilgi.t_id', '=', 'topluluklar.id')
+        ->leftJoin('etkinlik_gecmis', 'etkinlik_bilgi.id', '=', 'etkinlik_gecmis.e_id')
         ->where('etkinlik_bilgi.k_durum', '=', '1')
         ->where('etkinlik_bilgi.talep_onay', '=', '1')
+        ->where('topluluklar.durum', '=', '1')  // Topluluk aktif olmalı
+        ->where(function($query) {
+            $query->whereNull('etkinlik_gecmis.e_onay')
+                  ->orWhereNotIn('etkinlik_gecmis.e_onay', [2]);
+        })
         ->orderBy('etkinlik_bilgi.tarih', 'asc')
         ->select(
             'etkinlik_bilgi.id as eb_id',
@@ -68,7 +105,7 @@ class Controller extends BaseController
             'etkinlik_bilgi.bitis_tarihi as eb_bitis_tarihi',
             'etkinlik_bilgi.konum as eb_konum'
         )
-        ->paginate(12);
+        ->paginate($perPage);
 
         return view('kesfet', compact('kesfet'));
     }

@@ -1,20 +1,24 @@
 .navbar {
-    background-color: #a8dcf1;
+    background-color: #CCE6FF;
     padding: 1.5rem 0;
     min-height: 80px;
 }
 .navbar-brand img {
-    height: 50px;
+    height: 60px;
 }
 .nav-link {
-    color: #333;
+    color: #003366;
     font-weight: 500;
     margin: 0 15px;
     font-size: 1.1rem;
     padding: 0.5rem 1rem;
 }
 .nav-link:hover {
-    color: #007bff;
+    color: #003366;
+}
+.nav-link.active {
+    font-weight: 700;
+    color: #003366 !important;
 }
 .hero-section {
     background-image: url("../images/background_panel.png");
@@ -481,4 +485,45 @@
 }
 .mini-close:hover {
     color: #003366;
+}
+@media (max-width: 991.98px) {
+  .navbar-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 12px;
+    position: relative;
+    z-index: 1050;
+    background: #CCE6FF;
+    padding: 10px 0 10px 0;
+  }
+  .navbar-logos .navbar-brand img {
+    height: 48px;
+    max-height: 48px;
+    width: auto;
+    margin-top: 13px;
+  }
+  .neu-logo-mobile img {
+    height: 48px;
+    max-height: 48px;
+    width: auto;
+  }
+  .navbar {
+    padding-top: 0 !important;
+    min-height: 0 !important;
+  }
+  .navbar .container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+  .navbar-toggler {
+    margin-top:10px;
+    margin-left: 10px !important;
+    margin-right: auto !important;
+    left: 0;
+    right: auto;
+    position: relative;
+  }
 }

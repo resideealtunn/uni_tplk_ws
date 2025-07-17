@@ -324,29 +324,106 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
-        width: 100%;
-        position: relative;
-        height: auto;
+        width: 80vw;
+        max-width: 320px;
+        position: fixed;
+        left: -100vw;
+        top: 0;
+        height: 100vh;
+        z-index: 1001;
+        transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.08);
+        background: #003366;
+        padding-top: 4rem;
     }
-    
+    .sidebar.open {
+        left: 0;
+    }
     .main-content {
         margin-left: 0;
-        padding: 2rem;
-        width: 100%;
+        padding: 1rem;
+        width: 100vw;
+        min-width: 0;
     }
-    
     .page-wrapper {
         flex-direction: column;
     }
-    
     .footer {
-        width: 100%;
+        width: 100vw;
         margin-left: 0;
+        padding: 2rem 0 1rem;
     }
-    
     .footer-content {
         grid-template-columns: 1fr;
         text-align: center;
+        padding: 0 1rem;
+    }
+    .footer-section {
+        margin-bottom: 1.5rem;
+    }
+    .social-icons {
+        justify-content: center;
+    }
+    .form-container {
+        padding: 1rem;
+        max-width: 100vw;
+    }
+    .form-container h2 {
+        font-size: 2rem;
+    }
+    .alert {
+        font-size: 1.2rem;
+        padding: 1rem 1.2rem;
+    }
+}
+
+/* Hamburger Menü */
+.hamburger {
+    display: none;
+    position: fixed;
+    top: 1.5rem;
+    left: 1.5rem;
+    width: 38px;
+    height: 38px;
+    z-index: 1100;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: #003366;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    margin: 4px 0;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    .sidebar {
+        left: -100vw;
+    }
+    .sidebar.open {
+        left: 0;
+    }
+    body.sidebar-open {
+        overflow: hidden;
+    }
+}
+
+/* Sidebar kapalıyken ana içerik tıklanınca sidebar kapanır */
+@media (max-width: 768px) {
+    .main-content {
+        min-height: 100vh;
+        width: 100vw;
+        overflow-x: hidden;
     }
 }
 

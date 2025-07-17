@@ -13,9 +13,16 @@
 <body>
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
-        </a>
+        <!-- LOGO FLEX WRAP BAŞLANGIÇ -->
+        <div class="navbar-logos d-flex align-items-center">
+            <a class="navbar-brand" href="#">
+                <img src="{{ asset('images/logo/'.$topluluk->gorsel) }}">
+            </a>
+            <a class="navbar-brand neu-logo-mobile d-lg-none" href="#">
+                <img src="{{ asset('images/logo/neu_logo.png') }}" >
+            </a>
+        </div>
+        <!-- LOGO FLEX WRAP BİTİŞ -->
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -40,8 +47,7 @@
                 </li>
             </ul>
 
-            <!-- NEU Logo -->
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand neu-logo-desktop d-none d-lg-block" href="#">
                 <img src="{{ asset('images/logo/neu_logo.png') }}" >
             </a>
         </div>
@@ -72,7 +78,7 @@
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#uyeAccordion">
                             <div class="accordion-body">
-                                <form method="POST" enctype="multipart/form-data" action="{{ route('kayitol') }}" class="uye-form">
+                                <form method="POST" enctype="multipart/form-data" action="{{ route('kayitol') }}" class="uye-form" id="uyeForm">
                                     @csrf
                                     <div class="mb-3">
                                         <label for="student_number" class="form-label">TC. No</label>

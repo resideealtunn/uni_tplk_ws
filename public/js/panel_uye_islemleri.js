@@ -1,6 +1,14 @@
 // Modal işlemleri için genel fonksiyonlar
 function showModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'block';
+    
+    // Modal dışına tıklandığında kapatma özelliği
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal(modalId);
+        }
+    });
 }
 
 function closeModal(modalId) {
@@ -76,7 +84,7 @@ function getBasvuruListesi() {
 }
 
 function showBasvuruListeModal() {
-    document.getElementById("basvuruListeModal").style.display = "block";
+    showModal("basvuruListeModal");
     getBasvuruListesi();
 }
 
@@ -85,7 +93,7 @@ let currentRedIndex = null;
 function reddet(index) {
     currentRedIndex = index;
     document.getElementById('redSebepInput').value = '';
-    document.getElementById('redSebepModal').style.display = 'block';
+    showModal('redSebepModal');
 }
 
 function closeRedSebepModal() {
@@ -161,11 +169,15 @@ function populateUyeGuncelleTable() {
 
 function showUyeGuncelleModal() {
     populateUyeGuncelleTable();
-    document.getElementById('uyeGuncelleModal').style.display = 'block';
+    showModal('uyeGuncelleModal');
 }
 
 function searchUyeGuncelle() {
     const input = document.getElementById('guncelleSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
     const rows = document.querySelectorAll('#uyeGuncelleListesi tr');
     rows.forEach(row => {
         const ogrenciNo = row.children[1].textContent.toLowerCase();
@@ -179,7 +191,7 @@ function openDuzenleUyeModal(uye_id, ogr_id, tel, eposta, belge) {
     document.getElementById('duzenleUyeCepTel').value = tel;
     document.getElementById('duzenleUyeEmail').value = eposta;
     document.getElementById('duzenleUyeFormu').value = '';
-    document.getElementById('duzenleUyeModal').style.display = 'block';
+    showModal('duzenleUyeModal');
 }
 
 document.getElementById('duzenleUyeForm').addEventListener('submit', function(e) {
@@ -189,6 +201,38 @@ document.getElementById('duzenleUyeForm').addEventListener('submit', function(e)
     const tel = document.getElementById('duzenleUyeCepTel').value;
     const eposta = document.getElementById('duzenleUyeEmail').value;
     const belge = document.getElementById('duzenleUyeFormu').files[0];
+    
+    // Telefon numarası validasyonu
+    if (tel && tel.trim() !== '') {
+        // Sadece sayıları al
+        const telDigits = tel.replace(/[^0-9]/g, '');
+        
+        if (telDigits.length !== 11) {
+            alert('Telefon numarası 11 haneli olmalıdır.');
+            return;
+        }
+        
+        if (!telDigits.startsWith('0')) {
+            alert('Telefon numarası 0 ile başlamalıdır.');
+            return;
+        }
+    }
+    
+    // Email validasyonu
+    if (eposta && eposta.trim() !== '') {
+        if (!eposta.includes('@')) {
+            alert('Email adresi @ işareti içermelidir.');
+            return;
+        }
+        
+        // Basit email format kontrolü
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(eposta)) {
+            alert('Lütfen geçerli bir email adresi giriniz.');
+            return;
+        }
+    }
+    
     const formData = new FormData();
     formData.append('ogr_id', ogr_id);
     formData.append('uye_id', uye_id);
@@ -223,7 +267,7 @@ function showYeniUyeModal() {
     document.getElementById('yeniUyeForm').reset();
     document.getElementById('yeniKayitSekli').value = 'yönetici';
     document.getElementById('yeniBasvuruTarihi').value = today;
-    document.getElementById('yeniUyeModal').style.display = 'block';
+    showModal('yeniUyeModal');
 }
 
 // Tabloya üye satırı ekleme
@@ -250,6 +294,149 @@ window.addEventListener('DOMContentLoaded', () => {
     uyeler.forEach(tabloyaUyeEkle);
 });
 
+// TC Kimlik numarası validasyon fonksiyonu
+function validateTCKimlik(input) {
+    const value = input.value;
+    const errorElement = document.getElementById('tcKimlikError');
+    
+    // Sadece sayı girişine izin ver
+    input.value = value.replace(/[^0-9]/g, '');
+    
+    // 11 haneden fazla girilmesini engelle
+    if (input.value.length > 11) {
+        input.value = input.value.substring(0, 11);
+    }
+    
+    // Validasyon kuralları
+    if (input.value.length > 0) {
+        if (input.value.length !== 11) {
+            errorElement.textContent = 'TC kimlik numarası 11 haneli olmalıdır.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        if (input.value.startsWith('0')) {
+            errorElement.textContent = 'TC kimlik numarası 0 ile başlayamaz.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        // TC kimlik numarası algoritma kontrolü
+        if (!validateTCKimlikAlgorithm(input.value)) {
+            errorElement.textContent = 'Geçersiz TC kimlik numarası.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        errorElement.style.display = 'none';
+        return true;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+// TC kimlik numarası algoritma kontrolü
+function validateTCKimlikAlgorithm(tcKimlik) {
+    if (tcKimlik.length !== 11) return false;
+    
+    // İlk hane 0 olamaz
+    if (tcKimlik[0] === '0') return false;
+    
+    // Tüm haneler aynı olamaz
+    if (tcKimlik.split('').every(char => char === tcKimlik[0])) return false;
+    
+    // 1, 3, 5, 7, 9. hanelerin toplamının 7 katından, 2, 4, 6, 8. hanelerin toplamı çıkartıldığında, elde edilen sonucun 10'a bölümünden kalan, 10. haneyi vermelidir
+    let tekHaneToplam = 0;
+    let ciftHaneToplam = 0;
+    
+    for (let i = 0; i < 9; i++) {
+        if (i % 2 === 0) {
+            tekHaneToplam += parseInt(tcKimlik[i]);
+        } else {
+            ciftHaneToplam += parseInt(tcKimlik[i]);
+        }
+    }
+    
+    const onuncuHane = (tekHaneToplam * 7 - ciftHaneToplam) % 10;
+    if (onuncuHane !== parseInt(tcKimlik[9])) return false;
+    
+    // İlk 10 hanenin toplamının 10'a bölümünden kalan, 11. haneyi vermelidir
+    let ilkOnHaneToplam = 0;
+    for (let i = 0; i < 10; i++) {
+        ilkOnHaneToplam += parseInt(tcKimlik[i]);
+    }
+    
+    const onBirinciHane = ilkOnHaneToplam % 10;
+    if (onBirinciHane !== parseInt(tcKimlik[10])) return false;
+    
+    return true;
+}
+
+// Telefon numarası validasyon fonksiyonu
+function validateTelefon(input) {
+    const value = input.value;
+    const errorElement = document.getElementById('telefonError');
+    
+    // Sadece sayı girişine izin ver
+    input.value = value.replace(/[^0-9]/g, '');
+    
+    // 11 haneden fazla girilmesini engelle
+    if (input.value.length > 11) {
+        input.value = input.value.substring(0, 11);
+    }
+    
+    // Validasyon kuralları
+    if (input.value.length > 0) {
+        if (input.value.length !== 11) {
+            errorElement.textContent = 'Telefon numarası 11 haneli olmalıdır.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        if (!input.value.startsWith('0')) {
+            errorElement.textContent = 'Telefon numarası 0 ile başlamalıdır.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        errorElement.style.display = 'none';
+        return true;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+// Email validasyon fonksiyonu
+function validateEmail(input) {
+    const value = input.value;
+    const errorElement = document.getElementById('emailError');
+    
+    // Validasyon kuralları
+    if (value.length > 0) {
+        if (!value.includes('@')) {
+            errorElement.textContent = 'Email adresi @ işareti içermelidir.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        // Basit email format kontrolü
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            errorElement.textContent = 'Lütfen geçerli bir email adresi giriniz.';
+            errorElement.style.display = 'block';
+            return false;
+        }
+        
+        errorElement.style.display = 'none';
+        return true;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
 // Yeni üye formu gönderildiğinde çalışır
 document.getElementById('yeniUyeForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -257,10 +444,18 @@ document.getElementById('yeniUyeForm').addEventListener('submit', function (e) {
     const toplulukId = document.getElementById('topluluk_id').value;
     const basvuruTarihi = document.getElementById('yeniBasvuruTarihi').value;
     const pdfFile = document.getElementById('yeniUyelikFormu').files[0];
+    
+    // TC kimlik numarası validasyonu
+    if (!validateTCKimlik(document.getElementById('yeniTcNo'))) {
+        alert('Lütfen geçerli bir TC kimlik numarası giriniz.');
+        return;
+    }
+    
     if (!pdfFile) {
         alert('Lütfen üyelik formu (PDF) yükleyiniz.');
         return;
     }
+    
     const formData = new FormData();
     formData.append('tcno', tcno);
     formData.append('basvuru_tarihi', basvuruTarihi);
@@ -276,8 +471,9 @@ document.getElementById('yeniUyeForm').addEventListener('submit', function (e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Yeni üye başarıyla eklendi.');
+            alert(data.message || 'Yeni üye başarıyla eklendi.');
             closeModal('yeniUyeModal');
+            document.getElementById('yeniUyeForm').reset();
             populateUyeGuncelleTable && populateUyeGuncelleTable();
         } else {
             alert('Hata: ' + (data.message || 'Üye eklenemedi.'));
@@ -314,7 +510,7 @@ let currentSilUyeId = null;
 function openAyrilisSebepModal(uye_id) {
     currentSilUyeId = uye_id;
     document.getElementById('ayrilisSebepInput').value = '';
-    document.getElementById('ayrilisSebepModal').style.display = 'block';
+    showModal('ayrilisSebepModal');
 }
 function closeAyrilisSebepModal() {
     document.getElementById('ayrilisSebepModal').style.display = 'none';
@@ -394,6 +590,10 @@ function exportToPDF() {
 // Üye Listesi modalındaki tabloyu öğrenci no ile filtrele
 function searchUyeListesi() {
     var input = document.getElementById('uyeSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
     var table = document.getElementById('uyeListesi');
     var rows = table.getElementsByTagName('tr');
     for (var i = 0; i < rows.length; i++) {
@@ -413,6 +613,10 @@ function searchUyeListesi() {
 // Başvuru Listesi modalındaki tabloyu öğrenci no ile filtrele
 function searchBasvuruListesi() {
     var input = document.getElementById('basvuruSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
     var table = document.getElementById('basvuruListesi');
     var rows = table.getElementsByTagName('tr');
     for (var i = 0; i < rows.length; i++) {
@@ -491,6 +695,10 @@ function showNiyetMetniModalDinamik(niyetMetni) {
 
 function searchYonetimBasvurulari() {
     const input = document.getElementById('yonetimBasvuruSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
     const rows = document.querySelectorAll('#yonetimBasvurulariListesi tr');
     rows.forEach(row => {
         const ogrenciNo = row.children[1].textContent.toLowerCase();
@@ -500,7 +708,20 @@ function searchYonetimBasvurulari() {
 
 function showUyeSilModal() {
     populateUyeSilTable();
-    document.getElementById('uyeSilModal').style.display = 'block';
+    showModal('uyeSilModal');
+}
+
+function searchUyeSil() {
+    const input = document.getElementById('silSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
+    const rows = document.querySelectorAll('#uyeSilListesi tr');
+    rows.forEach(row => {
+        const ogrenciNo = row.children[1].textContent.toLowerCase();
+        row.style.display = ogrenciNo.includes(input) ? '' : 'none';
+    });
 }
 
 function showSilinenUyelerModal() {
@@ -538,7 +759,7 @@ function showSilinenUyelerModal() {
                 `;
             });
         });
-    document.getElementById('silinenUyelerModal').style.display = 'block';
+    showModal('silinenUyelerModal');
 }
 
 // Sebep popup fonksiyonu
@@ -667,7 +888,7 @@ let currentRedBasvuruId = null;
 function reddetBasvuru(uye_id, idx) {
     currentRedBasvuruId = uye_id;
     document.getElementById('redSebepInput').value = '';
-    document.getElementById('redSebepModal').style.display = 'block';
+    showModal('redSebepModal');
 }
 
 // Red sebep formunu submit edince başvuruyu reddet
@@ -703,5 +924,33 @@ if (redSebepForm) {
             })
             .catch(() => alert('Bir hata oluştu.'));
         }
+    });
+}
+
+// Silinen üyeler arama fonksiyonu
+function searchSilinenUyeler() {
+    const input = document.getElementById('silinenUyelerSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
+    const rows = document.querySelectorAll('#silinenUyelerListesi tr');
+    rows.forEach(row => {
+        const ogrenciNo = row.children[1].textContent.toLowerCase();
+        row.style.display = ogrenciNo.includes(input) ? '' : 'none';
+    });
+}
+
+// Üye mesajları arama fonksiyonu
+function searchUyeMesajlar() {
+    const input = document.getElementById('uyeMesajSearchInput').value.toLowerCase();
+    // Sadece sayısal değer kontrolü
+    if (input && !/^\d+$/.test(input)) {
+        return;
+    }
+    const rows = document.querySelectorAll('#uyeMesajListesi tr');
+    rows.forEach(row => {
+        const ogrenciNo = row.children[0].textContent.toLowerCase();
+        row.style.display = ogrenciNo.includes(input) ? '' : 'none';
     });
 }

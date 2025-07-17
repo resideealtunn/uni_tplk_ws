@@ -4,6 +4,7 @@
 let etkinlikEditData = [];
 let etkinlikEditIndex = null;
 let tempEtkinlikAfiş = null;
+let etkinlikShowAll = false;
 
 function renderEtkinlikGeriBildirimTable() {
     fetch('/panel/geribildirim/talep-etkinlik')
@@ -12,7 +13,8 @@ function renderEtkinlikGeriBildirimTable() {
             etkinlikEditData = data;
             const tbody = document.getElementById('etkinlikGeriBildirimBody');
             tbody.innerHTML = '';
-            data.forEach((item, idx) => {
+            let showData = etkinlikShowAll ? data : data.slice(0, 5);
+            showData.forEach((item, idx) => {
                 let durum = '';
                 if (item.talep_onay == 0) durum = 'Reddedildi';
                 else if (item.talep_onay == 1) durum = 'Onaylandı';
@@ -45,6 +47,33 @@ function renderEtkinlikGeriBildirimTable() {
                 </tr>
                 `;
             });
+            // Daha fazla/az göster butonları
+            const btnId = 'etkinlikDahaFazlaBtn';
+            let btn = document.getElementById(btnId);
+            if (btn) btn.remove();
+            if (!etkinlikShowAll && data.length > 5) {
+                const showMoreBtn = document.createElement('button');
+                showMoreBtn.id = btnId;
+                showMoreBtn.className = 'duzenle-btn';
+                showMoreBtn.textContent = 'Daha Fazla Göster';
+                showMoreBtn.style.margin = '10px auto 0 auto';
+                showMoreBtn.onclick = function() {
+                    etkinlikShowAll = true;
+                    renderEtkinlikGeriBildirimTable();
+                };
+                tbody.parentElement.appendChild(showMoreBtn);
+            } else if (etkinlikShowAll && data.length > 5) {
+                const showLessBtn = document.createElement('button');
+                showLessBtn.id = btnId;
+                showLessBtn.className = 'duzenle-btn';
+                showLessBtn.textContent = 'Daha Az Göster';
+                showLessBtn.style.margin = '10px auto 0 auto';
+                showLessBtn.onclick = function() {
+                    etkinlikShowAll = false;
+                    renderEtkinlikGeriBildirimTable();
+                };
+                tbody.parentElement.appendChild(showLessBtn);
+            }
         });
 }
 
@@ -141,6 +170,7 @@ function saveEtkinlikEdit() {
 let gerceklesenEtkinlikData = [];
 let gerceklesenEditIndex = null;
 let tempGerceklesenResim = null;
+let gerceklesenShowAll = false;
 
 function renderGerceklesenTable() {
     fetch('/panel/geribildirim/gerceklesen-etkinlik')
@@ -149,11 +179,25 @@ function renderGerceklesenTable() {
             gerceklesenEtkinlikData = data;
             const tbody = document.getElementById('gerceklesenEtkinlikBody');
             tbody.innerHTML = '';
-            data.forEach((item, idx) => {
+            let showData = gerceklesenShowAll ? data : data.slice(0, 5);
+            showData.forEach((item, idx) => {
                 let durum = item.e_onay == 1 ? 'Onaylandı' : (item.e_onay == 2 ? 'Beklemede' : 'Reddedildi');
                 let duzenleBtn = item.e_onay == 0 ? `<button class='duzenle-btn' onclick='openGerceklesenEditModal(${idx})'>Düzenle</button>` : '';
-                let detayBtn = `<button class='duzenle-btn' style='background:#217dbb' onclick=\"showEtkinlikDetay('${(item.bilgi||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;')}', '${(item.aciklama||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;')}')\">Görüntüle</button>`;
+                // Görüntüle butonu tüm durumlarda çalışmalı - data attribute kullanarak
+                let detayBtn = `<button class='duzenle-btn gerceklesen-detay-btn' style='background:#217dbb' data-bilgi="${encodeURIComponent(item.bilgi || '')}" data-aciklama="${encodeURIComponent(item.aciklama || '')}">Görüntüle</button>`;
                 let imgHtml = `<img src="/images/etkinlik/${item.resim}" alt="Resim" class="table-img" style="cursor:pointer;" onclick="showImagePopup('/images/etkinlik/${item.resim}')">`;
+                
+                // Red sebebi için popup sistemi
+                let redSebep = item.red_sebebi || '';
+                let redHtml = '';
+                if (redSebep.length > 30) {
+                    redHtml = `<span style='cursor:pointer;color:#c00;text-decoration:underline;' onclick=\"showTextDetailModal('Red Sebebi', '${redSebep.replace(/'/g, "&#39;").replace(/"/g, '&quot;')}')\">${redSebep.substring(0,30)}...</span>`;
+                } else if (redSebep) {
+                    redHtml = `<span style='cursor:pointer;color:#c00;text-decoration:underline;' onclick=\"showTextDetailModal('Red Sebebi', '${redSebep.replace(/'/g, "&#39;").replace(/"/g, '&quot;')}')\">${redSebep}</span>`;
+                } else {
+                    redHtml = '';
+                }
+                
                 tbody.innerHTML += `
                 <tr>
                     <td>${item.baslik}</td>
@@ -162,11 +206,38 @@ function renderGerceklesenTable() {
                     <td>${imgHtml}</td>
                     <td>${detayBtn}</td>
                     <td>${durum}</td>
-                    <td>${item.red_sebebi || ''}</td>
+                    <td>${redHtml}</td>
                     <td>${duzenleBtn}</td>
                 </tr>
                 `;
             });
+            // Daha fazla/az göster butonları
+            const btnId = 'gerceklesenDahaFazlaBtn';
+            let btn = document.getElementById(btnId);
+            if (btn) btn.remove();
+            if (!gerceklesenShowAll && data.length > 5) {
+                const showMoreBtn = document.createElement('button');
+                showMoreBtn.id = btnId;
+                showMoreBtn.className = 'duzenle-btn';
+                showMoreBtn.textContent = 'Daha Fazla Göster';
+                showMoreBtn.style.margin = '10px auto 0 auto';
+                showMoreBtn.onclick = function() {
+                    gerceklesenShowAll = true;
+                    renderGerceklesenTable();
+                };
+                tbody.parentElement.appendChild(showMoreBtn);
+            } else if (gerceklesenShowAll && data.length > 5) {
+                const showLessBtn = document.createElement('button');
+                showLessBtn.id = btnId;
+                showLessBtn.className = 'duzenle-btn';
+                showLessBtn.textContent = 'Daha Az Göster';
+                showLessBtn.style.margin = '10px auto 0 auto';
+                showLessBtn.onclick = function() {
+                    gerceklesenShowAll = false;
+                    renderGerceklesenTable();
+                };
+                tbody.parentElement.appendChild(showLessBtn);
+            }
         });
 }
 
@@ -204,23 +275,48 @@ if (gerceklesenResimInput) {
 function saveGerceklesenEdit() {
     if (gerceklesenEditIndex !== null) {
         const data = gerceklesenEtkinlikData[gerceklesenEditIndex];
-        data.baslik = document.getElementById('modalGerceklesenBaslik').value;
-        data.tarih = document.getElementById('modalGerceklesenTarih').value;
-        data.aciklama = document.getElementById('modalGerceklesenDetay').value;
-        if (tempGerceklesenResim) data.resim = tempGerceklesenResim;
-        renderGerceklesenTable();
-        closeGerceklesenEditModal();
+        const formData = new FormData();
+        formData.append('id', data.id);
+        formData.append('baslik', document.getElementById('modalGerceklesenBaslik').value);
+        formData.append('tarih', document.getElementById('modalGerceklesenTarih').value);
+        formData.append('aciklama', document.getElementById('modalGerceklesenDetay').value);
+        if (tempGerceklesenResim) {
+            formData.append('resim', tempGerceklesenResim);
+        }
+        
+        fetch('/panel/geribildirim/gerceklesen-etkinlik-guncelle', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(resp => {
+            if (resp.success) {
+                alert('Etkinlik başarıyla güncellendi ve onay için gönderildi.');
+                closeGerceklesenEditModal();
+                renderGerceklesenTable();
+            } else {
+                alert('Güncelleme başarısız!');
+            }
+        })
+        .catch(() => alert('Bir hata oluştu.'));
     }
 }
 
 // --- Üye Silme Geri Bildirim Tablosu ---
+let uyeSilmeData = [];
+let uyeSilmeShowAll = false;
 function renderUyeSilmeTable() {
     fetch('/panel/geribildirim/silinen-uyeler')
         .then(response => response.json())
         .then(data => {
+            uyeSilmeData = data;
             const tbody = document.getElementById('uyeSilmeGeriBildirimBody');
             tbody.innerHTML = '';
-            data.forEach((item, idx) => {
+            let showData = uyeSilmeShowAll ? data : data.slice(0, 5);
+            showData.forEach((item, idx) => {
                 tbody.innerHTML += `
                 <tr>
                     <td>${item.ogr_no}</td>
@@ -234,6 +330,33 @@ function renderUyeSilmeTable() {
                 </tr>
                 `;
             });
+            // Daha fazla/az göster butonları
+            const btnId = 'uyeSilmeDahaFazlaBtn';
+            let btn = document.getElementById(btnId);
+            if (btn) btn.remove();
+            if (!uyeSilmeShowAll && data.length > 5) {
+                const showMoreBtn = document.createElement('button');
+                showMoreBtn.id = btnId;
+                showMoreBtn.className = 'duzenle-btn';
+                showMoreBtn.textContent = 'Daha Fazla Göster';
+                showMoreBtn.style.margin = '10px auto 0 auto';
+                showMoreBtn.onclick = function() {
+                    uyeSilmeShowAll = true;
+                    renderUyeSilmeTable();
+                };
+                tbody.parentElement.appendChild(showMoreBtn);
+            } else if (uyeSilmeShowAll && data.length > 5) {
+                const showLessBtn = document.createElement('button');
+                showLessBtn.id = btnId;
+                showLessBtn.className = 'duzenle-btn';
+                showLessBtn.textContent = 'Daha Az Göster';
+                showLessBtn.style.margin = '10px auto 0 auto';
+                showLessBtn.onclick = function() {
+                    uyeSilmeShowAll = false;
+                    renderUyeSilmeTable();
+                };
+                tbody.parentElement.appendChild(showLessBtn);
+            }
         });
 }
 
@@ -394,6 +517,22 @@ function renderSosyalMedyaTable() {
         });
 }
 
+// Red sebebi validasyonu
+function validateRedReason(textarea) {
+    const sendButton = textarea.parentElement.querySelector('button[type="submit"]');
+    const reason = textarea.value.trim();
+    
+    if (reason.length === 0) {
+        sendButton.disabled = true;
+        sendButton.style.opacity = '0.5';
+        sendButton.style.cursor = 'not-allowed';
+    } else {
+        sendButton.disabled = false;
+        sendButton.style.opacity = '1';
+        sendButton.style.cursor = 'pointer';
+    }
+}
+
 // --- Tüm tabloları yükle ---
 const oldOnload = window.onload;
 window.onload = function() {
@@ -404,6 +543,51 @@ window.onload = function() {
     renderToplulukDurumuTable();
     renderWebArayuzTable();
     renderSosyalMedyaTable();
+    
+    // Gerçekleşen etkinlikler için event listener ekle
+    setTimeout(() => {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('gerceklesen-detay-btn')) {
+                const bilgi = decodeURIComponent(e.target.getAttribute('data-bilgi') || '');
+                const aciklama = decodeURIComponent(e.target.getAttribute('data-aciklama') || '');
+                showEtkinlikDetay(bilgi, aciklama);
+            }
+        });
+        
+        // Red sebebi textarea'larını kontrol et - tüm textarea'ları bul
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            // İlk yüklemede kontrol et
+            validateRedReason(textarea);
+            
+            // Her değişiklikte kontrol et
+            textarea.addEventListener('input', function() {
+                validateRedReason(this);
+            });
+        });
+        
+        // Dinamik olarak eklenen textarea'lar için MutationObserver
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // Element node
+                        const newTextareas = node.querySelectorAll ? node.querySelectorAll('textarea') : [];
+                        newTextareas.forEach(textarea => {
+                            validateRedReason(textarea);
+                            textarea.addEventListener('input', function() {
+                                validateRedReason(this);
+                            });
+                        });
+                    }
+                });
+            });
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }, 100);
 };
 
 function showTextDetailModal(title, content) {
@@ -426,6 +610,10 @@ function showTextDetailModal(title, content) {
 }
 
 function showEtkinlikDetay(kisa, aciklama) {
+    // Parametreleri güvenli hale getir
+    kisa = kisa || '';
+    aciklama = aciklama || '';
+    
     document.getElementById('textDetailTitle').textContent = 'Etkinlik Detayları';
     document.getElementById('textDetailContent').innerHTML =
         `<div style='font-size:1.5rem;line-height:1.6;'>

@@ -9,19 +9,52 @@ body {
     font-family: 'Nunito', sans-serif;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Sayfa yüksekliğini en az ekran boyutunda tut */
+    min-height: 100vh;
 }
+
 .menu-item.active {
     background-color: #3498db !important;
     color: #fff !important;
 }
-
 
 /* Aktif olan içerik kısmı görünsün */
 .content.active {
     display: block;
 }
 
+/* Hamburger Menü - Denetim Üye */
+#hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1002;
+    background: #003366;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+    align-items: center;
+}
+
+#hamburger span {
+    width: 28px;
+    height: 4px;
+    background-color: #fff;
+    margin: 4px 0;
+    border-radius: 2px;
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transition: 0.3s;
+}
+
+/* Sidebar - Desktop */
 .sidebar {
     width: 250px;
     background-color: #2c3e50;
@@ -30,6 +63,96 @@ body {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 1001;
+    transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Mobil Görünüm */
+@media (max-width: 768px) {
+    #hamburger {
+        display: flex !important;
+    }
+    
+    #sidebar {
+        width: 320px !important;
+        height: 639.2px !important;
+        max-width: 320px !important;
+        max-height: 639.2px !important;
+        min-width: 320px !important;
+        min-height: 639.2px !important;
+        left: -100vw !important;
+        top: 0 !important;
+        background: #2c3e50 !important;
+        z-index: 1001 !important;
+        transition: left 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.08) !important;
+        padding: 20px !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        box-sizing: border-box !important;
+    }
+    
+    #sidebar.open {
+        left: 0 !important;
+    }
+    
+    #sidebar img {
+        width: 120px !important;
+        height: 120px !important;
+        max-width: 120px !important;
+        max-height: 120px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    #sidebar h2 {
+        font-size: 1.2rem !important;
+        margin-bottom: 8px !important;
+        text-align: center !important;
+    }
+    
+    #sidebar h3 {
+        font-size: 1rem !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+    
+    #sidebar p {
+        font-size: 0.9rem !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+    
+    #sidebar .menu {
+        width: 90% !important;
+        margin-top: 10px !important;
+    }
+    
+    #sidebar .menu-item {
+        width: 100% !important;
+        margin: 4px 0 !important;
+        padding: 10px 12px !important;
+        font-size: 0.9rem !important;
+        text-align: center !important;
+    }
+    
+    .content {
+        margin-left: 0 !important;
+        padding: 20px !important;
+        width: 100% !important;
+        padding-top: 80px !important;
+    }
+    
+    body.sidebar-open {
+        overflow: hidden;
+    }
 }
 
 .sidebar img {
@@ -372,14 +495,14 @@ body {
 }
 /* Modal arka planı */
 .modal {
-    display: none; /* Başlangıçta gizli */
+    display: none;
     position: fixed;
-    z-index: 1; /* Üstte görünmesi için */
+    z-index: 3000; /* Sidebar'dan yüksek */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Arka planın kararması */
+    background-color: rgba(0, 0, 0, 0.4);
     padding-top: 60px;
 }
 
@@ -389,8 +512,10 @@ body {
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Ekranın %80'inde görünsün */
+    width: 80%;
     max-width: 900px;
+    z-index: 3100; /* Modal arka planından da yüksek */
+    position: relative;
 }
 
 /* Kapatma butonu */
@@ -1323,84 +1448,196 @@ form input {
 }
 
 /* Excel Modal Stilleri */
-#excelModal .modal-content {
-    max-width: 500px;
+.excel-modal {
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-#excelModal .form-group {
+.excel-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 10px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 10px 10px 0 0;
+}
+
+.excel-modal .modal-header h2 {
+    margin: 0;
+    color: #003366;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.excel-modal .close {
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.excel-modal .close:hover {
+    color: #003366;
+}
+
+.excel-modal .modal-body {
+    padding: 20px;
+}
+
+.excel-modal .search-container {
     margin-bottom: 20px;
 }
 
-#excelModal .form-control {
+.excel-modal .search-input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background: #fff;
 }
 
-#excelModal .form-control:focus {
+.excel-modal .search-input:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    border-color: #003366;
+    box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
 }
 
-#toplulukSelect {
-    height: 40px;
+.topluluk-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
 }
 
-#indirButton:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
-
-#indirButton:disabled:hover {
-    background-color: #6c757d;
-}
-
-/* Responsive tasarım için */
-@media (max-width: 768px) {
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 15px;
-    }
-    
-    .btn {
-        width: 100%;
-    }
-}
-
-/* Select2 input yüksekliğini azalt */
-.select2-container--default .select2-selection--single {
-    min-height: 28px !important;
-    height: 28px !important;
-    padding: 2px 8px !important;
-    font-size: 14px;
+.topluluk-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
     display: flex;
     align-items: center;
-}
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 24px !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 26px !important;
-    top: 1px !important;
-    right: 4px !important;
-    width: 24px !important;
+    gap: 10px;
 }
 
-/* Excel butonu için canlı yeşil */
-.btn-success {
-    background-color: #28a745 !important;
-    border-color: #28a745 !important;
-    color: #fff !important;
+.topluluk-item:last-child {
+    border-bottom: none;
 }
-.btn-success:hover, .btn-success:focus {
-    background-color: #218838 !important;
-    border-color: #1e7e34 !important;
+
+.topluluk-item:hover {
+    background-color: #f8f9fa;
+}
+
+.topluluk-item.selected {
+    background-color: #e3f2fd;
+    border-left: 4px solid #003366;
+}
+
+.topluluk-item img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.topluluk-item .topluluk-name {
+    flex: 1;
+    font-weight: 500;
+    color: #333;
+}
+
+.topluluk-item .topluluk-count {
+    background: #003366;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.excel-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
+
+.excel-modal .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.excel-modal .btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.excel-modal .btn-success:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.excel-modal .btn-success:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.excel-modal .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.excel-modal .btn-secondary:hover {
+    background: #545b62;
+    transform: translateY(-1px);
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .excel-modal {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .excel-modal .modal-header {
+        padding: 15px;
+    }
+    
+    .excel-modal .modal-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .excel-modal .modal-body {
+        padding: 15px;
+    }
+    
+    .excel-modal .modal-footer {
+        padding: 15px;
+        flex-direction: column;
+    }
+    
+    .excel-modal .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 

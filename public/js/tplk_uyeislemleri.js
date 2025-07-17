@@ -1,41 +1,86 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Üyelik kontrolü fonksiyonu
+    function checkMembership(tc, toplulukId) {
+        return fetch('/check-membership', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ tc: tc, topluluk_id: toplulukId })
+        })
+        .then(res => res.json());
+    }
+
     // Form validation
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
+    const uyeForm = document.getElementById('uyeForm');
+    if (uyeForm) {
+        uyeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const studentNumber = document.getElementById('student_number').value;
             const password = document.getElementById('password').value;
             const membershipForm = document.getElementById('membership_form').files[0];
+            const toplulukId = window.toplulukId;
 
             if (!studentNumber) {
-                alert('Lütfen öğrenci numaranızı giriniz.');
-                e.preventDefault();
+                alert('Lütfen TC kimlik numaranızı giriniz.');
                 return;
             }
 
             if (!password) {
                 alert('Lütfen tek şifrenizi giriniz.');
-                e.preventDefault();
                 return;
             }
 
             if (password.length < 6) {
                 alert('Şifreniz en az 6 karakter olmalıdır.');
-                e.preventDefault();
                 return;
             }
 
             if (!membershipForm) {
                 alert('Lütfen topluluk üyelik formunu yükleyiniz.');
-                e.preventDefault();
                 return;
             }
 
             if (membershipForm.type !== 'application/pdf') {
                 alert('Lütfen sadece PDF formatında dosya yükleyiniz.');
-                e.preventDefault();
                 return;
             }
+
+            // Üyelik kontrolü yap
+            checkMembership(studentNumber, toplulukId)
+                .then(data => {
+                    if (data.exists) {
+                        const rol = data.rol;
+                        let message = '';
+                        
+                        if ([1, 2, 3, 6].includes(rol)) {
+                            message = 'Zaten Bu Topluluğa Üyesiniz!';
+                        } else if (rol == 4) {
+                            message = 'Bu Topluluğa Üyelik Başvurunuz Bulunmaktadır!';
+                        } else if (rol == 5) {
+                            message = 'Bu Topluluktan Üyelik Kaydınız Silinmiştir, Topluluk Yönetimi ile İletişime Geçin!';
+                        } else if (rol == 7) {
+                            message = 'Başvurunuz Alınmıştır!';
+                        } else if (rol == 8) {
+                            message = 'Sistemde Aktif Öğrencilik Kaydınız Bulunmamaktadır!';
+                        } else {
+                            message = 'Bu Topluluğa Zaten Kayıtlısınız!';
+                        }
+                        
+                        alert(message);
+                        return;
+                    }
+                    
+                    // Üyelik yoksa formu gönder
+                    uyeForm.submit();
+                })
+                .catch(error => {
+                    console.error('Üyelik kontrolü hatası:', error);
+                    // Hata durumunda formu gönder
+                    uyeForm.submit();
+                });
         });
     }
 

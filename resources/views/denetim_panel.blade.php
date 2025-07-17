@@ -12,19 +12,26 @@
 </head>
 
 <body>
-<div class="sidebar">
-    <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
-    <h2>{{session('unvan')}}</h2>
-    <h3>{{session('isim')}}</h3>
-    <p>{{session('birim')}}</p>
 
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <img src="{{ asset('images/logo/neu_logo.png') }}" alt="Logo">
+    <h2>{{session('isim')}}</h2>
+    <h3>{{session('unvan')}}</h3>
+    <p>{{session('birim')}}</p>
     <div class="menu">
         <a href="{{ route('denetim.topluluk') }}" class="menu-item">Topluluk İşlemleri</a>
-        <a href="{{ route('denetim.etkinlik') }}" class="menu-item ">Etkinlik İşlemleri</a>
+        <a href="{{ route('denetim.etkinlik') }}" class="menu-item">Etkinlik İşlemleri</a>
         <a href="{{ route('denetim.uye') }}" class="menu-item">Üye İşlemleri</a>
         <a href="{{ route('denetim.formlar') }}" class="menu-item">Form İşlemleri</a>
         <a href="{{ route('denetim.panel') }}" class="menu-item active">Web Arayüz İşlemleri</a>
-        <div class="menu-item" onclick="window.location.href='{{ route('kesfet') }}'">Çıkış</div>
+        <div class="menu-item" onclick="window.location.href='{{ route('anasayfa') }}'">Çıkış</div>
     </div>
 </div>
 
@@ -103,22 +110,24 @@
 
         <h2>Sosyal Medya Denetim İşlemleri</h2>
         <div class="form-container">
-            <table class="table" id="sosyalMedyaTable">
-                <thead>
-                    <tr>
-                        <th>Topluluk ID</th>
-                        <th>Topluluk Adı</th>
-                        <th>Logo</th>
-                        <th>Instagram</th>
-                        <th>WhatsApp</th>
-                        <th>LinkedIn</th>
-                        <th>İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody id="sosyalMedyaBody">
-                    <!-- JS ile doldurulacak -->
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle text-center w-100" id="sosyalMedyaTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Topluluk ID</th>
+                            <th>Topluluk Adı</th>
+                            <th>Logo</th>
+                            <th>Instagram</th>
+                            <th>WhatsApp</th>
+                            <th>LinkedIn</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sosyalMedyaBody">
+                        <!-- JS ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -181,6 +190,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/denetim_etkinlik.js') }}"></script>
+<script src="{{ asset('js/denetim_panel_menu.js') }}"></script>
 <script>
     $(document).ready(function() {
         $('#textModal').on('show.bs.modal', function (event) {

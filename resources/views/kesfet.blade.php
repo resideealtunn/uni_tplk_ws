@@ -16,9 +16,8 @@
             padding-left: 10px;
         }
         .title-section {
-            background-color:rgb(163, 219, 252);
             padding: 30px 0;
-            margin-bottom: 30px;
+
         }
         #contentTitle {
             font-family: 'Poppins', sans-serif;
@@ -28,9 +27,16 @@
     </style>
 </head>
 <body>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
 <div class="container">
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="logo">
             <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
             <div class="logo-text">
@@ -46,14 +52,16 @@
             <li><a href={{route('yonetici.giris')}} id="adminBtn">Yönetici İşlemleri</a></li>
         </ul>
     </div>
-    <div class="title-section">
-        <h1 id="contentTitle">NEÜ ETKİNLİKLERİ KEŞFET</h1>
-        <div class="page-description">
-            <p>Necmettin Erbakan Üniversitesi'nin renkli dünyasına hoş geldiniz! Bu platformda yaklaşan etkinlikleri keşfedebilir, yeni topluluklara üye olabilir ve üniversite hayatınızı daha da zenginleştirebilirsiniz. Öğrenci topluluklarımızın düzenlediği seminerler, workshoplar, sosyal etkinlikler ve daha fazlasını burada bulabilirsiniz. Hemen bir etkinliğe katılın ve yeni arkadaşlıklar kurun!</p>
-        </div>
-    </div>
     <!-- Content Area -->
     <div class="content">
+        <div class="title-section">
+            <h1 id="contentTitle">NEÜ ETKİNLİKLERİ KEŞFET</h1>
+            <div class="page-description">
+                <p>Necmettin Erbakan Üniversitesi'nin Etkinlik Keşfet ortamına hoş geldiniz!
+Bu platform aracılığıyla üniversitemizde düzenlenen etkinlikleri takip edebilir, ilgi alanlarınıza uygun öğrenci topluluklarına katılarak hem kişisel hem de akademik gelişiminize katkı sağlayabilirsiniz.
+Etkinlikler sayesinde bilgi birikiminizi artırabilir, disiplinler arası bağlantılar kurabilir ve üniversite yaşamınızı daha verimli hale getirebilirsiniz.</p>
+            </div>
+        </div>
         <div id="contentArea" class="explore-grid">
             @foreach ($kesfet as $item)
                 <div class="event-card" data-e_id="{{ $item->eb_id }}" data-t_id="{{ $item->t_id }}" data-metin="{{ $item->eb_metin }}" data-tarih="{{ $item->eb_tarih }}" data-bitis_tarihi="{{ $item->eb_bitis_tarihi }}" data-konum="{{ $item->eb_konum }}">
@@ -76,33 +84,33 @@
                 </div>
             @endforeach
         </div>
-    </div>
-</div>
+        
+        <!-- Sayfalama -->
+        <div class="pagination-container">
+            <div class="pagination">
+                @if ($kesfet->hasPages())
+                    @if ($kesfet->onFirstPage())
+                        <span class="pagination-item disabled">« Önceki</span>
+                    @else
+                        <a href="{{ $kesfet->previousPageUrl() }}" class="pagination-item">« Önceki</a>
+                    @endif
 
-<!-- Sayfalama -->
-<div class="pagination-container">
-    <div class="pagination">
-        @if ($kesfet->hasPages())
-            @if ($kesfet->onFirstPage())
-                <span class="pagination-item disabled">« Önceki</span>
-            @else
-                <a href="{{ $kesfet->previousPageUrl() }}" class="pagination-item">« Önceki</a>
-            @endif
+                    @foreach ($kesfet->getUrlRange(1, $kesfet->lastPage()) as $page => $url)
+                        @if ($page == $kesfet->currentPage())
+                            <span class="pagination-item active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="pagination-item">{{ $page }}</a>
+                        @endif
+                    @endforeach
 
-            @foreach ($kesfet->getUrlRange(1, $kesfet->lastPage()) as $page => $url)
-                @if ($page == $kesfet->currentPage())
-                    <span class="pagination-item active">{{ $page }}</span>
-                @else
-                    <a href="{{ $url }}" class="pagination-item">{{ $page }}</a>
+                    @if ($kesfet->hasMorePages())
+                        <a href="{{ $kesfet->nextPageUrl() }}" class="pagination-item">Sonraki »</a>
+                    @else
+                        <span class="pagination-item disabled">Sonraki »</span>
+                    @endif
                 @endif
-            @endforeach
-
-            @if ($kesfet->hasMorePages())
-                <a href="{{ $kesfet->nextPageUrl() }}" class="pagination-item">Sonraki »</a>
-            @else
-                <span class="pagination-item disabled">Sonraki »</span>
-            @endif
-        @endif
+            </div>
+        </div>
     </div>
 </div>
 
@@ -162,7 +170,13 @@
             <input type="hidden" id="miniEId" name="miniEId">
             <input type="hidden" id="miniTId" name="miniTId">
             <label for="minitckNo">TC Kimlik No</label>
-            <input type="text" id="minitckNo" name="minitckNo" required>
+            <input type="text" id="minitckNo" name="minitckNo" 
+                   maxlength="11" 
+                   minlength="11" 
+                   pattern="[1-9][0-9]{10}" 
+                   title="TC Kimlik No 11 haneli olmalı ve 0 ile başlayamaz"
+                   required>
+            <div id="tcError" style="color: #dc3545; font-size: 12px; margin-top: 5px; display: none;"></div>
             <label for="minitckPass">Tek Şifre</label>
             <input type="password" id="minitckPass" name="minitckPass" required>
             <button type="submit">Başvur</button>

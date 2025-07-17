@@ -30,10 +30,47 @@ class UyelerExport implements FromCollection, WithHeadings
                 'ogrenci_bilgi.soyisim',
                 'ogrenci_bilgi.fak_ad',
                 'ogrenci_bilgi.bol_ad',
-                'ogrenci_bilgi.sınıf'
+                'ogrenci_bilgi.sınıf',
+                'ogrenci_bilgi.tel',
+                'ogrenci_bilgi.eposta',
+                'uyeler.tarih',
+                'uyeler.rol'
             )
             ->orderBy('ogrenci_bilgi.numara')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                // Rol bilgisini metin olarak ekle
+                $rolText = '';
+                switch ($item->rol) {
+                    case 1:
+                        $rolText = 'Üye';
+                        break;
+                    case 2:
+                        $rolText = 'Başkan';
+                        break;
+                    case 3:
+                        $rolText = 'Başkan Yardımcısı';
+                        break;
+                    case 6:
+                        $rolText = 'Yönetim Başvuru';
+                        break;
+                    default:
+                        $rolText = 'Üye';
+                }
+                
+                return [
+                    'numara' => $item->numara,
+                    'isim' => $item->isim,
+                    'soyisim' => $item->soyisim,
+                    'fakulte' => $item->fak_ad,
+                    'bolum' => $item->bol_ad,
+                    'sinif' => $item->sınıf,
+                    'telefon' => $item->tel,
+                    'email' => $item->eposta,
+                    'kayit_tarihi' => $item->tarih ? date('d.m.Y', strtotime($item->tarih)) : '',
+                    'rol' => $rolText
+                ];
+            });
     }
 
     public function headings(): array
@@ -45,6 +82,10 @@ class UyelerExport implements FromCollection, WithHeadings
             'Fakülte',
             'Bölüm',
             'Sınıf',
+            'Telefon',
+            'E-posta',
+            'Kayıt Tarihi',
+            'Rol',
         ];
     }
 }

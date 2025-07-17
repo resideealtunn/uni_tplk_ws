@@ -9,9 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
+<!-- Hamburger Menü -->
+<div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
 <div class="container">
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="logo">
             <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
             <div class="logo-text">
@@ -59,17 +66,18 @@
             </div>
 
             <div class="slider-section">
-                <h2 class="slider-title">Geçmiş Etkinliklerimiz</h2>
-                <div class="event-slider" id="eventSlider" data-count="{{ count($gecmis_etkinlikler) }}">
-                    @foreach($gecmis_etkinlikler as $i => $etkinlik)
-                        <a href="{{ route('etkinlikler', ['topluluk_isim' => Str::slug($etkinlik->topluluk_adi), 'topluluk_id' => $etkinlik->topluluk_id]) }}" class="slider-item{{ $i < 4 ? ' active' : '' }}" data-index="{{ $i }}" style="text-decoration:none; color:inherit;">
+                <div class="slider-header">
+                    <h2 class="slider-title">Geçmiş Etkinliklerimiz</h2>
+                </div>
+                <div class="event-slider" id="eventSlider" data-count="{{ min(count($gecmis_etkinlikler), 15) }}">
+                    @foreach($gecmis_etkinlikler->take(15) as $i => $etkinlik)
+                        <a href="{{ route('etkinlikler', ['topluluk_isim' => Str::slug($etkinlik->topluluk_adi), 'topluluk_id' => $etkinlik->topluluk_id]) }}" class="slider-item{{ $i == 0 ? ' active' : '' }}" data-index="{{ $i }}" style="text-decoration:none; color:inherit;">
                             <div class="slider-img-wrapper">
                                 <img src="{{ asset('images/etkinlik/'.$etkinlik->resim) }}" alt="{{ $etkinlik->etkinlik_adi }}" class="slider-img">
                             </div>
                             <div class="slider-info">
                                 <div class="slider-title">{{ $etkinlik->etkinlik_adi }}</div>
                                 <div class="slider-topluluk" style="color:#1956a3; font-weight:600; text-align:center; margin:6px 0 6px 0;">{{ $etkinlik->topluluk_adi }}</div>
-                                <div class="slider-bilgi">{{ $etkinlik->bilgi }}</div>
                             </div>
                         </a>
                     @endforeach
@@ -79,11 +87,17 @@
                 <!-- Sayfa Numaraları -->
                 <div class="slider-pagination" id="sliderPagination">
                     @php
-                        $totalPages = ceil(count($gecmis_etkinlikler) / 4);
+                        $totalItems = min(count($gecmis_etkinlikler), 15);
+                        $itemsPerPage = 4;
+                        $totalPages = ceil($totalItems / $itemsPerPage);
                     @endphp
                     @for($i = 1; $i <= $totalPages; $i++)
                         <span class="page-dot{{ $i == 1 ? ' active' : '' }}" data-page="{{ $i - 1 }}">{{ $i }}</span>
                     @endfor
+                </div>
+                <!-- Tümü Butonu -->
+                <div class="slider-actions">
+                    <a href="{{ route('haberler') }}" class="tumu-btn">Tümü</a>
                 </div>
             </div>
 

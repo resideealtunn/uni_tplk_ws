@@ -19,9 +19,15 @@
 </head>
 
 <body>
+    <!-- Hamburger Menü -->
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo">
                 <img src="{{ asset('images/logo/neu_logo.png') }}" alt="NEU Logo">
                 <div class="logo-text">
@@ -43,10 +49,10 @@
             <div id="contentTitle">ÖĞRENCİ TOPLULUKLARI KOORDİNATÖRLÜĞÜ</div>
 
             <!-- Bilgi Kutuları -->
-            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 40px;">
+            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 40px; flex-wrap: wrap;">
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     <span style="font-size: 16px; font-weight: bold; color: #003366;">TOPLULUK SAYISI</span>
-                    <span id="communityCount" style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{count($topluluklar)}}</span>
+                    <span id="communityCount" style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{$topluluklar->total()}}</span>
                 </div>
 
                 <div style="background-color: #fff; border: 2px solid #003366; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
@@ -60,7 +66,13 @@
 
             <!-- Arama Kutusu -->
             <div style="text-align: center; margin-bottom: 30px;">
-                <input type="text" id="searchInput" placeholder="Topluluk ara..." style="padding: 10px 20px; width: 300px; border: 2px solid #003366; border-radius: 25px;">
+                <div style="position: relative; display: inline-block;">
+                    <input type="text" id="searchInput" placeholder="Topluluk ara..." style="padding: 10px 20px; width: 300px; border: 2px solid #003366; border-radius: 25px; padding-right: 40px;">
+                    <button id="clearSearch" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #003366; cursor: pointer; font-size: 16px; display: none;">✕</button>
+                </div>
+            </div>
+            <div id="searchStatus" style="text-align: center; margin-bottom: 20px; display: none;">
+                <span style="color: #003366; font-style: italic;">Aranıyor...</span>
             </div>
 
             <!-- Topluluk Listesi -->
@@ -77,10 +89,11 @@
                 @endforeach
             </div>
 
-
             <!-- Sayfalama -->
-        <div class="pagination" id="paginationContainer"></div>
-    </div>
+            <div class="pagination" style="display: flex; justify-content: center; margin-top: 40px; gap: 10px;">
+                {{ $topluluklar->links() }}
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -124,7 +137,7 @@
             });
         });
     </script>
-
+    <script src="{{ asset('js/js_topluluklar_menu.js') }}"></script>
 </body>
 
 </html>
