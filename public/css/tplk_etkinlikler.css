@@ -389,18 +389,94 @@
     .modal-content-modern {
         flex-direction: column;
         max-width: 98vw;
+        max-height: 90vh;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     .modal-left-modern {
         border-radius: 20px 20px 0 0;
         padding: 18px 8px;
         justify-content: center;
+        flex-shrink: 0;
     }
     .modal-left-modern img {
         max-width: 95vw;
-        height: 180px;
+        height: 220px;
     }
     .modal-right-modern {
         padding: 24px 12px;
+        overflow: visible;
+        max-height: none;
+        flex: 1;
+    }
+    .modal-right-modern h2 {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    .modal-community {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    .modal-short {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    .modal-dates {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+    .modal-long {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    .apply-btn-modern {
+        font-size: 1.1rem;
+        padding: 14px 28px;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content-modern {
+        max-width: 95vw;
+        max-height: 95vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .modal-left-modern {
+        padding: 12px 6px;
+    }
+    .modal-left-modern img {
+        height: 300px;
+    }
+    .modal-right-modern {
+        padding: 16px 8px;
+        max-height: none;
+        overflow: visible;
+    }
+    .modal-right-modern h2 {
+        font-size: 1.3rem;
+    }
+    .modal-community {
+        font-size: 0.9rem;
+    }
+    .modal-short {
+        font-size: 0.9rem;
+    }
+    .modal-dates {
+        font-size: 0.8rem;
+    }
+    .modal-long {
+        font-size: 0.8rem;
+    }
+    .apply-btn-modern {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+    .close-btn-modern {
+        top: 12px;
+        right: 16px;
+        font-size: 1.5rem;
     }
 }
 /* === Mini Başvuru Modalı (Keşfet uyumlu) === */

@@ -130,7 +130,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('modalKonum').style.display = 'none';
             }
             
-            document.getElementById('eventModal').style.display = 'block';
+            document.getElementById('eventModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Scroll'u engelle
             // e_id ve t_id'yi sakla
             currentEId = card.getAttribute('data-e_id');
             currentTId = card.getAttribute('data-t_id');
@@ -143,6 +144,7 @@ window.addEventListener('DOMContentLoaded', function() {
     if (closeBtn) {
         closeBtn.addEventListener('click', function() {
             document.getElementById('eventModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Scroll'u geri aç
         });
     }
     // Modal dışında tıklayınca kapansın
@@ -151,6 +153,7 @@ window.addEventListener('DOMContentLoaded', function() {
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 modal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Scroll'u geri aç
             }
         });
     }

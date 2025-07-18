@@ -488,8 +488,18 @@ body {
     width: 100vw; height: 100vh;
     background: rgba(0, 48, 102, 0.25);
     z-index: 1000;
-    overflow-y: auto;
+    overflow: hidden;
     font-family: 'Poppins', Arial, sans-serif;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 .modal-content {
     background: #fff;
@@ -507,54 +517,338 @@ body {
     border: 1px solid #e3f0ff;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1001;
+    animation: slideIn 0.3s ease;
+    box-sizing: border-box;
+    align-items: flex-start;
+    text-align: left;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 @media (max-width: 768px) {
+    .event-modal {
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
     .modal-content {
         flex-direction: column;
-        width: 95%;
-        max-width: 500px;
-        padding: 20px;
-        max-height: 85vh;
+        width: 92%;
+        max-width: none;
+        padding: 16px;
+        height: 88vh;
+        max-height: 88vh;
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        border-radius: 12px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    
+    .modal-left {
+        width: 100%;
+        text-align: center;
+        flex-shrink: 0;
+        margin-bottom: 12px;
     }
     
     .modal-left img {
         width: 100%;
-        height: 200px;
-        margin-bottom: 15px;
+        max-width: 100%;
+        height: 160px;
+        margin-bottom: 0;
+        object-fit: cover;
+        border-radius: 8px;
+        box-sizing: border-box;
     }
     
     .modal-right {
         width: 100%;
         padding-left: 0;
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        overflow-y: visible;
+        min-height: auto;
+        justify-content: flex-start;
+        min-width: 250px;
+        align-items: stretch;
+        position: relative;
+        flex-wrap: nowrap;
     }
     
     .modal-right h3 {
-        font-size: 20px;
+        font-size: 16px;
+        margin-bottom: 6px;
+        color: #003366;
+        font-weight: 600;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.2;
+        text-align: left;
+        width: 100%;
+        max-width: 100%;
+        min-width: 250px;
     }
     
     .modal-right p {
-        font-size: 14px;
+        font-size: 12px;
+        margin-bottom: 4px;
+        color: #00509e;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    #modalTarih {
+        font-size: 10px;
+        padding: 4px 8px;
+        margin-bottom: 6px;
+        word-wrap: break-word;
+        line-height: 1.2;
+        text-align: left;
+        white-space: normal;
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+    
+    #modalKonum {
+        font-size: 10px;
+        padding: 4px 8px;
+        margin-bottom: 6px;
+        word-wrap: break-word;
+        line-height: 1.2;
+        text-align: left;
+        white-space: normal;
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+    
+    #modalLongDesc {
+        font-size: 11px;
+        line-height: 1.4;
+        margin-top: 8px;
+        padding-top: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        flex: 1;
+        min-height: auto;
+        text-align: left;
+        white-space: pre-line;
+        max-width: 100%;
+        margin-bottom: 15px;
+        display: block;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        position: relative;
+    }
+    
+    .apply-btn {
+        font-size: 13px;
+        padding: 8px 20px;
+        margin-top: 0;
+        align-self: center;
+        width: auto;
+        min-width: 140px;
+        max-width: 200px;
+        flex-shrink: 0;
+        border-radius: 20px;
+        font-weight: 600;
+        display: block;
+        position: relative;
+        z-index: 10;
+        clear: both;
+        float: none;
+    }
+    
+    .close-btn {
+        font-size: 24px;
+        top: 8px;
+        right: 8px;
+        z-index: 1002;
+        position: absolute;
     }
 }
 
 @media (max-width: 480px) {
+    .event-modal {
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
     .modal-content {
-        width: 98%;
-        padding: 15px;
-        max-height: 80vh;
+        width: 95%;
+        padding: 12px;
+        height: 82vh;
+        max-height: 82vh;
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        border-radius: 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    
+    .modal-left {
+        width: 100%;
+        text-align: center;
+        flex-shrink: 0;
+        margin-bottom: 10px;
     }
     
     .modal-left img {
-        height: 150px;
+        width: 100%;
+        max-width: 100%;
+        height: 120px;
+        margin-bottom: 0;
+        object-fit: cover;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+    
+    .modal-right {
+        width: 100%;
+        padding-left: 0;
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        overflow-y: visible;
+        min-height: auto;
+        justify-content: flex-start;
+        min-width: 200px;
+        align-items: stretch;
+        position: relative;
+        flex-wrap: nowrap;
     }
     
     .modal-right h3 {
-        font-size: 18px;
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: #003366;
+        font-weight: 600;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.2;
+        text-align: left;
+        width: 100%;
+        max-width: 100%;
+        min-width: 200px;
     }
     
     .modal-right p {
-        font-size: 13px;
+        font-size: 11px;
+        margin-bottom: 3px;
+        color: #00509e;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.2;
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    #modalTarih {
+        font-size: 9px;
+        padding: 3px 6px;
+        margin-bottom: 4px;
+        word-wrap: break-word;
+        line-height: 1.1;
+        text-align: left;
+        white-space: normal;
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+    
+    #modalKonum {
+        font-size: 9px;
+        padding: 3px 6px;
+        margin-bottom: 4px;
+        word-wrap: break-word;
+        line-height: 1.1;
+        text-align: left;
+        white-space: normal;
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+    
+    #modalLongDesc {
+        font-size: 10px;
+        line-height: 1.3;
+        margin-top: 6px;
+        padding-top: 6px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        flex: 1;
+        min-height: auto;
+        text-align: left;
+        white-space: pre-line;
+        max-width: 100%;
+        margin-bottom: 12px;
+        display: block;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        position: relative;
+    }
+    
+    .apply-btn {
+        font-size: 11px;
+        padding: 6px 16px;
+        margin-top: 0;
+        align-self: center;
+        width: auto;
+        min-width: 120px;
+        max-width: 180px;
+        flex-shrink: 0;
+        border-radius: 18px;
+        font-weight: 600;
+        display: block;
+        position: relative;
+        z-index: 10;
+        clear: both;
+        float: none;
+    }
+    
+    .close-btn {
+        font-size: 20px;
+        top: 5px;
+        right: 5px;
+        z-index: 1002;
+        position: absolute;
     }
 }
 .modal-left img {
@@ -572,12 +866,23 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     font-family: 'Poppins', Arial, sans-serif;
+    text-align: left;
+    min-width: 300px;
+    align-items: stretch;
+    position: relative;
+    flex-wrap: nowrap;
+    min-height: auto;
 }
 .modal-right h3 {
     font-size: 22px;
     margin-bottom: 10px;
     color: #003366;
     font-family: 'Poppins', Arial, sans-serif;
+    width: 100%;
+    max-width: 100%;
+    min-width: 300px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 .modal-right p {
     font-size: 15px;
@@ -585,6 +890,9 @@ body {
     color: #00509e;
     line-height: 1.5;
     font-family: 'Poppins', Arial, sans-serif;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 #modalTarih {
@@ -596,6 +904,9 @@ body {
     background-color: #f8f9fa;
     border-radius: 6px;
     border-left: 3px solid #00509e;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 #modalKonum {
@@ -608,6 +919,9 @@ body {
     border-radius: 6px;
     border-left: 3px solid #28a745;
     display: none;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 #modalLongDesc {
@@ -619,6 +933,13 @@ body {
     line-height: 1.6;
     word-break: break-word;
     white-space: pre-line;
+    text-align: left;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+    display: block;
+    position: relative;
 }
 
 .apply-btn {
@@ -631,9 +952,14 @@ body {
     cursor: pointer;
     transition: background 0.2s;
     margin-top: 10px;
-    align-self: flex-start;
+    align-self: center;
     font-family: 'Poppins', Arial, sans-serif;
     font-weight: 500;
+    display: block;
+    position: relative;
+    z-index: 10;
+    clear: both;
+    float: none;
 }
 .apply-btn:hover {
     background: #003366;

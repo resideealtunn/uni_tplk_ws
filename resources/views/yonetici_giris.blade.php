@@ -32,14 +32,14 @@
                 <label for="sifre">Şifre</label>
                 <input type="password" id="sifre" name="sifre" required>
             </div>
-            <!-- <div class="form-group">
+            <div class="form-group">
             <div class="g-recaptcha" data-sitekey="6LcFD6YpAAAAAGSGbeYUc0HSaJZZp_EBJfMqyX2Q"></div>
-            </div> -->
+            </div>
             <button type="submit" class="login-button">Giriş Yap</button>
         </form>
     </div>
 </div>
-<!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
 

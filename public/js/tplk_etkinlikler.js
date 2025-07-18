@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
             applyBtn.setAttribute('data-e_id', card.getAttribute('data-e_id'));
             applyBtn.setAttribute('data-t_id', card.getAttribute('data-t_id'));
             eventModal.style.display = 'flex';
+            // Body scroll'u devre dışı bırak
+            document.body.style.overflow = 'hidden';
         });
     });
     // Geçmiş etkinlikler
@@ -84,15 +86,21 @@ document.addEventListener('DOMContentLoaded', function() {
             modalLongDesc.innerText = card.getAttribute('data-metin');
             applyBtn.style.display = 'none';
             eventModal.style.display = 'flex';
+            // Body scroll'u devre dışı bırak
+            document.body.style.overflow = 'hidden';
         });
     });
     // Modal kapatma
     closeModalBtn.addEventListener('click', function() {
         eventModal.style.display = 'none';
+        // Body scroll'unu geri aç
+        document.body.style.overflow = 'auto';
     });
     window.addEventListener('click', function(e) {
         if (e.target === eventModal) {
             eventModal.style.display = 'none';
+            // Body scroll'unu geri aç
+            document.body.style.overflow = 'auto';
         }
     });
 

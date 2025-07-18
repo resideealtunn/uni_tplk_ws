@@ -23,14 +23,14 @@ class YoneticiController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
-            // $response = $request->input('g-recaptcha-response');
-            // $secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
-            // $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $response;
-            // $recaptchaResponse = \Illuminate\Support\Facades\Http::asForm()
-            // ->withOptions(['verify' => false])
-            // ->post($url);
-            // $recaptcha = $recaptchaResponse->json();
-            // if ($recaptcha["success"]) {
+            $response = $request->input('g-recaptcha-response');
+            $secretKey = "6LcFD6YpAAAAAA8rNdPgqJMQvPfTY7GqSnFS4voH";
+            $url = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . $response;
+            $recaptchaResponse = \Illuminate\Support\Facades\Http::asForm()
+            ->withOptions(['verify' => false])
+            ->post($url);
+            $recaptcha = $recaptchaResponse->json();
+            if ($recaptcha["success"]) {
                 $curl   = curl_init();
                 $tc     = $request->input('tc');
                 $sifre  = $request->input('sifre');
@@ -253,9 +253,9 @@ class YoneticiController extends Controller
                 } else {
                     return back()->with('error', 'Öğrenci veya personel bulunamadı.');
                 }
-            // } else {
-            //     return back()->with('error', 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.');
-            // }
+            } else {
+                return back()->with('error', 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.');
+            }
         }
     }
 
